@@ -1,59 +1,39 @@
 import WebSocket, { WebSocketServer } from "ws";
 class Socket {
-  constructor(port) {
-    this.wss = new WebSocketServer({ port:port });
+  constructor(port, controller) {
+    this.wss = new WebSocketServer({ port: port });
+    this.controller = controller;
+    this.clientsId = new Map();
     this.#setupEventListeners();
   }
   #setupEventListeners() {
-    console.log("connecting start");
-    this.wss.on("connection", (ws) => {
-      console.log("New client connected");
-
-      ws.on("message", (message) => {
-        // 수신된 메시지를 문자열로 변환 (Buffer 형태일 수 있으므로)
-        try {
-          // 💡 3. JSON 파싱
-          message = JSON.parse(message.toString());
-        } catch (e) {
-          ws.send(
-            JSON.stringify({ type: "error", message: "Invalid JSON format." })
-          );
-          return;
-        }
-        if (message.type === "info") {
-          this.#systemChat("info", { status: "connected" });
-        } else if (message.type === "move") {
-          this.#systemChat("move", { move: message.move });
-        } else if (message.type === "chat") {
-          this.#clientsChat(ws, "chat", { message: message.message });
-        }
-      });
-
-      // Close event handler
-      ws.on("close", () => {
-        console.log("Client disconnected");
-      });
-    });
+    this.wss.on("connection", (ws) => {this.connection(ws);});
   }
-  #systemChat(type, message) {
-    this.wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        const sendMessage = {
-          type: type,
-          ...message,
-        };
-        client.send(JSON.stringify(sendMessage));
+  connection(ws) {
+    ws.on("message", (message) => {
+      try {
+        message = JSON.parse(message.toString());
+      } catch (e) {
+        ws.send(
+          JSON.stringify({ type: "error", message: "Invalid JSON format." })
+        );
+        return;
       }
+      if(!this.clientsId[message.message])this.clientsId.set(message.message,ws)
+      const result = this.controller.sendService(message);
+      this.#systemChat(result)
+    });
+    // Close event handler
+    ws.on("close", () => {
+
+      console.log("Client disconnected");
     });
   }
-  #clientsChat(ws, type, message) {
-    this.wss.clients.forEach((client) => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        const sendMessage = {
-          type: type,
-          ...message,
-        };
-        client.send(JSON.stringify(sendMessage));
+  #systemChat([clients,data]) {
+    clients.forEach((id) => {
+      const client = this.clientsId.get(id)
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(data));
       }
     });
   }
