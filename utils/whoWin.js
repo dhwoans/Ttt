@@ -7,7 +7,7 @@ const whoWin = (gameCells) => {
     const b = gameCells[comb[1].row][comb[1].column];
     const c = gameCells[comb[2].row][comb[2].column];
     if (a !== "" && a === b && b === c) {
-      return a === 'X'? 1 : 2;
+      return a
     }
   }
   // 모든 조합 검사 후 승자가 없으면 -1 반환

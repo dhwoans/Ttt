@@ -1,7 +1,29 @@
-import Socket from "./modules/WebSocket.js";
-import Controller from "./modules/Controller.js"
-import Service from "./modules/Service.js"
+import SocketManager from "./src/routes/SocketManager.js";
+import Manager from "./src/models/Manager.js";
+import ApiController from "./src/controller/ApiController.js";
+import Receiver from "./src/routes/Receiver.js";
+import Service from "./src/service/Service.js";
+import ErrorHandler from "./src/ErrorHandler.js";
+import ApiRoutes from "./src/routes/ApiRoutes.js";
+import SessionManger from "./src/routes/SessionManager.js";
+import Sender from "./src/routes/Sender.js";
 
-const service = new Service()
-const controller = new Controller(service)
-new Socket(8080,controller);
+import http from "http";
+
+const manager = new Manager();
+const errorHandler = new ErrorHandler();
+const sessionManger = new SessionManger();
+const sender = new Sender(sessionManger);
+const service = new Service(manager);
+const controller = new ApiController(service, sender);
+const receiver = new Receiver(controller);
+
+// api - websocket 포트공유
+const api = new ApiRoutes(8080, controller, errorHandler);
+
+const server = http.createServer(api.app);
+new SocketManager(server, receiver, sessionManger);
+
+server.listen(8080, () => {
+  console.log(`Server running on port 8080.`);
+});
