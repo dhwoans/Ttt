@@ -32,6 +32,9 @@ class Service {
       throw new Error(`${this.constructor.name} : room 정보 확인 불가`);
     }
   }
+  removePlayer(roomId, connId) {
+    return this.manager.removePlayer(roomId, connId);
+  }
 
   /**
    * 모든 방의 roomId와 현재 플레이어 수를 반환
@@ -58,6 +61,22 @@ class Service {
       }
     );
     return playerArray;
+  }
+  readyPlayer(roomId, connId, status) {
+    const playersMap = this.manager.readyPlayer(roomId, connId, status);
+    const players = playersMap.getAllPlayersData();
+    //게임 시작 검증
+    if (playersMap.isFull) {
+      for (const { connId, nickname, isReady } of players) {
+        if (!isReady) {
+          console.log("레디 안함");
+          return [players, false];
+        }
+      }
+      return [players, true];
+    }
+    console.log("인원 부족");
+    return [players, false];
   }
 }
 

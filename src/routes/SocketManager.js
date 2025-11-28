@@ -71,11 +71,9 @@ class SocketManager {
       const id = ws.id;
 
       if (id && this.session.getConnId(id)) {
-        this.session.deleteConnId(id);
-
-        // if (this.receiver.handleDisconnect) {
-        //   this.receiver.handleDisconnect(id);
-        // }
+        //게임 복구 로직
+        
+        // this.session.deleteConnId(id);
 
         console.log(`client ${id} out`);
       }

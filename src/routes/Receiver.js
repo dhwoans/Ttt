@@ -12,7 +12,7 @@ class Receiver {
   /**
    * 제어흐름 역할
    */
-  handleMessage(message,connId) {
+  handleMessage(message, connId) {
     const handler = this.routes[message.type];
     if (handler) {
       handler.call(this.controller, message, connId);

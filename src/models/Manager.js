@@ -50,7 +50,7 @@ class Manager {
     if (!playersInfo || playersInfo.isFull()) {
       return false;
     }
-    playersInfo.addPlayer(connId, nickname);
+    playersInfo.addPlayer(connId, nickname, false);
     return playersInfo;
   }
 
@@ -72,9 +72,9 @@ class Manager {
     if (playersInfo && playersInfo.count() === 0) {
       this.games.delete(roomId);
       this.players.delete(roomId);
-      return "RoomDestroyed";
+      return null;
     }
-    return "PlayerRemoved";
+    return playersInfo;
   }
 
   /**
@@ -98,8 +98,21 @@ class Manager {
         return new Error("방 정보는 있는데 플레이어 정보가 없음");
       }
     }
-
     return rooms;
+  }
+  /**
+   * 플레이어 레디 처리
+   * @param {number} roomId
+   * @param {number} connId
+   * @param {number} nickname
+   * @returns {object}
+   */
+  readyPlayer(roomId, connId, status) {
+    const playersInfo = this.players.get(roomId);
+    const player = playersInfo.getPlayerDate(connId);
+    player.isReady = status;
+
+    return playersInfo;
   }
 }
 export default Manager;

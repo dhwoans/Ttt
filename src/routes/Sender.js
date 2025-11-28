@@ -20,8 +20,7 @@ class Sender {
    * @param {object} message - 보낼 메시지 객체
    */
   sendToRoom(playersMap, message) {
-    console.log("보낼 사람", playersMap);
-    Array.from(playersMap.entries()).forEach(([connId, nickname]) => {
+    Array.from(playersMap.entries()).forEach(([connId, _]) => {
       const ws = this.sessionManager.getConnId(connId);
       if (ws && ws.readyState === ws.OPEN) {
         ws.send(message);
