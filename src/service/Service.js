@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 class Service {
   constructor(manager) {
     this.manager = manager;
@@ -16,7 +17,7 @@ class Service {
       error.status = 400;
       throw error;
     }
-    const roomId = crypto.randomUUID();
+    const roomId = randomUUID();
     return this.manager.createRoom(roomId, userId, nickname);
   }
   /**
