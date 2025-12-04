@@ -12,8 +12,6 @@ class ApiController {
       console.log(this.constructor.name, " : 방생성 요청");
       const { userId, nickname } = req.body;
       const result = this.service.createRoom(userId, nickname);
-
-      // 서비스가 성공적으로 데이터를 리턴하면 여기서 응답 완료
       res.status(201).json({
         success: true,
         roomId: result,
@@ -24,10 +22,24 @@ class ApiController {
   }
   checkRoom(req, res, next) {
     try {
-      const { roomId } = req.query.roomId;
+      const roomId = req.query.roomId;
+      if (!roomId) {
+        console.log(this.constructor.name, " roomId 누락");
+        next(new Error("roomId 누락"));
+      }
       const result = this.service.checkRoom(roomId);
-      if (result) {
-        res.status(201).json({
+      if (!result) {
+        return next(new Error("없는 방에 접근"));
+      }
+      console.log(result);
+      const { players, game } = result;
+      if (players.isFull()) {
+        //클라이언트 강제 새로고침
+        res.status(200).json({
+          success: false,
+        });
+      } else {
+        res.status(200).json({
           success: true,
         });
       }
@@ -39,7 +51,7 @@ class ApiController {
     try {
       const result = this.service.getRoomList();
 
-      res.status(201).json({
+      res.status(200).json({
         success: true,
         roomList: result,
       });
@@ -55,8 +67,13 @@ class ApiController {
     // 클라이언트 새로 고침시 채팅내역,플레이어정보,log
     const { _, roomId, nickname, sender } = message;
     const { game, players } = this.service.checkRoom(roomId);
-
-    if (players.players.size === 2) {
+    if (!players) {
+      this.sender.sendToUser(
+        { type: "ERROR", message: "잘못된 방에 접근", sender: "system" },
+        connId
+      );
+    }
+    if (players.players.size === players.MAX_PLAYERS) {
       //새로고침 발생
       const allPlayersList = Array.from(players.players.entries()).map(
         ([userId, playerInfo]) => {
@@ -109,6 +126,7 @@ class ApiController {
     //남아있는 사람에게 알림
     const roomId = rawMessage.message;
     const nickname = rawMessage.sender;
+    console.log("leave :", roomId);
     const result = this.service.removePlayer(roomId, connId);
     // null 이면 메시지 x
     if (result) {
@@ -128,31 +146,64 @@ class ApiController {
   handleReady(rawMessage, connId) {
     const [roomId, status] = rawMessage.message;
     const nickname = rawMessage.sender;
-    const [players, gameStart] = this.service.readyPlayer(
+    const [playerList, gameStart] = this.service.readyPlayer(
       roomId,
       connId,
       status
     );
-    console.log("방안에 있는 사람 :", players);
+    console.log("방안에 있는 사람 :", playerList);
     const readyMessage = {
       type: "READY",
       message: [connId, status],
       sender: "system",
     };
-    for (const { connId, nickname, isReady } of players) {
+    for (const { connId, nickname, isReady } of playerList) {
       this.sender.sendToUser(readyMessage, connId);
     }
     //게임시작 확인
-    console.log("게임시작 ? ", gameStart);
     if (gameStart) {
+      //fsm on
+      const state = this.service.gameStart(roomId);
+      // console.log(state.status);
+      // console.log(state.currentTurn);
+      // console.log(state.players);
+      //게임시작 메시지 전송
       const startMessage = {
-        type: "GAME_START",
-        message: [],
+        type: state.status,
+        message: state.players[state.currentTurn],
         sender: "system",
       };
-      for (const { connId, nickname, isReady } of players) {
+      console.log(startMessage);
+      for (const { connId, nickname, isReady } of playerList) {
         console.log("스타트");
         this.sender.sendToUser(startMessage, connId);
+      }
+    }
+  }
+  handleMove(rawMessage, connId) {
+    const result = this.service.move(rawMessage);
+    const sender = rawMessage.sender;
+    const [roomId, index] = rawMessage.message;
+    const { game, players } = this.service.checkRoom(roomId);
+    const state = game.getState();
+    //
+    if (result.success) {
+      //move 브로드캐스트
+      const moveMessage = {
+        type: "MOVE",
+        message: [sender, index],
+        sender: "system",
+      };
+      //다음턴 이나 게임 결과 브로드캐스트
+      const nextTurnMessage = {
+        type: state.status,
+        message: state.players[state.currentTurn % 2],
+        sender: "system",
+      };
+      console.log(players);
+      for (const [userId, _] of players.players) {
+        this.sender.sendToUser(moveMessage, userId);
+        this.sender.sendToUser(nextTurnMessage, userId);
       }
     }
   }

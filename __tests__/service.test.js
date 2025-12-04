@@ -2,13 +2,9 @@ import { describe, test, expect, beforeEach, vi } from "vitest";
 import { randomUUID } from "node:crypto";
 import Service from "../src/service/Service.js";
 
-vi.mock("node:crypto", async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    randomUUID: vi.fn(() => "mock-room-id-123"),
-  };
-});
+vi.mock("node:crypto", () => ({
+  randomUUID: vi.fn(() => "mock-room-id-123"),
+}));
 
 describe("Service Class Test", () => {
   let managerMock;

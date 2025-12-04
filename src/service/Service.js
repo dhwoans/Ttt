@@ -23,7 +23,7 @@ class Service {
   /**
    * 실제로 방이 있는지 확인
    * @param {number} roomId
-   * @returns
+   * @returns {object} {game , players};
    */
   checkRoom(roomId) {
     const result = this.manager.getRoomData(roomId);
@@ -63,21 +63,39 @@ class Service {
     );
     return playerArray;
   }
+  /**
+   * 플레이어 레디상태 처리
+   * @param {number} roomId
+   * @param {number} connId
+   * @param {bool} status
+   * @returns {object}
+   */
   readyPlayer(roomId, connId, status) {
     const playersMap = this.manager.readyPlayer(roomId, connId, status);
     const players = playersMap.getAllPlayersData();
     //게임 시작 검증
-    if (playersMap.isFull) {
+    if (playersMap.isFull()) {
       for (const { connId, nickname, isReady } of players) {
         if (!isReady) {
-          console.log("레디 안함");
+          console.log(this.constructor.name, "레디 안함");
           return [players, false];
         }
       }
       return [players, true];
     }
-    console.log("인원 부족");
+    console.log(this.constructor.name, "인원 부족");
     return [players, false];
+  }
+  /**
+   * 게임 시작 처리
+   * @param {number} roomId
+   * @returns {object}
+   */
+  gameStart(roomId) {
+    return this.manager.gameStart(roomId);
+  }
+  move(message) {
+    return this.manager.move(message);
   }
 }
 

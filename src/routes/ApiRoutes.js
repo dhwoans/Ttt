@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import morgan from "morgan"
+import morgan from "morgan";
 
 class ApiRoutes {
   constructor(port, controller, errorHandler) {
@@ -26,12 +26,16 @@ class ApiRoutes {
   }
 
   #route() {
+    //방생성
     this.app.post("/api/room", (req, res, next) => {
       this.controller.createRoom(req, res, next);
     });
+
     this.app.get("/api/room", (req, res, next) => {
+      console.log("신호들어옴");
       this.controller.checkRoom(req, res, next);
     });
+    //대기실 목록렌더링
     this.app.get("/api/roomList", (req, res, next) => {
       this.controller.getRoomList(req, res, next);
     });

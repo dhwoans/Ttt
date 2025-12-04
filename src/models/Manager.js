@@ -1,5 +1,7 @@
 import Ttt from "../game/Ttt.js";
 import Player from "./player.js";
+import PlayingState from "../gameState/PlayingState.js";
+
 class Manager {
   constructor() {
     this.players = new Map();
@@ -13,9 +15,9 @@ class Manager {
    * @param {string} nickname
    * @returns {object}
    */
-  createRoom(roomId, userId, nickname) {
+  createRoom(roomId) {
     // GameInfo 생성
-    const gameInfo = new Ttt(roomId);
+    const gameInfo = new Ttt();
     // PlayersInfo 생성
     const playersInfo = new Player();
     // playersInfo.addPlayer(userId, nickname);
@@ -84,7 +86,6 @@ class Manager {
   getRoomList() {
     const rooms = [];
     for (const roomId of this.games.keys()) {
-      console.log(roomId);
       const playersInfo = this.players.get(roomId);
 
       if (playersInfo) {
@@ -92,9 +93,9 @@ class Manager {
           roomId: roomId,
           playerCount: playersInfo.count(),
           isFull: playersInfo.isFull(),
+          maxPlayers: playersInfo.MAX_PLAYERS,
         });
       } else {
-        console.warn(`Room ID ${roomId} found in games but not in players.`);
         return new Error("방 정보는 있는데 플레이어 정보가 없음");
       }
     }
@@ -113,6 +114,22 @@ class Manager {
     player.isReady = status;
 
     return playersInfo;
+  }
+  gameStart(roomId) {
+    const result = this.getRoomData(roomId);
+    const { players, game } = result;
+    //플레이어 넘겨줌
+    game.setPlayers(players.players);
+    game.changeState(new PlayingState());
+    return game.getState();
+  }
+  move(message) {
+    const [roomId, move] = message.message;
+    const info = this.getRoomData(roomId);
+    const { players, game } = info;
+    const result = game.processAction(message);
+    console.log(result);
+    return result
   }
 }
 export default Manager;

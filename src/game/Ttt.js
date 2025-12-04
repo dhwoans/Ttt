@@ -1,96 +1,73 @@
-import whoWin from "../../utils/whoWin.js";
+import IdleState from "../gameState/IdleState.js";
+
+/**
+ * @class Ttt
+ * @description Tic-Tac-Toe 게임의 컨텍스트(Context) 클래스.
+ * 게임의 모든 데이터(상태)를 보유하며, 모든 외부 요청을 현재 상태 객체(currentState)에 위임합니다.
+ * 상태 패턴 FSM에서 Context 역할을 담당합니다.
+ */
 class Ttt {
-  constructor(roomId) {
-    this.roomId = roomId;
-    //(waiting, playing, finished)
-    this.status = "WAITING";
-    this.logs = [];
-    this.board = [
-      ["", "", ""],
-      ["", "", ""],
-      ["", "", ""],
-    ];
-    this.players = [];
+  constructor() {
+    this.board = Array(9).fill("");
     this.winner = null;
+    this.status = "IDLE";
+    this.currentTurn = null;
+    this.log = [];
+    this.players = [];
+    this.currentState = new IdleState();
+    this.currentState.onEnter(this);
   }
+
   /**
-   * 
-   * @param {string} symbol - 마지막 수를 둔 심볼
+   * @method setPlayers
+   * @description 플레이어 ID와 역할(X/O)을 매핑하여 Context에 저장합니다.
+   * @param {object} playersMap
    */
-  setPlayer(userId, nickname) {
-    const playerInfo = {
-      userId,
-      nickname,
+  setPlayers(playersMap) {
+    for (const [playerId, playerInfo] of playersMap) {
+      this.players.push({ playerId, nickname: playerInfo.nickname });
+    }
+  }
+
+  /**
+   * @method changeState
+   * @description FSM의 상태를 새로운 상태로 전이(Transition)시키는 메서드입니다.
+   * 이 메서드는 현재 상태 클래스(예: PlayingState) 내부에서 호출됩니다.
+   * @param {GameState} newState - 새로 전환될 상태 클래스의 인스턴스 (예: new PlayingState())
+   */
+  changeState(newState) {
+    console.log(
+      `[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`
+    );
+    this.currentState = newState; // 현재 상태를 새 상태 인스턴스로 교체
+    newState.onEnter(this); // 새 상태의 진입 로직 실행
+  }
+
+  /**
+   * @method processAction
+   * @description Manager에서 들어오는 모든 액션을 처리
+   * 실제 처리 로직은 현재 상태 객체(currentState)에게 위임
+   * @param {object} action - 클라이언트가 보낸 액션 정보 (type, payload 포함)
+   * @returns {object} - 액션 처리 결과 ({ success: boolean, message?: string })
+   */
+  processAction(action) {
+    // currentState에게 모든 로직 처리를 위임
+    return this.currentState.handleAction(this, action);
+  }
+
+  /**
+   * @method getState
+   * @description 현재 게임의 모든 상태 데이터 반환
+   * @returns {object}
+   */
+  getState() {
+    return {
+      board: this.board,
+      players: this.players,
+      winner: this.winner,
+      status: this.status,
+      currentTurn: this.currentTurn,
     };
-    this.players.push(playerInfo);
-    return true;
-  }
-  /**
-   * 게임 안에 있는 플레이어 반환
-   * @param {string} symbol 
-   */
-  getPlayers(){
-    return this.players
-  }
-  /**
-   * 유효성 검사 착수 로그 기록
-   * @param {string} symbol - 놓을 심볼 ('X' 또는 'O')
-   * @param {number} x
-   * @param {number} y
-   * @returns {object} { success: boolean, message: string }
-   */
-  makeMove(symbol, x, y) {
-    if (symbol !== this.getTurn()) {
-      return { success: false, message: `현재 ${this.getTurn()}의 턴입니다.` };
-    }
-
-    if (this.board[x][y] !== "") {
-      return { success: false, message: "잘못된 위치입니다." };
-    }
-    this.board[x][y] = symbol;
-    this.logs.push({ symbol, x, y, timestamp: Date.now() });
-
-    //승리 또는 무승부 체크
-    this.updateGameStatus(symbol);
-
-    return { success: true, message: "수가 성공적으로 놓여졌습니다." };
-  }
-
-  /**
-   * 승리 또는 무승부 확인
-   * @param {string} symbol - 마지막 수를 둔 심볼
-   */
-  updateGameStatus() {
-    result = whoWin();
-    if (result !== -1) {
-      this.status = "FINISHED";
-      this.winner = result;
-      return;
-    }
-
-    if (this.logs.length === 9 && result === -1) {
-      this.status = "FINISHED";
-      this.winner = "DRAW";
-      return;
-    }
-
-    // 게임이 진행 중일 경우
-    this.status = "PLAYING";
-  }
-  /**
-   * 게임 상태 반환
-   * @returns {Array} [게임상태,승리자]
-   */
-  getStatus() {
-    return [this.status, this.winner];
-  }
-
-  /**
-   * 차례 반환
-   * @returns {string} 'X' 또는 'O'
-   */
-  getTurn() {
-    return this.logs.length % 2 === 0 ? "X" : "O";
   }
 }
 
