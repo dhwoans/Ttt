@@ -12,7 +12,6 @@ class Ttt {
     this.winner = null;
     this.status = "IDLE";
     this.currentTurn = null;
-    this.log = [];
     this.players = [];
     this.currentState = new IdleState();
     this.currentState.onEnter(this);

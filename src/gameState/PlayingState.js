@@ -26,7 +26,7 @@ class PlayingState extends State {
     const symbol = game.currentTurn % 2 == 0 ? "X" : "O";
     game.board[index] = symbol;
 
-    // 4. 승리/무승부 판별 (전이 조건 체크)
+    // 승리/무승부 판별 (전이 조건 체크)
     const winner = this.#checkWinner(game.board);
     if (winner || this.#isBoardFull(game.board)) {
       game.winner = winner || "DRAW";
@@ -35,7 +35,7 @@ class PlayingState extends State {
       return { success: true, message: "Game Over" };
     }
 
-    // 5. 턴 전환 (다음 행동도 여전히 PlayingState에서 처리됨)
+    //턴 전환 
     game.currentTurn += 1;
     return { success: true };
   }
@@ -54,7 +54,7 @@ class PlayingState extends State {
     ];
     for (let [a, b, c] of lines) {
       if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
+        return board[a] === "X"? game.players[0] : game.players[1];
       }
     }
     return null;

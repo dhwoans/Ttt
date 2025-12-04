@@ -195,16 +195,26 @@ class ApiController {
         sender: "system",
       };
       //다음턴 이나 게임 결과 브로드캐스트
+
       const nextTurnMessage = {
         type: state.status,
-        message: state.players[state.currentTurn % 2],
+        message:
+          state.status === "PLAYING"
+            ? state.players[state.currentTurn % 2]
+            : game.winner,
         sender: "system",
       };
-      console.log(players);
       for (const [userId, _] of players.players) {
         this.sender.sendToUser(moveMessage, userId);
         this.sender.sendToUser(nextTurnMessage, userId);
       }
+    } else {
+      const errorMessage = {
+        type: "ERROR",
+        message: result.message,
+        sender: "system",
+      };
+      this.sender.sendToUser(errorMessage, connId);
     }
   }
 }
