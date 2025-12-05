@@ -29,13 +29,20 @@ class PlayingState extends State {
     // 승리/무승부 판별 (전이 조건 체크)
     const winner = this.#checkWinner(game.board);
     if (winner || this.#isBoardFull(game.board)) {
-      game.winner = winner || "DRAW";
+      if (!winner) {
+        game.winner = "DRAW";
+      } else {
+        game.winner =
+          game.winner === "X"
+            ? game.players[0].nickname
+            : game.players[1].nickname;
+      }
       // PlayingState -> GameOverState
       game.changeState(new GameOverState());
       return { success: true, message: "Game Over" };
     }
 
-    //턴 전환 
+    //턴 전환
     game.currentTurn += 1;
     return { success: true };
   }
@@ -54,7 +61,7 @@ class PlayingState extends State {
     ];
     for (let [a, b, c] of lines) {
       if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]) {
-        return board[a] === "X"? game.players[0] : game.players[1];
+        return board[a];
       }
     }
     return null;
