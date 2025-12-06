@@ -1,5 +1,5 @@
 import Ttt from "../game/Ttt.js";
-import Player from "./player.js";
+import Player from "./Player.js";
 import PlayingState from "../gameState/PlayingState.js";
 
 class Manager {
@@ -144,7 +144,7 @@ class Manager {
       console.log(result);
       if (result.success) {
         // 룸상태 초기화
-        players.players.clear()
+        players.players.clear();
       }
       return result;
     }
