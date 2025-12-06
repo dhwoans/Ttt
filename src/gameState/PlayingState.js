@@ -33,9 +33,7 @@ class PlayingState extends State {
         game.winner = "DRAW";
       } else {
         game.winner =
-          game.winner === "X"
-            ? game.players[0].nickname
-            : game.players[1].nickname;
+          winner === "X" ? game.players[0].playerId : game.players[1].playerId;
       }
       // PlayingState -> GameOverState
       game.changeState(new GameOverState());

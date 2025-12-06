@@ -129,7 +129,25 @@ class Manager {
     const { players, game } = info;
     const result = game.processAction(message);
     console.log(result);
-    return result
+    return result;
+  }
+  reset(message) {
+    const roomId = message.message;
+    const { game, players } = this.getRoomData(roomId);
+    const state = game.getState();
+    if (state.status === "IDLE") {
+      //이미 상대가 다시하기 누름
+      return { success: true, message: "게임을 다시 시작 합니다." };
+    } else {
+      // 초기화 시작
+      const result = game.processAction(message);
+      console.log(result);
+      if (result.success) {
+        // 룸상태 초기화
+        players.players.clear()
+      }
+      return result;
+    }
   }
 }
 export default Manager;

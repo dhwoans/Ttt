@@ -7,6 +7,7 @@ class Receiver {
       LEAVE: this.controller.handleLeave,
       CHAT: this.controller.handleChat,
       READY: this.controller.handleReady,
+      RESET: this.controller.handleReset,
     };
   }
   /**

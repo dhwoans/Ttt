@@ -19,7 +19,7 @@ class Ttt {
 
   /**
    * @method setPlayers
-   * @description 플레이어 ID와 역할(X/O)을 매핑하여 Context에 저장합니다.
+   * @description 플레이어 ID Context에 저장
    * @param {object} playersMap
    */
   setPlayers(playersMap) {

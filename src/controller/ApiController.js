@@ -167,6 +167,7 @@ class ApiController {
       // console.log(state.status);
       // console.log(state.currentTurn);
       // console.log(state.players);
+
       //게임시작 메시지 전송
       const startMessage = {
         type: state.status,
@@ -175,7 +176,6 @@ class ApiController {
       };
       console.log(startMessage);
       for (const { connId, nickname, isReady } of playerList) {
-        console.log("스타트");
         this.sender.sendToUser(startMessage, connId);
       }
     }
@@ -194,8 +194,7 @@ class ApiController {
         message: [sender, index],
         sender: "system",
       };
-      //다음턴 이나 게임 결과 브로드캐스트
-
+      //다음턴 이나 게임 결과 전송
       const nextTurnMessage = {
         type: state.status,
         message:
@@ -216,6 +215,15 @@ class ApiController {
       };
       this.sender.sendToUser(errorMessage, connId);
     }
+  }
+  handleReset(message, connId) {
+    const result = this.service.reset(message, connId);
+    const resetMessage = {
+      type: "RESET",
+      message: result,
+      sender: "system",
+    };
+    this.sender.sendToUser(resetMessage, connId);
   }
 }
 

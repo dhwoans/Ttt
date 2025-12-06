@@ -94,8 +94,12 @@ class Service {
   gameStart(roomId) {
     return this.manager.gameStart(roomId);
   }
+
   move(message) {
     return this.manager.move(message);
+  }
+  reset(message) {
+    return this.manager.reset(message);
   }
 }
 

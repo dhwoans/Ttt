@@ -10,14 +10,15 @@ class GameOverState extends State {
   handleAction(game, action) {
     // 클라이언트가 보내는 RESET 액션만 허용
     if (action.type === "RESET") {
-      // ⭐ 상태 전이: GameOverState -> IdleState
-      game.board = Array(9).fill(null);
+      //GameOverState -> IdleState
+      game.board = Array(9).fill("");
       game.winner = null;
       game.currentTurn = null;
+      game.players = [];
       game.changeState(new IdleState());
-      return { success: true, message: "Game has been reset." };
+      return { success: true, message: "게임 초기화 완료." };
     }
-    return { success: false, message: "게임 종료 후에는 리셋만 가능합니다." };
+    return { success: false, message: "게임 리셋 중 에러발생" };
   }
 }
 export default GameOverState;
