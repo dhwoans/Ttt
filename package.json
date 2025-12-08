@@ -2,10 +2,15 @@
   "name": "websocket-project",
   "type": "module",
   "dependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "@types/ws": "^8.18.1",
     "cors": "^2.8.5",
     "eslint": "^9.39.1",
     "express": "^5.1.0",
     "morgan": "^1.10.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
     "ws": "^8.18.3"
   },
   "scripts": {
