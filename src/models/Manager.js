@@ -50,7 +50,9 @@ class Manager {
   joinPlayer(roomId, connId, nickname) {
     const playersInfo = this.players.get(roomId);
     if (!playersInfo || playersInfo.isFull()) {
-      return false;
+      throw new Error(
+        `${this.constructor.name} : 입장할 수 없습니다.`
+      );
     }
     playersInfo.addPlayer(connId, nickname, false);
     return playersInfo;

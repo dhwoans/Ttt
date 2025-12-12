@@ -1,6 +1,14 @@
+interface PlayerInfo {
+  nickname: string;
+  isReady: boolean;
+}
+
 class Player {
+  players: Map<number, PlayerInfo>;
+  MAX_PLAYERS: number;
+
   constructor() {
-    this.players = new Map(); // key : connId , value:{nickname, raady}
+    this.players = new Map();
     this.MAX_PLAYERS = 2;
   }
 
@@ -10,14 +18,8 @@ class Player {
    * @param {string} nickname
    * @returns {object}
    */
-  addPlayer(connId, nickname) {
-    const currentPlayers = this.players.get(connId);
-    if (currentPlayers >= this.MAX_PLAYERS) {
-      throw new Error(
-        `${this.constructor.name} : 인원이 초과되어 입장할 수 없습니다.`
-      );
-    }
-    const playerInfo = {
+  addPlayer(connId: number, nickname: string): PlayerInfo {
+    const playerInfo: PlayerInfo = {
       nickname: nickname,
       isReady: false,
     };
@@ -31,7 +33,7 @@ class Player {
    * @param {string} connId - WebSocket 접속 ID
    * @returns {boolean} 제거 성공 여부
    */
-  removePlayer(connId) {
+  removePlayer(connId: number):boolean {
     return this.players.delete(connId);
   }
 
@@ -39,17 +41,17 @@ class Player {
    * 방이 가득 찼는지 확인
    * @returns {boolean}
    */
-  isFull() {
+  isFull():boolean {
     return this.players.size === this.MAX_PLAYERS;
   }
-  getPlayerDate(connId) {
+  getPlayerDate(connId: number) {
     return this.players.get(connId);
   }
   /**
    * 현재 방의 모든 플레이어 정보 목록을 반환
    * @returns {Array<Object>}
    */
-  getAllPlayersData() {
+  getAllPlayersData():Array<object> {
     return Array.from(this.players.entries()).map(([connId, data]) => ({
       connId,
       ...data,
@@ -59,7 +61,7 @@ class Player {
   /**
    * 현재 플레이어 수를 반환
    */
-  count() {
+  count():number {
     return this.players.size;
   }
 }

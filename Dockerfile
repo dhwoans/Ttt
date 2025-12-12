@@ -29,7 +29,7 @@ RUN npm install
 COPY . .
 
 # 애플리케이션이 사용할 포트를 외부에 알립니다.
-EXPOSE 3000
+EXPOSE 8080
 
 # 컨테이너가 시작될 때 실행될 명령어입니다. 
 # Node.js 서버를 실행합니다.
