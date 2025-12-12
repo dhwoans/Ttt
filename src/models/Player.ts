@@ -1,7 +1,4 @@
-interface PlayerInfo {
-  nickname: string;
-  isReady: boolean;
-}
+import type PlayerInfo from "../dtos/user/User.dto.js";
 
 class Player {
   players: Map<number, PlayerInfo>;
@@ -33,7 +30,7 @@ class Player {
    * @param {string} connId - WebSocket 접속 ID
    * @returns {boolean} 제거 성공 여부
    */
-  removePlayer(connId: number):boolean {
+  removePlayer(connId: number): boolean {
     return this.players.delete(connId);
   }
 
@@ -41,7 +38,7 @@ class Player {
    * 방이 가득 찼는지 확인
    * @returns {boolean}
    */
-  isFull():boolean {
+  isFull(): boolean {
     return this.players.size === this.MAX_PLAYERS;
   }
   getPlayerDate(connId: number) {
@@ -51,7 +48,7 @@ class Player {
    * 현재 방의 모든 플레이어 정보 목록을 반환
    * @returns {Array<Object>}
    */
-  getAllPlayersData():Array<object> {
+  getAllPlayersData(): Array<object> {
     return Array.from(this.players.entries()).map(([connId, data]) => ({
       connId,
       ...data,
@@ -61,7 +58,7 @@ class Player {
   /**
    * 현재 플레이어 수를 반환
    */
-  count():number {
+  count(): number {
     return this.players.size;
   }
 }

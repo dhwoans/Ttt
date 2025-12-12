@@ -200,8 +200,8 @@ class ApiController {
         message:
           state.status === "PLAYING"
             ? state.players[state.currentTurn % 2]
-            : game.winner,
-        sender: "system",
+            : game.winner, // userId or 0
+        sender: "system"
       };
       for (const [userId, _] of players.players) {
         this.sender.sendToUser(moveMessage, userId);
