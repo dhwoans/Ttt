@@ -2,7 +2,7 @@ import State from "./State.js";
 import IdleState from "./IdleState.js";
 import type Ttt from "../game/Ttt.js";
 import type SocketMessage from "../dtos/SocketMessage.dto.js";
-import type Action from "../dtos/Action.js";
+import type Action from "../dtos/Action.dto.js";
 
 class GameOverState extends State {
   onEnter(game: Ttt) {

@@ -18,8 +18,10 @@ const service = new Service(manager);
 const controller = new ApiController(service, sender);
 const receiver = new Receiver(controller);
 
+const port = 8080;
+
 // api - websocket 포트공유
-const api = new ApiRoutes(8080, controller, errorHandler);
+const api = new ApiRoutes(port, controller, errorHandler);
 
 const server = http.createServer(api.app);
 new SocketManager(server, receiver, sessionManger);

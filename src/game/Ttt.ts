@@ -4,7 +4,9 @@ import type PlayerInfo from "../dtos/game/player.dto.js";
 import type State from "../gameState/State.js";
 import Context from "./Context.js";
 import type SocketMessage from "../dtos/SocketMessage.dto.js";
-import type Action from "../dtos/Action.js";
+import type Action from "../dtos/Action.dto.js";
+import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
+import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 /**
  * @class Ttt
  * @description Tic-Tac-Toe 게임의 컨텍스트(Context) 클래스.
@@ -15,6 +17,7 @@ class Ttt {
   board: Array<string>;
   winner: number;
   status: string;
+  players: Array<number>;
   currentTurn: number;
   currentState: State;
 
@@ -23,10 +26,13 @@ class Ttt {
     this.winner = -1;
     this.status = "IDLE";
     this.currentTurn = 0;
+    this.players = [];
     this.currentState = new IdleState();
     this.currentState.onEnter(this);
   }
-
+  setPlayersId(playerId: number) {
+    this.players.push(playerId);
+  }
   changeState(newState: State): void {
     console.log(
       `[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`
@@ -35,7 +41,7 @@ class Ttt {
     newState.onEnter(this); // 새 상태의 진입 로직 실행
   }
 
-  processAction(action: Action): object {
+  processAction(action: Action): SuccessResponse | FailureResponse {
     // currentState에게 모든 로직 처리를 위임
     return this.currentState.handleAction(this, action);
   }
@@ -44,12 +50,14 @@ class Ttt {
     board: Array<string>;
     winner: number;
     status: string;
+    players: Array<number>;
     currentTurn: number;
   } {
     return {
       board: this.board,
       winner: this.winner,
       status: this.status,
+      players: this.players,
       currentTurn: this.currentTurn,
     };
   }

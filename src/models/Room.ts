@@ -1,12 +1,12 @@
-import type PlayerInfo from "../dtos/user/User.dto.js";
+import type User from "../dtos/user/User.dto.js";
 
-class Player {
-  players: Map<number, PlayerInfo>;
+class Room {
+  players: Map<number, User>;
   MAX_PLAYERS: number;
 
-  constructor() {
+  constructor(max: number) {
     this.players = new Map();
-    this.MAX_PLAYERS = 2;
+    this.MAX_PLAYERS = max;
   }
 
   /**
@@ -15,8 +15,8 @@ class Player {
    * @param {string} nickname
    * @returns {object}
    */
-  addPlayer(connId: number, nickname: string): PlayerInfo {
-    const playerInfo: PlayerInfo = {
+  addPlayer(connId: number, nickname: string): User {
+    const playerInfo: User = {
       nickname: nickname,
       isReady: false,
     };
@@ -41,14 +41,25 @@ class Player {
   isFull(): boolean {
     return this.players.size === this.MAX_PLAYERS;
   }
-  getPlayerDate(connId: number) {
-    return this.players.get(connId);
+  /**
+   * 방안 특정 플레이어 정보 목록을 반환
+   * @returns
+   */
+  getPlayerDate(connId: number): { nickname: string; isReady: boolean } {
+    const player = this.players.get(connId);
+    if (!player)
+      throw new Error(`${this.constructor.name} : 존재 하지 않는 플레이어`);
+    return player;
   }
   /**
-   * 현재 방의 모든 플레이어 정보 목록을 반환
+   * 방안 모든 플레이어 정보 목록을 반환
    * @returns {Array<Object>}
    */
-  getAllPlayersData(): Array<object> {
+  getAllPlayersData(): Array<{
+    connId: number;
+    nickname: string;
+    isReady: boolean;
+  }> {
     return Array.from(this.players.entries()).map(([connId, data]) => ({
       connId,
       ...data,
@@ -58,9 +69,9 @@ class Player {
   /**
    * 현재 플레이어 수를 반환
    */
-  count(): number {
+  getCurrentPlayer(): number {
     return this.players.size;
   }
 }
 
-export default Player;
+export default Room;

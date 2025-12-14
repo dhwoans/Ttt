@@ -1,5 +1,15 @@
+import type Controller from "../controller/Controller.js";
+import type SocketMessage from "../dtos/SocketMessage.dto.js";
+
+interface RoutesMap {
+  [key: string]: (message: SocketMessage, connId: number) => void;
+}
+
 class Receiver {
-  constructor(controller) {
+  controller: Controller;
+  routes: RoutesMap;
+
+  constructor(controller: Controller) {
     this.controller = controller;
     this.routes = {
       JOIN: this.controller.handleJoin,
@@ -7,13 +17,12 @@ class Receiver {
       LEAVE: this.controller.handleLeave,
       CHAT: this.controller.handleChat,
       READY: this.controller.handleReady,
-      RESET: this.controller.handleReset,
     };
   }
   /**
-   * 제어흐름 역할
+   * @description 흐름제어
    */
-  handleMessage(message, connId) {
+  handleMessage(message: SocketMessage, connId: number) {
     const handler = this.routes[message.type];
     if (handler) {
       handler.call(this.controller, message, connId);
@@ -22,6 +31,5 @@ class Receiver {
       console.warn(`Unknown message type: ${message.type}`);
     }
   }
-  handleDisconnect(id) {}
 }
 export default Receiver;

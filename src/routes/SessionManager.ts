@@ -2,6 +2,7 @@
 /* 웹소켓 세션 관리                                             */
 /* ========================================================= */
 class SessionManager {
+  sessionMap:Map<number,WebSocket>
   constructor() {
     this.sessionMap = new Map(); // key : userId , value : ws (WebSocket object)
   }
@@ -10,7 +11,7 @@ class SessionManager {
    * @param {string} userId 
    * @param {WebSocket} ws
    */
-  setConnId(userId, ws) {
+  setConnId(userId:number, ws:WebSocket) {
     if (!userId || !ws) {
       console.error("SessionManager: Invalid userId or ws provided.");
       return false;

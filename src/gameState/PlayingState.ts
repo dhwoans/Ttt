@@ -4,7 +4,7 @@ import Ttt from "../game/Ttt.js";
 import GameOverState from "./GameOverState.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
-import type Action from "../dtos/Action.js";
+import type Action from "../dtos/Action.dto.js";
 
 class PlayingState extends State {
   onEnter(game: Ttt) {
