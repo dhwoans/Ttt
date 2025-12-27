@@ -1,5 +1,5 @@
 export default interface SocketMessage {
   type: string;
-  message: Array<string>;
+  message: string[];
   sender: string;
 }

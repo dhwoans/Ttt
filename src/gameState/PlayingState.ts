@@ -30,13 +30,13 @@ class PlayingState extends State {
     const winner = this.#checkWinner(game.board);
     if (winner !== -1 || game.currentTurn === 8) {
       if (winner === -1) {
-        game.winner = 0;
+        game.winner = -2;
       } else {
         game.winner = winner;
       }
       // PlayingState -> GameOverState
       game.changeState(new GameOverState());
-      return { success: true, message: "Game Over" };
+      return { success: true, message: "Game_Over" };
     }
 
     //턴 전환
@@ -57,7 +57,7 @@ class PlayingState extends State {
     ];
     for (const [a, b, c] of lines) {
       if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]) {
-        return board[a] === "X" ? 1 : 2;
+        return board[a] === "X" ? 0 : 1;
       }
     }
     return -1;

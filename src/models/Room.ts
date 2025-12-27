@@ -1,7 +1,8 @@
+import type { ConnId } from "../../type/socket.js";
 import type User from "../dtos/user/User.dto.js";
 
 class Room {
-  players: Map<number, User>;
+  players: Map<string, User>;
   MAX_PLAYERS: number;
 
   constructor(max: number) {
@@ -15,7 +16,7 @@ class Room {
    * @param {string} nickname
    * @returns {object}
    */
-  addPlayer(connId: number, nickname: string): User {
+  addPlayer(connId: ConnId, nickname: string): User {
     const playerInfo: User = {
       nickname: nickname,
       isReady: false,
@@ -30,7 +31,7 @@ class Room {
    * @param {string} connId - WebSocket 접속 ID
    * @returns {boolean} 제거 성공 여부
    */
-  removePlayer(connId: number): boolean {
+  removePlayer(connId: ConnId): boolean {
     return this.players.delete(connId);
   }
 
@@ -45,7 +46,7 @@ class Room {
    * 방안 특정 플레이어 정보 목록을 반환
    * @returns
    */
-  getPlayerDate(connId: number): { nickname: string; isReady: boolean } {
+  getPlayerDate(connId: string): { nickname: string; isReady: boolean } {
     const player = this.players.get(connId);
     if (!player)
       throw new Error(`${this.constructor.name} : 존재 하지 않는 플레이어`);
@@ -56,7 +57,7 @@ class Room {
    * @returns {Array<Object>}
    */
   getAllPlayersData(): Array<{
-    connId: number;
+    connId: string;
     nickname: string;
     isReady: boolean;
   }> {

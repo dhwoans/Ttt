@@ -1,10 +1,11 @@
 import { randomUUID } from "node:crypto";
-import type Manager from "../models/Manager.js";
+import type Manager from "./Manager.js";
 import type Room from "../models/Room.js";
 import type SocketMessage from "../dtos/SocketMessage.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
+import type { ConnId, Nickname, RoomId, UserId } from "../../type/socket.js";
 
 class Service {
   manager: Manager;
@@ -12,35 +13,28 @@ class Service {
     this.manager = manager;
   }
   /**
-   * @description 방 생성
-   * @param {number} userId
-   * @param {string} nickname
-   * @returns {number} roomId
+   *
+   * @param userId
+   * @param nickname
+   * @returns
    */
-  createRoom(userId: number, nickname: string): number {
+  createRoom(
+    userId: UserId,
+    nickname: Nickname
+  ): SuccessResponse | FailureResponse {
     if (!userId || !nickname) {
       throw new Error(`${this.constructor.name} : 정보가 누락되었습니다.`);
     }
-    const roomId = parseInt(randomUUID());
-    const result = this.manager.createRoom(roomId);
-    if (result.success) {
-      return roomId;
-    } else {
-      throw new Error(`${this.constructor.name} : 방생성 실패`);
-    }
+    const roomId = randomUUID();
+    return this.manager.createRoom(roomId);
   }
   /**
    * @description 실제로 방이 있는지 확인
-   * @param {number} roomId
+   * @param {string} roomId
    * @returns {Room}
    */
-  checkRoom(roomId: number): Room {
-    const room = this.manager.getRoomData(roomId);
-    if (room) {
-      return room;
-    } else {
-      throw new Error(`${this.constructor.name} : room 정보 확인 불가`);
-    }
+  checkRoom(roomId: RoomId): SuccessResponse | FailureResponse {
+    return this.manager.getRoomData(roomId);
   }
   /**
    *
@@ -49,8 +43,8 @@ class Service {
    * @returns
    */
   removePlayer(
-    roomId: number,
-    connId: number
+    roomId: RoomId,
+    connId: ConnId
   ): SuccessResponse | FailureResponse {
     return this.manager.removePlayer(roomId, connId);
   }
@@ -71,9 +65,9 @@ class Service {
    * @returns {object}
    */
   joinPlayer(
-    roomId: number,
-    connId: number,
-    nickname: string
+    roomId: RoomId,
+    connId: ConnId,
+    nickname: Nickname
   ): SuccessResponse | FailureResponse {
     return this.manager.joinPlayer(roomId, connId, nickname);
   }
@@ -86,8 +80,8 @@ class Service {
    * @returns {object}
    */
   readyPlayer(
-    roomId: number,
-    connId: number,
+    roomId: RoomId,
+    connId: ConnId,
     status: boolean
   ): SuccessResponse | FailureResponse {
     return this.manager.readyPlayer(roomId, connId, status);
@@ -97,21 +91,26 @@ class Service {
    * @param {number} roomId
    * @returns {boolean}
    */
-  gameStart(roomId: number): SuccessResponse | FailureResponse {
+  gameStart(roomId: RoomId): SuccessResponse | FailureResponse {
     // 레디 검증
-    const room = this.checkRoom(roomId);
-    if (room.isFull()) {
-      for (const { connId, nickname, isReady } of room.getAllPlayersData()) {
-        if (!isReady) {
-          return { success: false, message: "레디 안함" };
+    const result = this.checkRoom(roomId);
+    if (result) {
+      const room = result.message;
+      if (room.isFull()) {
+        for (const { connId, nickname, isReady } of room.getAllPlayersData()) {
+          if (!isReady) {
+            return { success: false, message: "레디 안함" };
+          }
         }
+        //시작 처리
+        this.manager.gameStart(roomId);
+        return { success: true };
+      } else {
+        // 인원 부족
+        return { success: false, message: "인원 부족" };
       }
-      //시작 처리
-      this.manager.gameStart(roomId);
-      return { success: true };
     } else {
-      // 인원 부족
-      return { success: false, message: "인원 부족" };
+      return result;
     }
   }
   /**
@@ -129,17 +128,10 @@ class Service {
       nickname: sender,
     };
 
-    return this.manager.setMove(parseInt(roomId!), action);
+    return this.manager.setMove(roomId!, action);
   }
-  getGameState(roomId: number): {
-    board: Array<string>;
-    winner: number;
-    status: string;
-    players: Array<number>;
-    currentTurn: number;
-  } {
-    const game = this.manager.getGameDate(roomId);
-    return game.getState();
+  getGameState(roomId: RoomId): SuccessResponse | FailureResponse {
+    return this.manager.getGameDate(roomId);
   }
 }
 

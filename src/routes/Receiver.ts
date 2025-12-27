@@ -1,28 +1,28 @@
-import type Controller from "../controller/Controller.js";
+import type WSController from "../controller/WSContrller.js";
 import type SocketMessage from "../dtos/SocketMessage.dto.js";
 
 interface RoutesMap {
-  [key: string]: (message: SocketMessage, connId: number) => void;
+  [key: string]: (message: SocketMessage, connId: string) => void;
 }
 
 class Receiver {
-  controller: Controller;
+  controller: WSController;
   routes: RoutesMap;
 
-  constructor(controller: Controller) {
+  constructor(controller: WSController) {
     this.controller = controller;
     this.routes = {
       JOIN: this.controller.handleJoin,
-      MOVE: this.controller.handleMove,
       LEAVE: this.controller.handleLeave,
-      CHAT: this.controller.handleChat,
       READY: this.controller.handleReady,
+      CHAT: this.controller.handleChat,
+      MOVE: this.controller.handleMove,
     };
   }
   /**
    * @description 흐름제어
    */
-  handleMessage(message: SocketMessage, connId: number) {
+  handleMessage(message: SocketMessage, connId: string) {
     const handler = this.routes[message.type];
     if (handler) {
       handler.call(this.controller, message, connId);

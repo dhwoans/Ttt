@@ -6,29 +6,29 @@ import express, {
 } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import type Controller from "../controller/Controller.js";
+import type ApiController from "../controller/ApiController.js";
 
 interface GlobalErrorHandler {
   handle(err: Error, req: Request, res: Response, next: NextFunction): void;
 }
 
 class ApiRoutes {
+  app: Application;
   private port: number;
-  private app: Application;
-  private controller: Controller;
+  private apiController: ApiController;
   private errorHandler: GlobalErrorHandler;
 
   constructor(
     port: number,
-    controller: Controller,
+    apiController: ApiController,
     errorHandler: GlobalErrorHandler
   ) {
     const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : port;
 
     this.port = envPort;
     this.app = express();
-    this.controller = controller;
-    this.errorHandler = errorHandler; // errorHandler를 클래스 멤버 변수에 저장
+    this.apiController = apiController;
+    this.errorHandler = errorHandler;
 
     this.app.set("port", this.port);
     this.app.use(morgan("dev"));
@@ -36,7 +36,7 @@ class ApiRoutes {
     // CORS 설정
     this.app.use(
       cors({
-        origin: ["http://localhost:3000", "http://localhost:4000"],
+        origin: ["http://localhost:3000", "http://localhost:80"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
       })
@@ -57,7 +57,7 @@ class ApiRoutes {
     this.app.post(
       "/api/room",
       (req: Request, res: Response, next: NextFunction) => {
-        this.controller.createRoom(req, res, next);
+        this.apiController.createRoom(req, res, next);
       }
     );
 
@@ -65,8 +65,7 @@ class ApiRoutes {
     this.app.get(
       "/api/room",
       (req: Request, res: Response, next: NextFunction) => {
-        console.log("신호들어옴");
-        this.controller.checkRoom(req, res, next);
+        this.apiController.checkRoom(req, res, next);
       }
     );
 
@@ -74,7 +73,7 @@ class ApiRoutes {
     this.app.get(
       "/api/roomList",
       (req: Request, res: Response, next: NextFunction) => {
-        this.controller.getRoomList(req, res, next);
+        this.apiController.getRoomList(req, res, next);
       }
     );
   }

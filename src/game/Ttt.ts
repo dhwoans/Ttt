@@ -7,6 +7,7 @@ import type SocketMessage from "../dtos/SocketMessage.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
+import type { ConnId } from "../../type/socket.js";
 /**
  * @class Ttt
  * @description Tic-Tac-Toe 게임의 컨텍스트(Context) 클래스.
@@ -17,7 +18,7 @@ class Ttt {
   board: Array<string>;
   winner: number;
   status: string;
-  players: Array<number>;
+  players: Array<ConnId>;
   currentTurn: number;
   currentState: State;
 
@@ -30,7 +31,7 @@ class Ttt {
     this.currentState = new IdleState();
     this.currentState.onEnter(this);
   }
-  setPlayersId(playerId: number) {
+  setPlayersId(playerId: string) {
     this.players.push(playerId);
   }
   changeState(newState: State): void {
@@ -50,7 +51,7 @@ class Ttt {
     board: Array<string>;
     winner: number;
     status: string;
-    players: Array<number>;
+    players: Array<string>;
     currentTurn: number;
   } {
     return {

@@ -1,0 +1,1 @@
+{"version":3,"file":"GameOverState.d.ts","sourceRoot":"","sources":["../../src/gameState/GameOverState.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,MAAM,YAAY,CAAC;AAE/B,OAAO,KAAK,GAAG,MAAM,gBAAgB,CAAC;AAEtC,OAAO,KAAK,MAAM,MAAM,uBAAuB,CAAC;AAEhD,cAAM,aAAc,SAAQ,KAAK;IAC/B,OAAO,CAAC,IAAI,EAAE,GAAG;IAIjB,YAAY,CAAC,IAAI,EAAE,GAAG,EAAE,MAAM,EAAE,MAAM;;;;CAYvC;AACD,eAAe,aAAa,CAAC"}

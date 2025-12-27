@@ -8,13 +8,14 @@
     "eslint": "^9.39.1",
     "express": "^5.1.0",
     "morgan": "^1.10.1",
+    "socket.io": "^4.8.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "ws": "^8.18.3"
   },
   "scripts": {
     "build": "tsc",
-    "start": "node app.js",
+    "start": "node dist/app.js",
     "test": "vitest",
     "test:watch": "vitest --watch"
   },

@@ -1,0 +1,1 @@
+{"version":3,"file":"Sender.d.ts","sourceRoot":"","sources":["../../src/routes/Sender.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,aAAa,MAAM,8BAA8B,CAAC;AAC9D,OAAO,KAAK,cAAc,MAAM,wBAAwB,CAAC;AAEzD,cAAM,MAAM;IACS,cAAc,EAAE,cAAc;gBAA9B,cAAc,EAAE,cAAc;IACjD;;;;OAIG;IACH,UAAU,CAAC,OAAO,EAAE,aAAa,EAAE,MAAM,EAAE,MAAM,GAAG,IAAI;CAMzD;AAED,eAAe,MAAM,CAAC"}
