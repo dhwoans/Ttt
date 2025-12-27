@@ -1,4 +1,4 @@
-export interface SuccessResponse {
+export interface SuccessResponse<T = void> {
   success: true;
-  message?: any;
+  message?: T;
 }

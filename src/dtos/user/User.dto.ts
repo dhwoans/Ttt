@@ -6,3 +6,10 @@ export default interface User {
   nickname: string;
   isReady: boolean;
 }
+
+/**
+ * @description 방의 모든 플레이어 정보 (connId 포함)
+ */
+export interface PlayerInfo extends User {
+  connId: string;
+}

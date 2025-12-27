@@ -23,30 +23,28 @@ class RoomIOManager {
       const userId: ConnId = socket.handshake.auth?.userId;
 
       if (!roomId || !userId) {
-        console.error(`[ROOM] 잘못된 연결: roomId=${roomId}, userId=${userId}`);
+        console.error(`[RoomIOManager] Invalid connection attempt - roomId: ${roomId}, userId: ${userId}`);
         socket.disconnect();
         return;
       }
 
       this.session.set(socket.id, userId);
-      // 유지: userId -> socketId 매핑
       this.users.set(userId, socket.id);
       socket.join(roomId);
       console.log(
-        `[ROOM] 연결 성공! socketId: ${socket.id}, roomId: ${roomId}, userId: ${userId}`
+        `[RoomIOManager] Connection established - socketId: ${socket.id}, roomId: ${roomId}, userId: ${userId}`
       );
       this.connection(socket);
     });
   }
   /**
-   *
-   * @param socket
+   * Handle client disconnection and cleanup session
    */
   connection(socket: Socket) {
     socket.on("disconnect", (reason: string) => {
       const userId = this.session.get(socket.id);
       console.log(
-        `[ROOM] 클라이언트 ${socket.id} 연결해제. userId: ${userId}, 사유: ${reason}`
+        `[RoomIOManager] Disconnect - socketId: ${socket.id}, userId: ${userId}, reason: ${reason}`
       );
       this.session.delete(socket.id);
       if (userId) {
@@ -67,7 +65,7 @@ class RoomIOManager {
       socket.on(event, (data) => {
         const userId = this.session.get(socket.id);
         if (!userId) {
-          console.error(`[ERROR] socketId ${socket.id}에 userId 없음`);
+          console.error(`[RoomIOManager] User mapping missing for socketId: ${socket.id}`);
           return;
         }
         this.receiver.handleMessage(data, userId);
@@ -76,7 +74,7 @@ class RoomIOManager {
   }
 
   /**
-   * @description send server result to client
+   * Relay events to clients based on emit mode (UNICAST, BROADCAST, EXCEPT_ME)
    */
   sendEvent() {
     [
@@ -92,16 +90,13 @@ class RoomIOManager {
       eventshandler.on(eventName, (emitContext: EmitContext) => {
         const { mode, roomId, payload } = emitContext;
         if (payload === undefined && roomId) {
-          // signature: (packet)
-          console.log(
-            `[${this.constructor.name}] ERROR: ${JSON.stringify(roomId)}`
+          console.error(
+            `[RoomIOManager] Payload missing for event: ${eventName}, roomId: ${roomId}`
           );
           return;
         }
         console.log(
-          `[${this.constructor.name}] : ${eventName}  event. ${JSON.stringify(
-            emitContext
-          )} `
+          `[RoomIOManager] Emitting ${eventName} - ${JSON.stringify(emitContext)} `
         );
         this.relayEvent(eventName, emitContext);
       });
@@ -113,25 +108,23 @@ class RoomIOManager {
     { mode, roomId, targetId, payload }: EmitContext
   ) {
     if (mode === EMIT_MODES.BROADCAST) {
-      //targetRoomId
       this.room.to(roomId).emit(eventName, payload);
     } else if (mode === EMIT_MODES.EXCEPT_ME) {
       const socketId = this.users.get(targetId);
       if (!socketId) {
-        console.error(`[ERROR] User ${targetId} not found in mapping`);
+        console.error(`[RoomIOManager] Socket mapping not found for userId: ${targetId}`);
         return;
       }
       this.room.to(roomId).except(socketId).emit(eventName, payload);
     } else if (mode === EMIT_MODES.UNICAST) {
-      //targetSocketId
       const socketId = this.users.get(targetId);
       if (!socketId) {
-        console.error(`[ERROR] User ${targetId} not found in mapping`);
+        console.error(`[RoomIOManager] Socket mapping not found for userId: ${targetId}`);
         return;
       }
       const targetSocket = this.room.sockets.get(socketId);
       if (!targetSocket) {
-        console.error(`[ERROR] Socket ${socketId} not found`);
+        console.error(`[RoomIOManager] Socket instance not found for socketId: ${socketId}`);
         return;
       }
       targetSocket.emit(eventName, payload);

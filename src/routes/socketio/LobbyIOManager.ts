@@ -12,20 +12,20 @@ class LobbyIOManager {
   }
   setupEventListeners() {
     this.lobby.on("connection", (socket: Socket) => {
-      console.log(`[LOBBY] 연결 성공! socketId: ${socket.id}`);
+      console.log(`[LobbyIOManager] Connection established - socketId: ${socket.id}`);
       this.connection(socket);
     });
   }
 
   connection(socket: Socket) {
     socket.on("disconnect", (reason: string) => {
-      console.log(`[LOBBY] 클라이언트 ${socket.id} 연결해제 ${reason}`);
+      console.log(`[LobbyIOManager] Disconnect - socketId: ${socket.id}, reason: ${reason}`);
       this.session.delete(socket.id);
     });
 
     socket.on("joinLobby", (data) => {
       console.log(
-        `[LOBBY] 클라이언트 ${socket.id}로부터 'joinLobby' 수신. data: ${JSON.stringify(data)}`
+        `[LobbyIOManager] joinLobby received from socketId: ${socket.id}, data: ${JSON.stringify(data)}`
       );
       this.lobby.to(socket.id).emit("joinLobby", { status: "success" });
     });
@@ -33,22 +33,22 @@ class LobbyIOManager {
 
   sendEvent() {
     eventshandler.on(EVENT_LIST.ROOM_CREATE, (data: roomInfo) => {
-      console.log(`[${this.constructor.name}] 방생성 요청`);
+      console.log(`[LobbyIOManager] Emitting room create event`);
       this.lobby.emit(EVENT_LIST.ROOM_CREATE, { ...data });
     });
 
     eventshandler.on(EVENT_LIST.ROOM_REMOVE, (data) => {
-      console.log(`[${this.constructor.name}] 방삭제 요청. roomId: ${data}`);
+      console.log(`[LobbyIOManager] Emitting room delete event - roomId: ${data}`);
       this.lobby.emit(EVENT_LIST.ROOM_REMOVE, { roomId: data });
     });
 
     eventshandler.on(EVENT_LIST.PLAYER_MINUS, (data: RoomId) => {
-      console.log(`[${this.constructor.name}] 인원 감소. roomId: ${data}`);
+      console.log(`[LobbyIOManager] Emitting player decrease event - roomId: ${data}`);
       this.lobby.emit(EVENT_LIST.PLAYER_MINUS, { roomId: data });
     });
 
     eventshandler.on(EVENT_LIST.PLAYER_PLUS, (data: RoomId) => {
-      console.log(`[${this.constructor.name}] 인원 증가. roomId: ${data}`);
+      console.log(`[LobbyIOManager] Emitting player increase event - roomId: ${data}`);
       this.lobby.emit(EVENT_LIST.PLAYER_PLUS, { roomId: data });
     });
   }

@@ -6,6 +6,8 @@ export type ConnId = string;
 export type UserId = number;
 export type Nickname = string;
 export type SocketEvent = (typeof SOCKET_EVENTS)[number];
+export type EmitMode = (typeof EMIT_MODES)[keyof typeof EMIT_MODES];
+
 export type roomInfo = {
   roomId: RoomId;
   isFull: boolean;
@@ -35,8 +37,6 @@ export const EMIT_MODES = {
   BROADCAST: "BROADCAST",
   EXCEPT_ME: "EXCEPT_ME",
 } as const;
-
-export type EmitMode = (typeof EMIT_MODES)[keyof typeof EMIT_MODES];
 
 export type EmitContext =
   | {

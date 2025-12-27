@@ -25,47 +25,41 @@ class Manager {
    * @param {number} roomId
    * @returns {number}
    */
-  createRoom(roomId: RoomId): SuccessResponse | FailureResponse {
+  createRoom(roomId: RoomId): SuccessResponse<RoomId> | FailureResponse {
     this.rooms.set(roomId, new Room(2));
     if (!this.rooms.get(roomId)) {
       return {
         success: false,
-        message: `${this.constructor.name} : 방생성 중 오류`,
+        message: `Failed to create room: ${roomId}`,
       };
     }
     return { success: true, message: roomId };
   }
 
   /**
-   * 방정보 반환
-   * @param {number} roomId
-   * @returns {object}
+   * Retrieve room data by roomId
    */
-  getRoomData(roomId: RoomId): SuccessResponse | FailureResponse {
+  getRoomData(roomId: RoomId): SuccessResponse<Room> | FailureResponse {
     const room = this.rooms.get(roomId);
     if (room) return { success: true, message: room as Room };
     else {
-      return { success: false, message: "존재하는 않는 방을 조회" };
+      return { success: false, message: `Room not found: ${roomId}` };
     }
   }
 
   /**
-   * 플레이어 입장 처리
-   * @param {number} roomId
-   * @param {number} connId
-   * @param {number} nickname
-   * @returns {object}
+   * Handle player join
    */
   joinPlayer(
     roomId: RoomId,
     connId: ConnId,
     nickname: Nickname
-  ): SuccessResponse | FailureResponse {
+  ): SuccessResponse<RoomId> | FailureResponse {
     const room = this.rooms.get(roomId);
     if (!room || room.isFull()) {
       return {
         success: false,
-        message: `${this.constructor.name} : 유저 입장 처리 중오류`,
+        message: `Cannot join room ${roomId}: room not found or full`,
       };
     }
     room.addPlayer(connId, nickname);
@@ -73,46 +67,44 @@ class Manager {
   }
 
   /**
-   * 플레이어 퇴장 처리
-   * @param {number} roomId
-   * @param {number} connId
-   * @param {number} nickname
-   * @returns {Room}
+   * Handle player leave
    */
   removePlayer(
     roomId: RoomId,
     connId: ConnId
-  ): SuccessResponse | FailureResponse {
+  ): SuccessResponse<string> | FailureResponse {
     const room = this.rooms.get(roomId);
 
     if (room) {
       room.removePlayer(connId);
-      // 플레이어 없는 방 폭파
       if (room.players.size === 0) {
         this.rooms.delete(roomId);
-        return { success: true, message: EVENT_LIST.ROOM_REMOVE }; // 방폭파
+        return { success: true, message: EVENT_LIST.ROOM_REMOVE };
       } else {
-        return { success: true, message: EVENT_LIST.PLAYER_MINUS }; // 인원감소
+        return { success: true, message: EVENT_LIST.PLAYER_MINUS };
       }
     } else {
       return {
         success: false,
-        message: `${this.constructor.name} : 유저 퇴장 처리 중 오류`,
+        message: `Failed to remove player: room ${roomId} not found`,
       };
     }
   }
 
   /**
-   * 모든 방의 roomId와 현재 플레이어 수를 반환
-   * @returns {Array<object>} [{roomId: number, playerCount: number, isFull: boolean}]
+   * Get all rooms with player count and capacity info
    */
-  getRoomList(): Array<object> {
+  getRoomList(): Array<{
+    roomId: RoomId;
+    isFull: boolean;
+    currentPlayers: number;
+    maxPlayers: number;
+  }> {
     const roomList = [];
     for (const roomId of this.rooms.keys()) {
       const room = this.rooms.get(roomId);
       if (room) {
         if (room.players.size === 0) {
-          // 플레이어 없는 방 폭파
           this.rooms.delete(roomId);
         } else {
           roomList.push({
@@ -123,17 +115,13 @@ class Manager {
           });
         }
       } else {
-        throw new Error("방 정보는 있는데 플레이어 정보가 없음");
+        throw new Error(`Room data inconsistency: roomId=${roomId}`);
       }
     }
     return roomList;
   }
   /**
-   *
-   * @param roomId
-   * @param connId
-   * @param status
-   * @returns
+   * Handle player ready status change
    */
   readyPlayer(
     roomId: RoomId,
@@ -147,7 +135,7 @@ class Manager {
     } else
       return {
         success: false,
-        message: `${this.constructor} : 레디할 플레이어가 존재하지 않음`,
+        message: `Player not found: roomId=${roomId}, connId=${connId}`,
       };
   }
 
@@ -156,59 +144,49 @@ class Manager {
   /* ========================================================= */
 
   /**
-   * @description 게임 상태 조회
-   * @param roomId
-   * @returns Ttt
+   * Get game state from game instance
    */
-  getGameDate(roomId: RoomId): SuccessResponse | FailureResponse {
+  getGameDate(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
     const game = this.games.get(roomId);
     if (!game) {
-      return { success: false, message: "게임 조회 실패" };
+      return { success: false, message: `Game state not found: roomId=${roomId}` };
     }
     return { success: true, message: game as Ttt };
   }
 
   /**
-   * @description 게임 시작
-   * @param roomId
-   * @returns
+   * Start game - transition from idle to playing state
    */
   gameStart(roomId: RoomId): SuccessResponse | FailureResponse {
-    //게임 생성
     this.games.set(roomId, new Ttt());
     const game = this.games.get(roomId);
     const room = this.rooms.get(roomId);
     if (game && room) {
-      //플레이어 id 저장
       for (const info of room.getAllPlayersData()) {
         game.setPlayersId(info.connId);
       }
-      // 게임 시작
       game.changeState(new PlayingState());
       const state = game.getState();
       if (state.status !== "PLAYING")
         return {
           success: false,
-          message: `${this.constructor} : 게임 시작처리 중 오류`,
+          message: `Failed to start game: invalid state ${state.status}`,
         };
       if (state.players.length !== 2)
         return {
           success: false,
-          message: `${this.constructor} : 플레이어 수 부족`,
+          message: `Failed to start game: insufficient players (${state.players.length}/2)`,
         };
       return { success: true };
     } else {
       return {
         success: false,
-        message: `${this.constructor} : 비정상적 게임 시작`,
+        message: `Failed to start game: game=${game ? "exists" : "missing"}, room=${room ? "exists" : "missing"}`,
       };
     }
   }
   /**
-   *
-   * @param roomId
-   * @param message
-   * @returns
+   * Process player move action
    */
   setMove(roomId: RoomId, message: Action): SuccessResponse | FailureResponse {
     const game = this.games.get(roomId);
@@ -217,14 +195,16 @@ class Manager {
       if (state.status !== "PLAYING") {
         return {
           success: false,
-          message: "",
+          message: "Game is not in PLAYING state",
         };
       }
-      return game.processAction(message);
+      return game.processAction(message) as
+        | SuccessResponse<void>
+        | FailureResponse;
     } else {
       return {
         success: false,
-        message: `${this.constructor.name} : "착수 중 게임 조회 실패" `,
+        message: `Game instance not found: roomId=${roomId}`,
       };
     }
   }

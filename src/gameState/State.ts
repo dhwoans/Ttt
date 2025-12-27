@@ -8,6 +8,6 @@ export default abstract class State {
   abstract handleAction(
     game: Ttt,
     action: Action
-  ): SuccessResponse | FailureResponse;
-  abstract onEnter(game: Ttt): any;
+  ): SuccessResponse<string | void> | FailureResponse;
+  abstract onEnter(game: Ttt): void;
 }

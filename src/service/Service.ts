@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import type Manager from "./Manager.js";
 import type Room from "../models/Room.js";
+import type Ttt from "../game/Ttt.js";
 import type SocketMessage from "../dtos/SocketMessage.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
@@ -21,7 +22,7 @@ class Service {
   createRoom(
     userId: UserId,
     nickname: Nickname
-  ): SuccessResponse | FailureResponse {
+  ): SuccessResponse<RoomId> | FailureResponse {
     if (!userId || !nickname) {
       throw new Error(`${this.constructor.name} : 정보가 누락되었습니다.`);
     }
@@ -33,7 +34,7 @@ class Service {
    * @param {string} roomId
    * @returns {Room}
    */
-  checkRoom(roomId: RoomId): SuccessResponse | FailureResponse {
+  checkRoom(roomId: RoomId): SuccessResponse<Room> | FailureResponse {
     return this.manager.getRoomData(roomId);
   }
   /**
@@ -45,7 +46,7 @@ class Service {
   removePlayer(
     roomId: RoomId,
     connId: ConnId
-  ): SuccessResponse | FailureResponse {
+  ): SuccessResponse<string> | FailureResponse {
     return this.manager.removePlayer(roomId, connId);
   }
 
@@ -68,7 +69,7 @@ class Service {
     roomId: RoomId,
     connId: ConnId,
     nickname: Nickname
-  ): SuccessResponse | FailureResponse {
+  ): SuccessResponse<RoomId> | FailureResponse {
     return this.manager.joinPlayer(roomId, connId, nickname);
   }
 
@@ -83,7 +84,7 @@ class Service {
     roomId: RoomId,
     connId: ConnId,
     status: boolean
-  ): SuccessResponse | FailureResponse {
+  ): SuccessResponse<void> | FailureResponse {
     return this.manager.readyPlayer(roomId, connId, status);
   }
   /**
@@ -91,10 +92,10 @@ class Service {
    * @param {number} roomId
    * @returns {boolean}
    */
-  gameStart(roomId: RoomId): SuccessResponse | FailureResponse {
+  gameStart(roomId: RoomId): SuccessResponse<void> | FailureResponse {
     // 레디 검증
     const result = this.checkRoom(roomId);
-    if (result) {
+    if (result.success && result.message) {
       const room = result.message;
       if (room.isFull()) {
         for (const { connId, nickname, isReady } of room.getAllPlayersData()) {
@@ -110,7 +111,7 @@ class Service {
         return { success: false, message: "인원 부족" };
       }
     } else {
-      return result;
+      return { success: true };
     }
   }
   /**
@@ -118,7 +119,7 @@ class Service {
    * @param message
    * @returns
    */
-  setMove(rawMessage: SocketMessage): SuccessResponse | FailureResponse {
+  setMove(rawMessage: SocketMessage): SuccessResponse<void> | FailureResponse {
     const { type, message, sender } = rawMessage;
     const [roomId, index] = rawMessage.message;
     //message -> action
@@ -130,7 +131,7 @@ class Service {
 
     return this.manager.setMove(roomId!, action);
   }
-  getGameState(roomId: RoomId): SuccessResponse | FailureResponse {
+  getGameState(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
     return this.manager.getGameDate(roomId);
   }
 }

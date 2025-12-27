@@ -1,25 +1,34 @@
+// GameOverState.ts - Tic-Tac-Toe game over state
 import State from "./State.js";
 import IdleState from "./IdleState.js";
 import type Ttt from "../game/Ttt.js";
-import type SocketMessage from "../dtos/SocketMessage.dto.js";
 import type Action from "../dtos/Action.dto.js";
+import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
+import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 
+/**
+ * Represents the GAME_OVER state in the game FSM.
+ * Only accepts RESET action to transition back to IDLE state.
+ */
 class GameOverState extends State {
-  onEnter(game: Ttt) {
+  onEnter(game: Ttt): void {
     game.status = "GAME_OVER";
   }
 
-  handleAction(game: Ttt, action: Action) {
-    // 클라이언트가 보내는 RESET 액션만 허용
+  handleAction(
+    game: Ttt,
+    action: Action
+  ): SuccessResponse<string> | FailureResponse {
+    // Only RESET action is valid in game over state
     if (action.type === "RESET") {
-      //GameOverState -> IdleState
+      // Reset game board and transition to IDLE state
       game.board = Array(9).fill("");
       game.winner = -1;
       game.currentTurn = 0;
       game.changeState(new IdleState());
-      return { success: true, message: "게임 초기화 완료." };
+      return { success: true, message: "Game reset complete" };
     }
-    return { success: false, message: "게임 리셋 중 에러발생" };
+    return { success: false, message: "Invalid action in GAME_OVER state" };
   }
 }
 export default GameOverState;

@@ -1,25 +1,19 @@
-import type UserInfo from "../dtos/user/User.dto.js";
 import IdleState from "../gameState/IdleState.js";
-import type PlayerInfo from "../dtos/game/player.dto.js";
 import type State from "../gameState/State.js";
-import Context from "./Context.js";
-import type SocketMessage from "../dtos/SocketMessage.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 import type { ConnId } from "../../type/socket.js";
 /**
- * @class Ttt
- * @description Tic-Tac-Toe 게임의 컨텍스트(Context) 클래스.
- * 게임의 모든 데이터(상태)를 보유하며, 모든 외부 요청을 현재 상태 객체(currentState)에 위임합니다.
- * 상태 패턴 FSM에서 Context 역할을 담당합니다.
+ * Tic-Tac-Toe game context class (FSM Context pattern)
+ * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
 class Ttt {
-  board: Array<string>;
-  winner: number;
-  status: string;
-  players: Array<ConnId>;
-  currentTurn: number;
+  board: Array<string>; // 9-element array for 3x3 board
+  winner: number; // -2: draw, -1: no winner, 0/1: player index
+  status: string; // IDLE, PLAYING, GAME_OVER
+  players: Array<ConnId>; // [player1Id, player2Id]
+  currentTurn: number; // Turn counter (even=player0, odd=player1)
   currentState: State;
 
   constructor() {
@@ -31,22 +25,37 @@ class Ttt {
     this.currentState = new IdleState();
     this.currentState.onEnter(this);
   }
+
+  /**
+   * Add player ID to the game
+   */
   setPlayersId(playerId: string) {
     this.players.push(playerId);
   }
+
+  /**
+   * Transition to new state and invoke its entry logic
+   */
   changeState(newState: State): void {
     console.log(
       `[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`
     );
     this.currentState = newState;
-    newState.onEnter(this); // 새 상태의 진입 로직 실행
+    newState.onEnter(this);
   }
 
-  processAction(action: Action): SuccessResponse | FailureResponse {
-    // currentState에게 모든 로직 처리를 위임
+  /**
+   * Delegate action processing to current state
+   */
+  processAction(
+    action: Action
+  ): SuccessResponse<string | void> | FailureResponse {
     return this.currentState.handleAction(this, action);
   }
 
+  /**
+   * Get current game state snapshot
+   */
   getState(): {
     board: Array<string>;
     winner: number;

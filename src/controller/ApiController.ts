@@ -18,10 +18,30 @@ class ApiController {
    */
   createRoom(req: Request, res: Response, next: NextFunction): void {
     try {
-      console.log(this.constructor.name, " : 방생성 요청");
+      console.log("[ApiController] Room creation request");
       const { userId, nickname } = req.body;
       const result = this.service.createRoom(userId, nickname);
+      if (!result.success || !result.message) {
+        next(
+          new Error(
+            typeof result.message === "string"
+              ? result.message
+              : "Failed to create room"
+          )
+        );
+        return;
+      }
       const room = this.service.checkRoom(result.message);
+      if (!room.success || !room.message) {
+        next(
+          new Error(
+            typeof room.message === "string"
+              ? room.message
+              : "Failed to get room"
+          )
+        );
+        return;
+      }
       // 방생성 이벤트
       eventshandler.emit(EVENT_LIST.ROOM_CREATE, {
         roomId: result.message,
@@ -29,14 +49,10 @@ class ApiController {
         currentPlayers: room.message.players.size,
         maxPlayers: room.message.MAX_PLAYERS,
       } as roomInfo);
-      if (result.success) {
-        // 방생성자 http 응답
-        res.status(201).json({
-          ...result,
-        });
-      } else {
-        next(new Error(result.message));
-      }
+      // 방생성자 http 응답
+      res.status(201).json({
+        ...result,
+      });
     } catch (error) {
       next(error);
     }
@@ -48,29 +64,35 @@ class ApiController {
    * @param next
    * @returns
    */
-  checkRoom(req: Request, res: Response, next: NextFunction) {
+  checkRoom(req: Request, res: Response, next: NextFunction): void {
     try {
       const roomId = req.query.roomId;
       if (!roomId) {
-        console.log(this.constructor.name, " roomId 누락");
-        next(new Error("roomId 누락"));
+        console.log("[ApiController] Missing roomId parameter");
+        next(new Error("roomId is required"));
+        return;
       }
       if (typeof roomId === "string") {
         const result = this.service.checkRoom(roomId);
-        if (!result.success) {
-          next(new Error(result.message));
+        if (!result.success || !result.message) {
+          next(
+            new Error(
+              typeof result.message === "string"
+                ? result.message
+                : "Failed to get room"
+            )
+          );
+          return;
+        }
+        const room = result.message;
+        if (room.isFull()) {
+          res.status(300).json({
+            success: false,
+          });
         } else {
-          const room = result.message;
-          if (room.isFull()) {
-            //클라이언트 강제 새로고침
-            res.status(300).json({
-              success: false,
-            });
-          } else {
-            res.status(200).json({
-              success: true,
-            });
-          }
+          res.status(200).json({
+            success: true,
+          });
         }
       }
     } catch (error) {
@@ -78,15 +100,12 @@ class ApiController {
     }
   }
   /**
-   *
-   * @param req
-   * @param res
-   * @param next
+   * Get list of all available rooms
    */
-  getRoomList(req: Request, res: Response, next: NextFunction) {
+  getRoomList(req: Request, res: Response, next: NextFunction): void {
     try {
       const result = this.service.getRoomList();
-      console.log("getRoomList", result);
+      console.log("[ApiController] Room list retrieved:", result);
       res.status(200).json({
         success: true,
         roomList: result,

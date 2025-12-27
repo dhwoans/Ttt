@@ -1,4 +1,4 @@
-// PlayingState.js
+// PlayingState.ts - Tic-Tac-Toe game playing state
 import State from "./State.js";
 import Ttt from "../game/Ttt.js";
 import GameOverState from "./GameOverState.js";
@@ -6,44 +6,52 @@ import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type Action from "../dtos/Action.dto.js";
 
+/**
+ * Represents the PLAYING state in the game FSM.
+ * Handles move validation, board updates, and win/draw detection.
+ */
 class PlayingState extends State {
-  onEnter(game: Ttt) {
-    // 상태 진입 시 초기 설정: 컨텍스트 데이터 업데이트
+  onEnter(game: Ttt): void {
     game.status = "PLAYING";
-    // 선턴 지정 (FSM에 의해 턴이 확정됨)
     game.currentTurn = 0;
-    console.log(`[FSM] Game started. Turn: ${game.currentTurn}`);
+    console.log(`[FSM] Game started. Initial turn: ${game.currentTurn}`);
   }
 
-  handleAction(game: Ttt, action: Action): SuccessResponse | FailureResponse {
+  handleAction(
+    game: Ttt,
+    action: Action
+  ): SuccessResponse<string> | FailureResponse {
     const index = action.move;
-    // 위치 검증
+    // Validate position hasn't been taken
     if (game.board[index] !== "") {
-      return { success: false, message: "이미 착수된 위치" };
+      return { success: false, message: "Position already occupied" };
     }
 
-    //데이터 업데이트
+    // Update board with current player's symbol
     const symbol = game.currentTurn % 2 == 0 ? "X" : "O";
     game.board[index] = symbol;
 
-    // 승리/무승부 판별 (전이 조건 체크)
+    // Check for win or draw
     const winner = this.#checkWinner(game.board);
     if (winner !== -1 || game.currentTurn === 8) {
       if (winner === -1) {
-        game.winner = -2;
+        game.winner = -2; // Draw condition
       } else {
         game.winner = winner;
       }
-      // PlayingState -> GameOverState
       game.changeState(new GameOverState());
       return { success: true, message: "Game_Over" };
     }
 
-    //턴 전환
+    // Advance turn
     game.currentTurn += 1;
     return { success: true };
   }
 
+  /**
+   * Check for winning combinations on the board
+   * Returns 0 for X win, 1 for O win, -1 for no winner
+   */
   #checkWinner(board: Array<string>): number {
     const lines: Array<[number, number, number]> = [
       [0, 1, 2],
