@@ -3,18 +3,27 @@ import type Service from "../service/Service.js";
 import type User from "../dtos/user/User.dto.js";
 import type { PlayerInfo } from "../dtos/user/User.dto.js";
 import { EVENT_LIST, eventshandler } from "../utils/eventhandler.js";
-import { EMIT_MODES } from "../../type/socket.js";
+import { EMIT_MODES } from "../utils/eventhandler.js";
+import type { ConnId } from "../type/socket.js";
 
 class WSController {
   constructor(public service: Service) {}
-
-  /* ========================================================= */
-  /* WS  처리                                                   */
-  /* ========================================================= */
-
-  /**
-   * Handle player join room
-   */
+  handleMove(rawMessage: SocketMessage, connId: ConnId): void {
+    const result = this.service.processMove(rawMessage, connId);
+    if (!result.success) {
+      // Service already emits an error to the client, but ensure fallback emit here
+      const errorPayload: SocketMessage = {
+        type: "ERROR",
+        message: [result.message ?? "Move failed"],
+        sender: "system",
+      };
+      eventshandler.emit(EVENT_LIST.ERROR, {
+        mode: EMIT_MODES.UNICAST,
+        targetId: connId,
+        payload: errorPayload,
+      });
+    }
+  }
   handleJoin(rawMessage: SocketMessage, connId: string): void {
     const { type, message, sender } = rawMessage;
     const [roomId, userId] = message;
@@ -170,75 +179,6 @@ class WSController {
           );
         }
       }
-    }
-  }
-  /**
-   * Handle player move action
-   */
-  handleMove(rawMessage: SocketMessage, connId: string): void {
-    const result = this.service.setMove(rawMessage);
-    if (result.success) {
-      const { type, message, sender } = rawMessage;
-      const [roomId, index] = message;
-      const resultGameState = this.service.getGameState(roomId!);
-      if (!resultGameState.success || !resultGameState.message) {
-        throw Error(
-          resultGameState.message
-            ? String(resultGameState.message)
-            : "Failed to get game state"
-        );
-      }
-      const state = resultGameState.message.getState();
-      const moveMessage: SocketMessage = {
-        type: "MOVE",
-        message: [sender, index!.toString()],
-        sender: "system",
-      };
-      console.log("[WSController] Game state:", state);
-      let nextMessage: SocketMessage;
-      if (state.status === "GAME_OVER") {
-        const winner: string =
-          state.winner === -2
-            ? "DRAW"
-            : state.players[state.winner] ?? "Unknown";
-        nextMessage = {
-          type: state.status,
-          message: [winner],
-          sender: "system",
-        };
-      } else {
-        nextMessage = {
-          type: state.status,
-          message: [state.players[state.currentTurn % 2]!.toString()],
-          sender: "system",
-        };
-      }
-      const checkRoomResult = this.service.checkRoom(roomId!);
-      if (checkRoomResult.success) {
-        eventshandler.emit(EVENT_LIST.MOVE, {
-          mode: EMIT_MODES.BROADCAST,
-          roomId,
-          payload: moveMessage,
-        });
-        eventshandler.emit(state.status, {
-          mode: EMIT_MODES.BROADCAST,
-          roomId,
-          payload: nextMessage,
-        });
-      } else {
-        throw Error(checkRoomResult.message ?? "Unknown error");
-      }
-    } else {
-      const errorMessage: SocketMessage = {
-        type: "ERROR",
-        message: [result.message],
-        sender: "system",
-      };
-      eventshandler.emit(EVENT_LIST.ERROR, {
-        mode: EMIT_MODES.UNICAST,
-        targetId: connId,
-        payload: errorMessage,
-      });
     }
   }
 }

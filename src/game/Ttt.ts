@@ -3,7 +3,7 @@ import type State from "../gameState/State.js";
 import type Action from "../dtos/Action.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
-import type { ConnId } from "../../type/socket.js";
+import type { ConnId } from "../type/socket.js";
 /**
  * Tic-Tac-Toe game context class (FSM Context pattern)
  * Manages game state, board, and players. Delegates all state-specific logic to current state.

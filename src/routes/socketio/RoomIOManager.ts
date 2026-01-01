@@ -1,10 +1,8 @@
 import { Namespace, Server, Socket } from "socket.io";
 import Receiver from "../Receiver.js";
 import { eventshandler, EVENT_LIST } from "../../utils/eventhandler.js";
-import type { ConnId, EmitContext, RoomId } from "../../../type/socket.js";
-import { EMIT_MODES } from "../../../type/socket.js";
-import type { NextFunction } from "express";
-import type SocketMessage from "../../dtos/SocketMessage.dto.js";
+import type { ConnId, EmitContext, RoomId } from "../../type/socket.js";
+import { EMIT_MODES } from "../../utils/eventhandler.js";
 class RoomIOManager {
   room: Namespace;
   receiver: Receiver;
@@ -23,7 +21,9 @@ class RoomIOManager {
       const userId: ConnId = socket.handshake.auth?.userId;
 
       if (!roomId || !userId) {
-        console.error(`[RoomIOManager] Invalid connection attempt - roomId: ${roomId}, userId: ${userId}`);
+        console.error(
+          `[RoomIOManager] Invalid connection attempt - roomId: ${roomId}, userId: ${userId}`
+        );
         socket.disconnect();
         return;
       }
@@ -65,7 +65,9 @@ class RoomIOManager {
       socket.on(event, (data) => {
         const userId = this.session.get(socket.id);
         if (!userId) {
-          console.error(`[RoomIOManager] User mapping missing for socketId: ${socket.id}`);
+          console.error(
+            `[RoomIOManager] User mapping missing for socketId: ${socket.id}`
+          );
           return;
         }
         this.receiver.handleMessage(data, userId);
@@ -96,7 +98,9 @@ class RoomIOManager {
           return;
         }
         console.log(
-          `[RoomIOManager] Emitting ${eventName} - ${JSON.stringify(emitContext)} `
+          `[RoomIOManager] Emitting ${eventName} - ${JSON.stringify(
+            emitContext
+          )} `
         );
         this.relayEvent(eventName, emitContext);
       });
@@ -112,19 +116,25 @@ class RoomIOManager {
     } else if (mode === EMIT_MODES.EXCEPT_ME) {
       const socketId = this.users.get(targetId);
       if (!socketId) {
-        console.error(`[RoomIOManager] Socket mapping not found for userId: ${targetId}`);
+        console.error(
+          `[RoomIOManager] Socket mapping not found for userId: ${targetId}`
+        );
         return;
       }
       this.room.to(roomId).except(socketId).emit(eventName, payload);
     } else if (mode === EMIT_MODES.UNICAST) {
       const socketId = this.users.get(targetId);
       if (!socketId) {
-        console.error(`[RoomIOManager] Socket mapping not found for userId: ${targetId}`);
+        console.error(
+          `[RoomIOManager] Socket mapping not found for userId: ${targetId}`
+        );
         return;
       }
       const targetSocket = this.room.sockets.get(socketId);
       if (!targetSocket) {
-        console.error(`[RoomIOManager] Socket instance not found for socketId: ${socketId}`);
+        console.error(
+          `[RoomIOManager] Socket instance not found for socketId: ${socketId}`
+        );
         return;
       }
       targetSocket.emit(eventName, payload);

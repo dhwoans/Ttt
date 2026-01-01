@@ -1,5 +1,5 @@
 import "ws";
-import type SocketMessage from "../src/dtos/SocketMessage.dto.ts";
+import type SocketMessage from "../dtos/SocketMessage.dto.ts";
 
 export type RoomId = string;
 export type ConnId = string;
@@ -32,11 +32,7 @@ export const SOCKET_EVENTS = [
   "GAME_START",
 ] as const;
 
-export const EMIT_MODES = {
-  UNICAST: "UNICAST",
-  BROADCAST: "BROADCAST",
-  EXCEPT_ME: "EXCEPT_ME",
-} as const;
+
 
 export type EmitContext =
   | {

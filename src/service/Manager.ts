@@ -6,7 +6,7 @@ import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import { EVENT_LIST } from "../utils/eventhandler.js";
-import type { ConnId, Nickname, RoomId } from "../../type/socket.js";
+import type { ConnId, Nickname, RoomId } from "../type/socket.js";
 class Manager {
   rooms: Map<RoomId, Room>;
   games: Map<RoomId, Ttt>;
@@ -143,20 +143,18 @@ class Manager {
   /* 게임 관리                                                   */
   /* ========================================================= */
 
-  /**
-   * Get game state from game instance
-   */
+
   getGameDate(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
     const game = this.games.get(roomId);
     if (!game) {
-      return { success: false, message: `Game state not found: roomId=${roomId}` };
+      return {
+        success: false,
+        message: `Game state not found: roomId=${roomId}`,
+      };
     }
     return { success: true, message: game as Ttt };
   }
 
-  /**
-   * Start game - transition from idle to playing state
-   */
   gameStart(roomId: RoomId): SuccessResponse | FailureResponse {
     this.games.set(roomId, new Ttt());
     const game = this.games.get(roomId);
@@ -181,8 +179,18 @@ class Manager {
     } else {
       return {
         success: false,
-        message: `Failed to start game: game=${game ? "exists" : "missing"}, room=${room ? "exists" : "missing"}`,
+        message: `Failed to start game: game=${
+          game ? "exists" : "missing"
+        }, room=${room ? "exists" : "missing"}`,
       };
+    }
+  }
+  deleteGame(roomId: RoomId): SuccessResponse | FailureResponse {
+    this.games.delete(roomId);
+    if (this.games.get(roomId)) {
+      return { success: false, message: "게임 삭제 실패" };
+    } else {
+      return { success: true };
     }
   }
   /**

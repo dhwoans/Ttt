@@ -6,7 +6,13 @@ import type SocketMessage from "../dtos/SocketMessage.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
-import type { ConnId, Nickname, RoomId, UserId } from "../../type/socket.js";
+
+import {
+  eventshandler,
+  EVENT_LIST,
+  EMIT_MODES,
+} from "../utils/eventhandler.js";
+import type { ConnId, Nickname, RoomId, UserId } from "../type/socket.js";
 
 class Service {
   manager: Manager;
@@ -59,11 +65,11 @@ class Service {
   }
 
   /**
-   * @description 플레이어 입장 처리
-   * @param {number} roomId
-   * @param {number} connId
-   * @param {number} nickname
-   * @returns {object}
+   *
+   * @param roomId
+   * @param connId
+   * @param nickname
+   * @returns
    */
   joinPlayer(
     roomId: RoomId,
@@ -131,8 +137,111 @@ class Service {
 
     return this.manager.setMove(roomId!, action);
   }
+
+  processMove(
+    rawMessage: SocketMessage,
+    connId: ConnId
+  ): SuccessResponse<void> | FailureResponse {
+    const { type, message, sender } = rawMessage;
+    const [roomId, index] = message;
+
+    const action: Action = { type, move: parseInt(index!), nickname: sender };
+    const applyResult = this.manager.setMove(roomId!, action);
+    if (!applyResult.success) {
+      // emit error to requesting client
+      const errorPayload: SocketMessage = {
+        type: "ERROR",
+        message: [applyResult.message],
+        sender: "system",
+      };
+      eventshandler.emit(EVENT_LIST.ERROR, {
+        mode: EMIT_MODES.UNICAST,
+        targetId: connId,
+        payload: errorPayload,
+      });
+      return applyResult;
+    }
+
+    const gameStateResult = this.getGameState(roomId!);
+    if (!gameStateResult.success || !gameStateResult.message) {
+      return { success: false, message: "게임 상태 얻기 실패" };
+    }
+    const state = gameStateResult.message.getState();
+
+    const checkRoom = this.checkRoom(roomId!);
+    if (!checkRoom.success) {
+      return { success: false, message: checkRoom.message };
+    }
+
+    this.broadcastMove(roomId!, sender, index!.toString());
+    this.broadcastNextGameState(roomId!, state);
+
+    return { success: true };
+  }
+
+  /**
+   * Broadcast MOVE message indicating which player moved and to which position
+   */
+  private broadcastMove(roomId: RoomId, sender: string, index: string): void {
+    const moveMessage: SocketMessage = {
+      type: "MOVE",
+      message: [sender, index],
+      sender: "system",
+    };
+    eventshandler.emit(EVENT_LIST.MOVE, {
+      mode: EMIT_MODES.BROADCAST,
+      roomId,
+      payload: moveMessage,
+    });
+  }
+
+  /**
+   * Broadcast next game state (either next turn or game over with winner)
+   */
+  private broadcastNextGameState(
+    roomId: RoomId,
+    state: {
+      board: Array<string>;
+      winner: number;
+      status: string;
+      players: Array<string>;
+      currentTurn: number;
+    }
+  ): void {
+    let nextMessage: SocketMessage;
+    if (state.status === "GAME_OVER") {
+      const winner: string =
+        state.winner === -2 ? "DRAW" : state.players[state.winner]!;
+      nextMessage = { type: state.status, message: [winner], sender: "system" };
+      //게임 객체삭제
+      this.manager.deleteGame(roomId);
+      //레디 초기화
+      this.initReady(roomId);
+    } else {
+      nextMessage = {
+        type: state.status,
+        message: [state.players[state.currentTurn % 2]!.toString()],
+        sender: "system",
+      };
+    }
+
+    eventshandler.emit(state.status, {
+      mode: EMIT_MODES.BROADCAST,
+      roomId,
+      payload: nextMessage,
+    });
+  }
   getGameState(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
     return this.manager.getGameDate(roomId);
+  }
+  private initReady(roomId:RoomId) {
+    const resultCheckRoom = this.manager.getRoomData(roomId)
+    if(resultCheckRoom.success){
+      const players = resultCheckRoom.message?.getAllPlayersData()!
+      for(const player of players){
+        this.manager.readyPlayer(roomId,player.connId,false)
+      }
+    }
   }
 }
 

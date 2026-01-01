@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type Service from "../service/Service.js";
 import { EVENT_LIST, eventshandler } from "../utils/eventhandler.js";
-import type { roomInfo } from "../../type/socket.js";
+import type { roomInfo } from "../type/socket.js";
 
 class ApiController {
   constructor(public service: Service) {}

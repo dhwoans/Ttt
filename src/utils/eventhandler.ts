@@ -17,3 +17,9 @@ export const EVENT_LIST = {
   GAME_OVER: "GAME_OVER",
   ERROR: "ERROR",
 } as const;
+
+export const EMIT_MODES = {
+  UNICAST: "UNICAST",
+  BROADCAST: "BROADCAST",
+  EXCEPT_ME: "EXCEPT_ME",
+} as const;

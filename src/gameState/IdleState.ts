@@ -24,7 +24,10 @@ class IdleState extends State {
       game.changeState(new PlayingState());
       return { success: true, message: "Transition to Playing" };
     }
-    return { success: false, message: "Only game start action is allowed in IDLE state" };
+    return {
+      success: false,
+      message: "Only game start action is allowed in IDLE state",
+    };
   }
 }
 export default IdleState;

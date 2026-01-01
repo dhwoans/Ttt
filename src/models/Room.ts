@@ -1,4 +1,4 @@
-import type { ConnId } from "../../type/socket.js";
+import type { ConnId } from "../type/socket.js";
 import type User from "../dtos/user/User.dto.js";
 import type { PlayerInfo } from "../dtos/user/User.dto.js";
 
@@ -42,8 +42,7 @@ class Room {
    */
   getPlayerDate(connId: string): { nickname: string; isReady: boolean } {
     const player = this.players.get(connId);
-    if (!player)
-      throw new Error(`Player not found: connId=${connId}`);
+    if (!player) throw new Error(`Player not found: connId=${connId}`);
     return player;
   }
 
