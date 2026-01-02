@@ -6,6 +6,7 @@
     "@types/ws": "^8.18.1",
     "connect-redis": "^9.0.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
@@ -17,8 +18,8 @@
     "ws": "^8.18.3"
   },
   "scripts": {
+    "dev": "node -r dotenv/config dist/app.js",
     "build": "tsc",
-    "start": "node dist/app.js",
     "test": "vitest",
     "test:watch": "vitest --watch"
   },
