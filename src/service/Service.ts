@@ -19,6 +19,7 @@ class Service {
   constructor(manager: Manager) {
     this.manager = manager;
   }
+
   /**
    *
    * @param userId

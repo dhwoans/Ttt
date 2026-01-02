@@ -7,9 +7,12 @@ class ApiController {
   constructor(public service: Service) {}
 
   /* ========================================================= */
-  /* API 처리 */
+  /* Room API 처리 */
   /* ========================================================= */
 
+  checkHealth(req: Request, res: Response, next: NextFunction) {
+    return 1;
+  }
   /**
    *
    * @param req
