@@ -33,8 +33,20 @@ const port = 8080;
 const api = new ApiRoutes(port, apiController, userController, errorHandler);
 
 const server: http.Server = http.createServer(api.app);
-const socket: SocketManager = new SocketIOManager(server, receiver);
+console.log("[App] HTTP server created");
+
+const socket: SocketManager = new SocketIOManager(
+  server,
+  receiver,
+  roomservice,
+);
 socket.init();
+console.log("[App] Socket.IO initialized");
+
 server.listen(port, () => {
-  console.log(`Server running on port 8080.`);
+  console.log("=".repeat(60));
+  console.log(`🚀 Server is running on port ${port}`);
+  console.log(`📡 HTTP API: http://localhost:${port}`);
+  console.log(`🔌 WebSocket: ws://localhost:${port} (path: /socket.io)`);
+  console.log("=".repeat(60));
 });

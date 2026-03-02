@@ -28,7 +28,7 @@ class Service {
    */
   createRoom(
     userId: UserId,
-    nickname: Nickname
+    nickname: Nickname,
   ): SuccessResponse<RoomId> | FailureResponse {
     if (!userId || !nickname) {
       throw new Error(`${this.constructor.name} : 정보가 누락되었습니다.`);
@@ -52,7 +52,7 @@ class Service {
    */
   removePlayer(
     roomId: RoomId,
-    connId: ConnId
+    connId: ConnId,
   ): SuccessResponse<string> | FailureResponse {
     return this.manager.removePlayer(roomId, connId);
   }
@@ -66,6 +66,14 @@ class Service {
   }
 
   /**
+   * Find or create a room for matchmaking
+   * @returns {RoomId} The assigned room ID
+   */
+  findOrCreateRoom(): SuccessResponse<RoomId> | FailureResponse {
+    return this.manager.findOrCreateRoom();
+  }
+
+  /**
    *
    * @param roomId
    * @param connId
@@ -75,7 +83,7 @@ class Service {
   joinPlayer(
     roomId: RoomId,
     connId: ConnId,
-    nickname: Nickname
+    nickname: Nickname,
   ): SuccessResponse<RoomId> | FailureResponse {
     return this.manager.joinPlayer(roomId, connId, nickname);
   }
@@ -90,7 +98,7 @@ class Service {
   readyPlayer(
     roomId: RoomId,
     connId: ConnId,
-    status: boolean
+    status: boolean,
   ): SuccessResponse<void> | FailureResponse {
     return this.manager.readyPlayer(roomId, connId, status);
   }
@@ -141,7 +149,7 @@ class Service {
 
   processMove(
     rawMessage: SocketMessage,
-    connId: ConnId
+    connId: ConnId,
   ): SuccessResponse<void> | FailureResponse {
     const { type, message, sender } = rawMessage;
     const [roomId, index] = message;
@@ -207,7 +215,7 @@ class Service {
       status: string;
       players: Array<string>;
       currentTurn: number;
-    }
+    },
   ): void {
     let nextMessage: SocketMessage;
     if (state.status === "GAME_OVER") {
@@ -235,12 +243,12 @@ class Service {
   getGameState(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
     return this.manager.getGameDate(roomId);
   }
-  private initReady(roomId:RoomId) {
-    const resultCheckRoom = this.manager.getRoomData(roomId)
-    if(resultCheckRoom.success){
-      const players = resultCheckRoom.message?.getAllPlayersData()!
-      for(const player of players){
-        this.manager.readyPlayer(roomId,player.connId,false)
+  private initReady(roomId: RoomId) {
+    const resultCheckRoom = this.manager.getRoomData(roomId);
+    if (resultCheckRoom.success) {
+      const players = resultCheckRoom.message?.getAllPlayersData()!;
+      for (const player of players) {
+        this.manager.readyPlayer(roomId, player.connId, false);
       }
     }
   }

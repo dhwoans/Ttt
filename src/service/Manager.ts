@@ -7,6 +7,7 @@ import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type Action from "../dtos/Action.dto.js";
 import { EVENT_LIST } from "../utils/eventhandler.js";
 import type { ConnId, Nickname, RoomId } from "../type/socket.js";
+import { randomUUID } from "node:crypto";
 class Manager {
   rooms: Map<RoomId, Room>;
   games: Map<RoomId, Ttt>;
@@ -53,7 +54,7 @@ class Manager {
   joinPlayer(
     roomId: RoomId,
     connId: ConnId,
-    nickname: Nickname
+    nickname: Nickname,
   ): SuccessResponse<RoomId> | FailureResponse {
     const room = this.rooms.get(roomId);
     if (!room || room.isFull()) {
@@ -71,7 +72,7 @@ class Manager {
    */
   removePlayer(
     roomId: RoomId,
-    connId: ConnId
+    connId: ConnId,
   ): SuccessResponse<string> | FailureResponse {
     const room = this.rooms.get(roomId);
 
@@ -120,13 +121,38 @@ class Manager {
     }
     return roomList;
   }
+
+  /**
+   * Find an available room or create a new one for matchmaking
+   * @returns Available roomId
+   */
+  findOrCreateRoom(): SuccessResponse<RoomId> | FailureResponse {
+    // Find a room that is not full
+    for (const [roomId, room] of this.rooms.entries()) {
+      if (!room.isFull()) {
+        console.log(`[Manager] Found available room: ${roomId}`);
+        return { success: true, message: roomId };
+      }
+    }
+
+    // No available room found, create a new one
+    const newRoomId = randomUUID();
+    const result = this.createRoom(newRoomId);
+
+    if (result.success) {
+      console.log(`[Manager] Created new room: ${newRoomId}`);
+      return { success: true, message: newRoomId };
+    }
+
+    return { success: false, message: "Failed to find or create room" };
+  }
   /**
    * Handle player ready status change
    */
   readyPlayer(
     roomId: RoomId,
     connId: ConnId,
-    status: boolean
+    status: boolean,
   ): SuccessResponse | FailureResponse {
     const player = this.rooms.get(roomId)?.getPlayerDate(connId);
     if (player) {
@@ -142,7 +168,6 @@ class Manager {
   /* ========================================================= */
   /* 게임 관리                                                   */
   /* ========================================================= */
-
 
   getGameDate(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
     const game = this.games.get(roomId);

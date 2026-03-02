@@ -24,7 +24,7 @@ class ApiRoutes {
     port: number,
     apiController: ApiController,
     userController: UserController,
-    errorHandler: GlobalErrorHandler
+    errorHandler: GlobalErrorHandler,
   ) {
     const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : port;
 
@@ -43,7 +43,7 @@ class ApiRoutes {
         origin: ["http://localhost:3000", "http://localhost:80"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
-      })
+      }),
     );
 
     this.app.use(express.json());
@@ -52,7 +52,7 @@ class ApiRoutes {
 
     this.app.use(
       (err: Error, req: Request, res: Response, next: NextFunction) =>
-        this.errorHandler.handle(err, req, res, next)
+        this.errorHandler.handle(err, req, res, next),
     );
   }
 
@@ -65,7 +65,7 @@ class ApiRoutes {
       "/api/room",
       (req: Request, res: Response, next: NextFunction) => {
         this.apiController.createRoom(req, res, next);
-      }
+      },
     );
 
     // 방 확인
@@ -73,7 +73,7 @@ class ApiRoutes {
       "/api/room",
       (req: Request, res: Response, next: NextFunction) => {
         this.apiController.checkRoom(req, res, next);
-      }
+      },
     );
 
     // 대기실 목록 렌더링
@@ -81,17 +81,30 @@ class ApiRoutes {
       "/api/roomList",
       (req: Request, res: Response, next: NextFunction) => {
         this.apiController.getRoomList(req, res, next);
-      }
+      },
     );
     /* ========================================================= */
     /* User */
     /* ========================================================= */
 
+    // 사용자 생성 (POST)
     this.app.post(
-      "/api/userInfo",
+      "/api/user",
       (req: Request, res: Response, next: NextFunction) => {
-        this.apiController.getRoomList(req, res, next);
-      }
+        this.userController.createUser(req, res, next);
+      },
+    );
+
+    /* ========================================================= */
+    /* Ticket */
+    /* ========================================================= */
+
+    // 티켓 발급 (POST)
+    this.app.post(
+      "/api/ticket",
+      (req: Request, res: Response, next: NextFunction) => {
+        this.apiController.issueTicket(req, res, next);
+      },
     );
   }
 
