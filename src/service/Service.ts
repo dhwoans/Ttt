@@ -44,6 +44,15 @@ class Service {
   checkRoom(roomId: RoomId): SuccessResponse<Room> | FailureResponse {
     return this.manager.getRoomData(roomId);
   }
+
+  /**
+   * Get room data by roomId
+   * @param {string} roomId
+   * @returns {Room} Room instance
+   */
+  getRoomData(roomId: RoomId): SuccessResponse<Room> | FailureResponse {
+    return this.manager.getRoomData(roomId);
+  }
   /**
    *
    * @param roomId
@@ -78,14 +87,16 @@ class Service {
    * @param roomId
    * @param connId
    * @param nickname
+   * @param avatar
    * @returns
    */
   joinPlayer(
     roomId: RoomId,
     connId: ConnId,
     nickname: Nickname,
+    avatar?: string,
   ): SuccessResponse<RoomId> | FailureResponse {
-    return this.manager.joinPlayer(roomId, connId, nickname);
+    return this.manager.joinPlayer(roomId, connId, nickname, avatar);
   }
 
   /**

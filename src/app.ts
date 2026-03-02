@@ -17,10 +17,11 @@ import RedisManager from "./utils/redis.js";
 const manager = new Manager();
 const errorHandler = new ErrorHandler();
 // const sessionManger = new SessionManger();
-const roomservice = new Service(manager);
-const apiController = new ApiController(roomservice);
-
 const redisManger = new RedisManager();
+
+const roomservice = new Service(manager);
+const apiController = new ApiController(roomservice, redisManger);
+
 const userModel = new UserModel(redisManger);
 const userService = new UserService(userModel);
 const userController = new UserController(userService);
@@ -39,6 +40,7 @@ const socket: SocketManager = new SocketIOManager(
   server,
   receiver,
   roomservice,
+  redisManger,
 );
 socket.init();
 console.log("[App] Socket.IO initialized");

@@ -55,6 +55,7 @@ class Manager {
     roomId: RoomId,
     connId: ConnId,
     nickname: Nickname,
+    avatar?: string,
   ): SuccessResponse<RoomId> | FailureResponse {
     const room = this.rooms.get(roomId);
     if (!room || room.isFull()) {
@@ -63,7 +64,7 @@ class Manager {
         message: `Cannot join room ${roomId}: room not found or full`,
       };
     }
-    room.addPlayer(connId, nickname);
+    room.addPlayer(connId, nickname, avatar);
     return { success: true, message: roomId };
   }
 

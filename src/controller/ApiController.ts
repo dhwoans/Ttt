@@ -4,9 +4,13 @@ import { EVENT_LIST, eventshandler } from "../utils/eventhandler.js";
 import type { roomInfo } from "../type/socket.js";
 import crypto from "crypto";
 import type { TicketResponse, TicketDto } from "../dtos/Ticket.dto.js";
+import type RedisManager from "../utils/redis.js";
 
 class ApiController {
-  constructor(public service: Service) {}
+  constructor(
+    public service: Service,
+    public redis: RedisManager,
+  ) {}
 
   /* ========================================================= */
   /* Room API 처리 */
@@ -126,13 +130,36 @@ class ApiController {
 
   /**
    * 클라이언트 요청 시 티켓을 발급하고 웹소켓 서버 URL을 반환
-   * @param req
+   * @param req - { userId, nickname, avatar }
    * @param res
    * @param next
    */
-  issueTicket(req: Request, res: Response, next: NextFunction): void {
+  async issueTicket(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
-      console.log("[ApiController] Ticket issuance request");
+      console.log("[ApiController] Ticket issuance request:", req.body);
+
+      const { userId, nickname, avatar } = req.body;
+
+      // 필수 값 체크 (구체적인 에러 메시지)
+      const missingFields: string[] = [];
+      if (!userId) missingFields.push("userId");
+      if (!nickname) missingFields.push("nickname");
+
+      if (missingFields.length > 0) {
+        const errorMessage = `Missing required fields: ${missingFields.join(", ")}`;
+        console.error(`[ApiController] Bad Request: ${errorMessage}`);
+        res.status(400).json({
+          success: false,
+          message: errorMessage,
+          required: ["userId", "nickname"],
+          optional: ["avatar"],
+        });
+        return;
+      }
 
       // 랜덤 티켓 생성 (16바이트 = 32자 hex 문자열)
       const ticket = `ticket_${crypto.randomBytes(16).toString("hex")}`;
@@ -143,11 +170,34 @@ class ApiController {
       const wsPort = process.env.WS_PORT || process.env.PORT || "8080";
       const gameServerUrl = `${wsProtocol}://${wsHost}:${wsPort}`;
 
-      // TODO: Redis에 티켓 저장 (60초 만료)
-      // await redis.setex(ticket, 60, JSON.stringify({ valid: true }));
+      // Redis에 티켓과 사용자 정보 저장 (60초 만료)
+      const ticketData = {
+        userId,
+        nickname,
+        avatar: avatar || null,
+        createdAt: Date.now(),
+      };
 
-      console.log("[ApiController] Ticket issued:", {
+      const redisResult = await this.redis.setex(
         ticket,
+        60,
+        JSON.stringify(ticketData),
+      );
+
+      if (!redisResult) {
+        console.error("[ApiController] Failed to save ticket to Redis");
+        res.status(500).json({
+          success: false,
+          message: "Failed to create ticket: Redis storage error",
+        });
+        return;
+      }
+
+      console.log("[ApiController] ✅ Ticket issued successfully:", {
+        ticket,
+        userId,
+        nickname,
+        avatar,
         gameServerUrl,
         expiresIn: "60 seconds",
       });
@@ -161,8 +211,14 @@ class ApiController {
 
       res.status(200).json(response);
     } catch (error) {
-      console.error("[ApiController] Ticket issuance error:", error);
-      next(error);
+      console.error("[ApiController] ❌ Ticket issuance error:", error);
+      res.status(500).json({
+        success: false,
+        message:
+          error instanceof Error
+            ? `Server error: ${error.message}`
+            : "Internal server error",
+      });
     }
   }
 }
