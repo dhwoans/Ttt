@@ -9,5 +9,6 @@ export interface TicketResponse {
   success: boolean;
   gameServerUrl?: string;
   ticket?: string;
+  ttl?: number;
   message?: string;
 }

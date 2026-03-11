@@ -207,6 +207,7 @@ class ApiController {
         success: true,
         gameServerUrl,
         ticket,
+        ttl: 60,
       };
 
       res.status(200).json(response);

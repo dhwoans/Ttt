@@ -13,13 +13,13 @@ import type Action from "../dtos/Action.dto.js";
 class PlayingState extends State {
   onEnter(game: Ttt): void {
     game.status = "PLAYING";
-    game.currentTurn = 0;
+    game.currentTurn = Math.floor(Math.random() * game.players.length);
     console.log(`[FSM] Game started. Initial turn: ${game.currentTurn}`);
   }
 
   handleAction(
     game: Ttt,
-    action: Action
+    action: Action,
   ): SuccessResponse<string> | FailureResponse {
     const index = action.move;
     // Validate position hasn't been taken

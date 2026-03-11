@@ -6,9 +6,10 @@ import LobbyIOManager from "./LobbyIOManager.js";
 import RoomIOManager from "./RoomIOManager.js";
 import type Service from "../../service/Service.js";
 import type RedisManager from "../../utils/redis.js";
+import type { ServerEvents, ClientEvents } from "@share";
 
 class SocketIOManager implements SocketManager {
-  io: Server;
+  io: Server<ClientEvents, ServerEvents>;
   receiver: Receiver;
   lobby: LobbyIOManager;
   room: RoomIOManager;
@@ -22,7 +23,7 @@ class SocketIOManager implements SocketManager {
     redis: RedisManager,
   ) {
     console.log("[SocketIOManager] Initializing Socket.IO server...");
-    this.io = new Server(server, {
+    this.io = new Server<ClientEvents, ServerEvents>(server, {
       // Socket.IO 기본 경로 사용
       cors: {
         origin: ["http://localhost:3000", "http://localhost:80"],
@@ -85,7 +86,6 @@ class SocketIOManager implements SocketManager {
         socketId: socket.id,
         message: "Socket connection established",
       });
-      console.log(`[SocketIOManager] ✅ CONNECTED event sent to client`);
 
       if (!ticket) {
         console.error("[SocketIOManager] ❌ No ticket, disconnecting");
@@ -198,7 +198,12 @@ class SocketIOManager implements SocketManager {
         // 1. 기존 플레이어들에게 새 플레이어 입장 알림
         if (existingPlayers.length > 0) {
           socket.to(roomId).emit("PLAYER_JOINED", {
-            player: newPlayerInfo,
+            player: {
+              connId: userId,
+              nickname,
+              isReady: false,
+              avatar,
+            },
             roomId,
           });
           console.log(
@@ -248,7 +253,7 @@ class SocketIOManager implements SocketManager {
 
             // 같은 방의 다른 플레이어들에게 LEAVE 알림
             socket.to(roomId).emit("PLAYER_LEFT", {
-              userId,
+              connId: userId,
               nickname,
               avatar,
               roomId,
@@ -321,7 +326,7 @@ class SocketIOManager implements SocketManager {
 
           // 같은 방의 모든 플레이어들에게 (자신 포함) READY 상태 알림
           this.io.to(roomId).emit("PLAYER_READY", {
-            userId,
+            connId: userId,
             nickname,
             avatar,
             isReady,
@@ -364,6 +369,30 @@ class SocketIOManager implements SocketManager {
               return;
             }
 
+            // 게임 시작 직후 다음 판 준비를 위해 ready 상태를 초기화한다.
+            for (const player of players) {
+              const resetReadyResult = this.service.readyPlayer(
+                roomId,
+                player.connId,
+                false,
+              );
+
+              if (!resetReadyResult.success) {
+                console.error(
+                  `[SocketIOManager] ❌ Failed to reset ready for ${player.connId}: ${resetReadyResult.message}`,
+                );
+                continue;
+              }
+
+              this.io.to(roomId).emit("PLAYER_READY", {
+                connId: player.connId,
+                nickname: player.nickname,
+                ...(player.avatar ? { avatar: player.avatar } : {}),
+                isReady: false,
+                roomId,
+              });
+            }
+
             const gameStateResult = this.service.getGameState(roomId);
             if (!gameStateResult.success || !gameStateResult.message) {
               console.error(
@@ -379,8 +408,8 @@ class SocketIOManager implements SocketManager {
             const state = gameStateResult.message.getState();
             this.io.to(roomId).emit("PLAYING", {
               roomId,
-              status: state.status,
-              currentTurnPlayerId: state.players[state.currentTurn],
+              status: state.status as "PLAYING",
+              currentTurnPlayerId: state.players[state.currentTurn]!,
               players: state.players,
             });
             console.log(
@@ -392,6 +421,113 @@ class SocketIOManager implements SocketManager {
             `[SocketIOManager] ❌ Failed to update ready status: ${readyResult.message}`,
           );
           socket.emit("ERROR", { message: "Failed to update ready status" });
+        }
+      });
+
+      // MOVE 이벤트 핸들러: 플레이어가 수를 둘 때
+      socket.on("MOVE", (data: { move: number }) => {
+        console.log(`[SocketIOManager] 🎯 MOVE event from ${socket.id}:`, data);
+
+        const roomId = socket.data.roomId;
+        const userId = socket.data.userId;
+        const nickname = socket.data.nickname;
+
+        if (!roomId || !userId || !nickname) {
+          console.error(
+            "[SocketIOManager] ❌ MOVE failed: no room/user data found",
+          );
+          socket.emit("ERROR", { message: "Not in a room" });
+          return;
+        }
+
+        if (typeof data?.move !== "number" || data.move < 0 || data.move > 8) {
+          console.error(
+            `[SocketIOManager] ❌ MOVE failed: invalid move index ${data?.move}`,
+          );
+          socket.emit("ERROR", { message: "Invalid move: must be 0-8" });
+          return;
+        }
+
+        const move = data.move;
+        console.log(
+          `[SocketIOManager] Processing move: user=${userId}, room=${roomId}, position=${move}`,
+        );
+
+        // Action 객체 생성
+        const action = {
+          type: "MOVE",
+          move,
+          nickname,
+        };
+
+        // 게임 로직 처리 (유효성 검증 및 보드 업데이트)
+        const moveResult = this.service.getGameState(roomId);
+        if (!moveResult.success || !moveResult.message) {
+          console.error(
+            `[SocketIOManager] ❌ Failed to get game state: ${moveResult.message}`,
+          );
+          socket.emit("ERROR", { message: "Game not found" });
+          return;
+        }
+
+        const game = moveResult.message;
+        const actionResult = game.processAction(action);
+
+        if (!actionResult.success) {
+          console.error(
+            `[SocketIOManager] ❌ Move rejected: ${actionResult.message}`,
+          );
+          socket.emit("ERROR", { message: actionResult.message });
+          return;
+        }
+
+        // 업데이트된 게임 상태 조회
+        const state = game.getState();
+        console.log(
+          `[SocketIOManager] Move processed, game status: ${state.status}`,
+        );
+
+        // 모든 플레이어에게 수를 둔 결과 브로드캐스트
+        this.io.to(roomId).emit("MOVE_MADE", {
+          connId: userId,
+          move,
+        });
+        console.log(
+          `[SocketIOManager] 📢 MOVE_MADE broadcasted to room ${roomId}`,
+        );
+
+        // 게임 종료 확인
+        if (state.status === "GAME_OVER") {
+          let winnerUserId: string | null = null;
+          let result: "win" | "draw" = "draw";
+
+          if (state.winner >= 0 && state.winner < state.players.length) {
+            winnerUserId = state.players[state.winner] || null;
+            result = "win";
+          }
+
+          this.io.to(roomId).emit("GAME_OVER", {
+            roomId,
+            result,
+            winner: winnerUserId,
+            winnerIndex: state.winner,
+            board: state.board,
+          });
+          console.log(
+            `[SocketIOManager] 🏁 GAME_OVER broadcasted: result=${result}, winner=${winnerUserId}`,
+          );
+        } else {
+          // 게임 진행 중 - 다음 턴 플레이어 알림
+          const nextPlayerId =
+            state.players[state.currentTurn % state.players.length]!;
+          this.io.to(roomId).emit("NEXT_TURN", {
+            roomId,
+            currentTurn: state.currentTurn,
+            nextPlayerId,
+          });
+          console.log(
+            `[SocketIOManager] 🔄 NEXT_TURN broadcasted: turn=${state.currentTurn}, player=${nextPlayerId}`,
+          );
         }
       });
 
@@ -420,7 +556,7 @@ class SocketIOManager implements SocketManager {
 
             // 같은 방의 다른 플레이어들에게 나간 플레이어 정보 전송
             socket.to(roomId).emit("PLAYER_LEFT", {
-              userId,
+              connId: userId,
               nickname,
               avatar,
               roomId,
