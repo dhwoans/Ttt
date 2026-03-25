@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import type Service from "../service/UserService.js";
+import type UserService from "../service/UserService.js";
 
 class UserController {
-  constructor(public service: Service) {}
+  constructor(public userService: UserService) {}
 
   /* ========================================================= */
   /* User API 처리 */
@@ -19,7 +19,7 @@ class UserController {
       console.log("[UserController] User creation request");
       const { nickname, avatar } = req.body;
 
-      const result = this.service.createUser(nickname, avatar);
+      const result = this.userService.createUser(nickname, avatar);
 
       if (!result.success || !result.message) {
         next(new Error("Failed to create user"));

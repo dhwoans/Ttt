@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import type Service from "../service/Service.js";
+import type RoomService from "../service/RoomService.js";
 import { EVENT_LIST, eventshandler } from "../utils/eventhandler.js";
 import type { roomInfo } from "../type/socket.js";
 import crypto from "crypto";
@@ -8,7 +8,7 @@ import type RedisManager from "../utils/redis.js";
 
 class ApiController {
   constructor(
-    public service: Service,
+    public roomService: RoomService,
     public redis: RedisManager,
   ) {}
 
@@ -29,7 +29,7 @@ class ApiController {
     try {
       console.log("[ApiController] Room creation request");
       const { userId, nickname } = req.body;
-      const result = this.service.createRoom(userId, nickname);
+      const result = this.roomService.createRoom(userId, nickname);
       if (!result.success || !result.message) {
         next(
           new Error(
@@ -40,7 +40,7 @@ class ApiController {
         );
         return;
       }
-      const room = this.service.checkRoom(result.message);
+      const room = this.roomService.checkRoom(result.message);
       if (!room.success || !room.message) {
         next(
           new Error(
@@ -82,7 +82,7 @@ class ApiController {
         return;
       }
       if (typeof roomId === "string") {
-        const result = this.service.checkRoom(roomId);
+        const result = this.roomService.checkRoom(roomId);
         if (!result.success || !result.message) {
           next(
             new Error(
@@ -113,7 +113,7 @@ class ApiController {
    */
   getRoomList(req: Request, res: Response, next: NextFunction): void {
     try {
-      const result = this.service.getRoomList();
+      const result = this.roomService.getRoomList();
       console.log("[ApiController] Room list retrieved:", result);
       res.status(200).json({
         success: true,

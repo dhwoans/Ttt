@@ -1,14 +1,18 @@
-import Sender from "../routes/Sender.js";
+import { EVENT_LIST, eventshandler } from "../utils/eventhandler.js";
+import crypto from "crypto";
 class ApiController {
-    service;
-    sender;
-    constructor(service, sender) {
-        this.service = service;
-        this.sender = sender;
+    roomService;
+    redis;
+    constructor(roomService, redis) {
+        this.roomService = roomService;
+        this.redis = redis;
     }
     /* ========================================================= */
-    /* API 처리 */
+    /* Room API 처리 */
     /* ========================================================= */
+    checkHealth(req, res, next) {
+        return 1;
+    }
     /**
      *
      * @param req
@@ -17,12 +21,32 @@ class ApiController {
      */
     createRoom(req, res, next) {
         try {
-            console.log(this.constructor.name, " : 방생성 요청");
+            console.log("[ApiController] Room creation request");
             const { userId, nickname } = req.body;
-            const roomId = this.service.createRoom(userId, nickname);
+            const result = this.roomService.createRoom(userId, nickname);
+            if (!result.success || !result.message) {
+                next(new Error(typeof result.message === "string"
+                    ? result.message
+                    : "Failed to create room"));
+                return;
+            }
+            const room = this.roomService.checkRoom(result.message);
+            if (!room.success || !room.message) {
+                next(new Error(typeof room.message === "string"
+                    ? room.message
+                    : "Failed to get room"));
+                return;
+            }
+            // 방생성 이벤트
+            eventshandler.emit(EVENT_LIST.ROOM_CREATE, {
+                roomId: result.message,
+                isFull: room.message.isFull(),
+                currentPlayers: room.message.players.size,
+                maxPlayers: room.message.MAX_PLAYERS,
+            });
+            // 방생성자 http 응답
             res.status(201).json({
-                success: true,
-                roomId,
+                ...result,
             });
         }
         catch (error) {
@@ -40,16 +64,20 @@ class ApiController {
         try {
             const roomId = req.query.roomId;
             if (!roomId) {
-                console.log(this.constructor.name, " roomId 누락");
-                next(new Error("roomId 누락"));
+                console.log("[ApiController] Missing roomId parameter");
+                next(new Error("roomId is required"));
+                return;
             }
             if (typeof roomId === "string") {
-                const room = this.service.checkRoom(parseInt(roomId));
-                if (!room) {
-                    return next(new Error("없는 방에 접근"));
+                const result = this.roomService.checkRoom(roomId);
+                if (!result.success || !result.message) {
+                    next(new Error(typeof result.message === "string"
+                        ? result.message
+                        : "Failed to get room"));
+                    return;
                 }
+                const room = result.message;
                 if (room.isFull()) {
-                    //클라이언트 강제 새로고침
                     res.status(300).json({
                         success: false,
                     });
@@ -66,14 +94,12 @@ class ApiController {
         }
     }
     /**
-     *
-     * @param req
-     * @param res
-     * @param next
+     * Get list of all available rooms
      */
     getRoomList(req, res, next) {
         try {
-            const result = this.service.getRoomList();
+            const result = this.roomService.getRoomList();
+            console.log("[ApiController] Room list retrieved:", result);
             res.status(200).json({
                 success: true,
                 roomList: result,
@@ -84,182 +110,83 @@ class ApiController {
         }
     }
     /* ========================================================= */
-    /* WS  처리                                                   */
+    /* Ticket API 처리 */
     /* ========================================================= */
     /**
-     * @description 게임방에 연결
-     * @param rawMessage
-     * @param connId
+     * 클라이언트 요청 시 티켓을 발급하고 웹소켓 서버 URL을 반환
+     * @param req - { userId, nickname, avatar }
+     * @param res
+     * @param next
      */
-    handleJoin(rawMessage, connId) {
-        // 클라이언트 새로 고침시 채팅내역,플레이어정보,log
-        const { type, message, sender } = rawMessage;
-        const [roomId, userId] = message;
-        const room = this.service.checkRoom(parseInt(roomId));
-        if (!room) {
-            const errorMessage = {
-                type: "ERROR",
-                message: ["잘못된 방에 접근"],
-                sender: "system",
+    async issueTicket(req, res, next) {
+        try {
+            console.log("[ApiController] Ticket issuance request:", req.body);
+            const { userId, nickname, avatar } = req.body;
+            // 필수 값 체크 (구체적인 에러 메시지)
+            const missingFields = [];
+            if (!userId)
+                missingFields.push("userId");
+            if (!nickname)
+                missingFields.push("nickname");
+            if (missingFields.length > 0) {
+                const errorMessage = `Missing required fields: ${missingFields.join(", ")}`;
+                console.error(`[ApiController] Bad Request: ${errorMessage}`);
+                res.status(400).json({
+                    success: false,
+                    message: errorMessage,
+                    required: ["userId", "nickname"],
+                    optional: ["avatar"],
+                });
+                return;
+            }
+            // 랜덤 티켓 생성 (16바이트 = 32자 hex 문자열)
+            const ticket = `ticket_${crypto.randomBytes(16).toString("hex")}`;
+            // 웹소켓 게임 서버 URL (환경 변수 또는 기본값 사용)
+            const wsProtocol = process.env.WS_PROTOCOL || "ws";
+            const wsHost = process.env.WS_HOST || "localhost";
+            const wsPort = process.env.WS_PORT || process.env.PORT || "8080";
+            const gameServerUrl = `${wsProtocol}://${wsHost}:${wsPort}`;
+            // Redis에 티켓과 사용자 정보 저장 (60초 만료)
+            const ticketData = {
+                userId,
+                nickname,
+                avatar: avatar || null,
+                createdAt: Date.now(),
             };
-            this.sender.sendToUser(errorMessage, connId);
-        }
-        if (room.players.size === 1) {
-            // 먼저온 플레이어에게 전하기
-            const joinMessage = {
-                type: "JOIN",
-                message: [connId.toString()],
-                sender,
-            };
-            room.players.forEach((value, player) => {
-                this.sender.sendToUser(joinMessage, player);
+            const redisResult = await this.redis.setex(ticket, 60, JSON.stringify(ticketData));
+            if (!redisResult) {
+                console.error("[ApiController] Failed to save ticket to Redis");
+                res.status(500).json({
+                    success: false,
+                    message: "Failed to create ticket: Redis storage error",
+                });
+                return;
+            }
+            console.log("[ApiController] ✅ Ticket issued successfully:", {
+                ticket,
+                userId,
+                nickname,
+                avatar,
+                gameServerUrl,
+                expiresIn: "60 seconds",
             });
-        }
-        const result = this.service.joinPlayer(parseInt(roomId), parseInt(userId), sender);
-        if (result) {
-            //들어온 플레이어에게 방정보 전하기
-            const room = this.service.checkRoom(parseInt(roomId));
-        }
-    }
-    /**
-     * @description 채팅 처리
-     * @param rawMessage
-     */
-    handleChat(rawMessage) {
-        const { type, message, sender } = rawMessage;
-        const [roomId, chat] = message;
-        const room = this.service.checkRoom(parseInt(roomId));
-        if (!room)
-            throw new Error(`${this.constructor.name} : 없는 방 조회`);
-        const chatMessage = {
-            type: "CHAT",
-            message: [chat],
-            sender,
-        };
-        const players = room.getAllPlayersData();
-        for (const [connId, playerInfo] of players.entries()) {
-            this.sender.sendToUser(chatMessage, connId);
-        }
-        //
-    }
-    /**
-     * @description 게임방 퇴장 처리
-     * @param rawMessage
-     * @param connId
-     */
-    handleLeave(rawMessage, connId) {
-        //게임 상태에 따라 다르게 처리
-        //남아있는 사람에게 알림
-        const { type, message, sender } = rawMessage;
-        const [roomId] = message;
-        const nickname = rawMessage.sender;
-        console.log("leave :", roomId);
-        const result = this.service.removePlayer(parseInt(roomId), connId);
-        if (result) {
-            const sendMessage = {
-                type: "LEAVE",
-                message: [connId.toString(), sender], //떠난사람
-                sender: "system",
+            // 클라이언트가 기대하는 응답 형식
+            const response = {
+                success: true,
+                gameServerUrl,
+                ticket,
+                ttl: 60,
             };
-            // 방안에 남아있는 사람에게 메시지 전송
-            const players = this.service
-                .checkRoom(parseInt(roomId))
-                ?.getAllPlayersData();
-            for (const [connId, _] of players.entries()) {
-                this.sender.sendToUser(sendMessage, connId);
-            }
+            res.status(200).json(response);
         }
-        else {
-            throw new Error(`${this.constructor.name} : 퇴장처리중오류`);
-        }
-    }
-    /**
-     * @description 플레이어 레디 처리
-     * @param rawMessage
-     * @param connId
-     */
-    handleReady(rawMessage, connId) {
-        const { type, message, sender } = rawMessage;
-        const [roomId, status] = message;
-        const result = this.service.readyPlayer(parseInt(roomId), connId, Boolean(status));
-        if (result) {
-            const readyMessage = {
-                type: "READY",
-                message: [connId.toString(), status.toString()],
-                sender: "system",
-            };
-            const players = this.service
-                .checkRoom(parseInt(roomId))
-                ?.getAllPlayersData();
-            for (const connId of players.keys()) {
-                this.sender.sendToUser(readyMessage, connId);
-            }
-        }
-        //게임시작 확인
-        const startGame = this.service.gameStart(parseInt(roomId));
-        if (startGame) {
-            //fsm on
-            const state = this.service.getGameState(parseInt(roomId));
-            // console.log(state.status);
-            // console.log(state.currentTurn);
-            // console.log(state.players);
-            //게임시작 메시지 전송
-            const startMessage = {
-                type: state.status,
-                message: [state.players[state.currentTurn].toString()],
-                sender: "system",
-            };
-            console.log(startMessage);
-            // 플레이어들에게 알림
-            const players = this.service
-                .checkRoom(parseInt(roomId))
-                ?.getAllPlayersData();
-            for (const connId of players.keys()) {
-                this.sender.sendToUser(startMessage, connId);
-            }
-        }
-    }
-    /**
-     *
-     * @param rawMessage
-     * @param connId
-     */
-    handleMove(rawMessage, connId) {
-        const result = this.service.setMove(rawMessage);
-        if (result.success) {
-            const { type, message, sender } = rawMessage;
-            const [roomId, index] = message;
-            const state = this.service.getGameState(parseInt(roomId));
-            //move 브로드캐스트
-            const moveMessage = {
-                type: "MOVE",
-                message: [sender, index.toString()],
-                sender: "system",
-            };
-            //다음턴 이나 게임 결과 전송
-            const nextTurnMessage = {
-                type: state.status,
-                message: state.status === "PLAYING"
-                    ? [state.players[state.currentTurn % 2].toString()]
-                    : [state.winner.toString()], // userId or 0
-                sender: "system",
-            };
-            // 플레이어 전송
-            const players = this.service
-                .checkRoom(parseInt(roomId))
-                .getAllPlayersData();
-            for (const connId of players.keys()) {
-                this.sender.sendToUser(moveMessage, connId);
-                this.sender.sendToUser(nextTurnMessage, connId);
-            }
-        }
-        else {
-            const errorMessage = {
-                type: "ERROR",
-                message: [result.message],
-                sender: "system",
-            };
-            this.sender.sendToUser(errorMessage, connId);
+        catch (error) {
+            console.error("[ApiController] ❌ Ticket issuance error:", error);
+            res.status(500).json({
+                success: false,
+                message: error instanceof Error
+                    ? `Server error: ${error.message}`
+                    : "Internal server error",
+            });
         }
     }
 }

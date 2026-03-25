@@ -43,5 +43,61 @@
  */
 
 export * from "./rest-api.types.js";
-export * from "./socket-client-events.types.js";
-export * from "./socket-server-events.types.js";
+
+type RestSchemas = import("./rest-api.types.js").components["schemas"];
+export type IssueTicketRequest = RestSchemas["IssueTicketRequest"];
+export type IssueTicketResponse = RestSchemas["IssueTicketResponse"];
+
+type ClientSchemas =
+  import("./socket-client-events.types.js").components["schemas"];
+type ServerSchemas =
+  import("./socket-server-events.types.js").components["schemas"];
+
+export type ReadyEventPayload = ClientSchemas["ReadyEventPayload"];
+export type MoveEventPayload = ClientSchemas["MoveEventPayload"];
+export type LeaveEventPayload = Record<string, never>;
+
+export type ExistingPlayersEvent = ServerSchemas["ExistingPlayersEvent"];
+export type PlayerJoinedEvent = ServerSchemas["PlayerJoinedEvent"];
+export type PlayerReadyEvent = ServerSchemas["PlayerReadyEvent"];
+export type ReadyTimeoutExpiredEvent =
+  ServerSchemas["ReadyTimeoutExpiredEvent"];
+export type TurnTimeoutStartedEvent = ServerSchemas["TurnTimeoutStartedEvent"];
+export type MoveMadeEvent = ServerSchemas["MoveMadeEvent"];
+export type PlayerLeftEvent = ServerSchemas["PlayerLeftEvent"];
+export type LeaveSuccessEvent = ServerSchemas["LeaveSuccessEvent"];
+
+/** 클라이언트 → 서버 이벤트 맵 (Socket.IO ListenEvents) */
+export type ClientEvents = {
+  READY: (payload: ReadyEventPayload) => void;
+  MOVE: (payload: MoveEventPayload) => void;
+  LEAVE: (payload: LeaveEventPayload) => void;
+};
+
+/** 서버 → 클라이언트 이벤트 맵 (Socket.IO EmitEvents) */
+export type ServerEvents = {
+  CONNECTED: (payload: ServerSchemas["ConnectedEvent"]) => void;
+  ROOM_ASSIGNED: (payload: ServerSchemas["RoomAssignedEvent"]) => void;
+  EXISTING_PLAYERS: (payload: ServerSchemas["ExistingPlayersEvent"]) => void;
+  PLAYER_JOINED: (payload: ServerSchemas["PlayerJoinedEvent"]) => void;
+  PLAYER_READY: (payload: ServerSchemas["PlayerReadyEvent"]) => void;
+  READY_TIMEOUT_STARTED: (
+    payload: ServerSchemas["ReadyTimeoutStartedEvent"],
+  ) => void;
+  READY_TIMEOUT_EXPIRED: (
+    payload: ServerSchemas["ReadyTimeoutExpiredEvent"],
+  ) => void;
+  READY_TIMEOUT_CANCELED: (
+    payload: ServerSchemas["ReadyTimeoutCanceledEvent"],
+  ) => void;
+  PLAYING: (payload: ServerSchemas["PlayingEvent"]) => void;
+  TURN_TIMEOUT_STARTED: (
+    payload: ServerSchemas["TurnTimeoutStartedEvent"],
+  ) => void;
+  MOVE_MADE: (payload: ServerSchemas["MoveMadeEvent"]) => void;
+  NEXT_TURN: (payload: ServerSchemas["NextTurnEvent"]) => void;
+  GAME_OVER: (payload: ServerSchemas["GameOverEvent"]) => void;
+  PLAYER_LEFT: (payload: ServerSchemas["PlayerLeftEvent"]) => void;
+  LEAVE_SUCCESS: (payload: ServerSchemas["LeaveSuccessEvent"]) => void;
+  ERROR: (payload: ServerSchemas["SocketErrorEvent"]) => void;
+};

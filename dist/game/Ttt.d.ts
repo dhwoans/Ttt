@@ -2,28 +2,39 @@ import type State from "../gameState/State.js";
 import type Action from "../dtos/Action.dto.js";
 import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
 import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
+import type { ConnId } from "../type/socket.js";
 /**
- * @class Ttt
- * @description Tic-Tac-Toe 게임의 컨텍스트(Context) 클래스.
- * 게임의 모든 데이터(상태)를 보유하며, 모든 외부 요청을 현재 상태 객체(currentState)에 위임합니다.
- * 상태 패턴 FSM에서 Context 역할을 담당합니다.
+ * Tic-Tac-Toe game context class (FSM Context pattern)
+ * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
 declare class Ttt {
     board: Array<string>;
     winner: number;
     status: string;
-    players: Array<number>;
+    players: Array<ConnId>;
     currentTurn: number;
     currentState: State;
     constructor();
-    setPlayersId(playerId: number): void;
+    /**
+     * Add player ID to the game
+     */
+    setPlayersId(playerId: string): void;
+    /**
+     * Transition to new state and invoke its entry logic
+     */
     changeState(newState: State): void;
-    processAction(action: Action): SuccessResponse | FailureResponse;
+    /**
+     * Delegate action processing to current state
+     */
+    processAction(action: Action): SuccessResponse<string | void> | FailureResponse;
+    /**
+     * Get current game state snapshot
+     */
     getState(): {
         board: Array<string>;
         winner: number;
         status: string;
-        players: Array<number>;
+        players: Array<string>;
         currentTurn: number;
     };
 }

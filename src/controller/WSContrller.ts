@@ -1,5 +1,6 @@
 import type SocketMessage from "../dtos/SocketMessage.dto.js";
-import type Service from "../service/Service.js";
+import type RoomService from "../service/RoomService.js";
+import type LegacyWsGameService from "../service/legacy/LegacyWsGameService.js";
 import type User from "../dtos/user/User.dto.js";
 import type { PlayerInfo } from "../dtos/user/User.dto.js";
 import { EVENT_LIST, eventshandler } from "../utils/eventhandler.js";
@@ -7,9 +8,12 @@ import { EMIT_MODES } from "../utils/eventhandler.js";
 import type { ConnId } from "../type/socket.js";
 
 class WSController {
-  constructor(public service: Service) {}
+  constructor(
+    public roomService: RoomService,
+    public legacyWsGameService: LegacyWsGameService,
+  ) {}
   handleMove(rawMessage: SocketMessage, connId: ConnId): void {
-    const result = this.service.processMove(rawMessage, connId);
+    const result = this.legacyWsGameService.processMove(rawMessage, connId);
     if (!result.success) {
       // Service already emits an error to the client, but ensure fallback emit here
       const errorPayload: SocketMessage = {
@@ -27,7 +31,7 @@ class WSController {
   handleJoin(rawMessage: SocketMessage, connId: string): void {
     const { type, message, sender } = rawMessage;
     const [roomId, userId] = message;
-    const checkRoomResult = this.service.checkRoom(roomId!);
+    const checkRoomResult = this.roomService.checkRoom(roomId!);
     if (!checkRoomResult.success) {
       const errorMessage: SocketMessage = {
         type: "ERROR",
@@ -55,7 +59,7 @@ class WSController {
           payload: joinMessage,
         });
       }
-      const result = this.service.joinPlayer(roomId!, userId!, sender);
+      const result = this.roomService.joinPlayer(roomId!, userId!, sender);
       if (result.success) {
         eventshandler.emit(EVENT_LIST.PLAYER_PLUS, roomId);
         const players = room.getAllPlayersData();
@@ -83,7 +87,7 @@ class WSController {
   handleChat(rawMessage: SocketMessage): void {
     const { type, message, sender } = rawMessage;
     const [roomId, chat] = message;
-    const result = this.service.checkRoom(roomId!);
+    const result = this.roomService.checkRoom(roomId!);
 
     if (!result.success) {
       throw new Error(`Failed to relay chat: room ${roomId} not found`);
@@ -107,7 +111,7 @@ class WSController {
   handleLeave(rawMessage: SocketMessage, connId: string): void {
     const { type, message, sender } = rawMessage;
     const [roomId] = message;
-    const removePlayerResult = this.service.removePlayer(roomId!, connId);
+    const removePlayerResult = this.roomService.removePlayer(roomId!, connId);
     if (removePlayerResult.success) {
       const message = removePlayerResult.message as string;
       eventshandler.emit(message as any, roomId);
@@ -133,14 +137,18 @@ class WSController {
   handleReady(rawMessage: SocketMessage, connId: string) {
     const { type, message, sender } = rawMessage;
     const [roomId, status] = message;
-    const result = this.service.readyPlayer(roomId!, connId, Boolean(status!));
+    const result = this.roomService.readyPlayer(
+      roomId!,
+      connId,
+      Boolean(status!),
+    );
     if (result.success) {
       const readyMessage: SocketMessage = {
         type: "READY",
         message: [connId, status!],
         sender: "system",
       };
-      const checkRoomResult = this.service.checkRoom(roomId!);
+      const checkRoomResult = this.roomService.checkRoom(roomId!);
       if (checkRoomResult.success) {
         eventshandler.emit(EVENT_LIST.READY, {
           mode: EMIT_MODES.BROADCAST,
@@ -152,9 +160,9 @@ class WSController {
       }
     }
 
-    const startGame = this.service.gameStart(roomId!);
+    const startGame = this.roomService.gameStart(roomId!);
     if (startGame.success) {
-      const resultGameState = this.service.getGameState(roomId!);
+      const resultGameState = this.roomService.getGameState(roomId!);
       if (resultGameState.success && resultGameState.message) {
         const state = resultGameState.message.getState();
         const startMessage: SocketMessage = {
@@ -162,7 +170,7 @@ class WSController {
           message: [state.players[state.currentTurn]!.toString()],
           sender: "system",
         };
-        const checkRoomResult = this.service.checkRoom(roomId!);
+        const checkRoomResult = this.roomService.checkRoom(roomId!);
         if (checkRoomResult.success && checkRoomResult.message) {
           eventshandler.emit(EVENT_LIST.PLAYING, {
             mode: EMIT_MODES.BROADCAST,
@@ -174,8 +182,8 @@ class WSController {
             checkRoomResult.success
               ? "Unknown error"
               : typeof checkRoomResult.message === "string"
-              ? checkRoomResult.message
-              : "Unknown error"
+                ? checkRoomResult.message
+                : "Unknown error",
           );
         }
       }

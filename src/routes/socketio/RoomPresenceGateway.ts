@@ -1,5 +1,5 @@
 import type { Socket } from "socket.io";
-import type Service from "../../service/Service.js";
+import type RoomService from "../../service/RoomService.js";
 import SocketErrorResponder from "./SocketErrorResponder.js";
 import GameEventPublisher from "./GameEventPublisher.js";
 
@@ -26,7 +26,7 @@ type JoinResult =
  */
 class RoomPresenceGateway {
   constructor(
-    private readonly service: Service,
+    private readonly roomService: RoomService,
     private readonly errors: SocketErrorResponder,
     private readonly publisher: GameEventPublisher,
   ) {}
@@ -35,7 +35,7 @@ class RoomPresenceGateway {
    * 유저를 방에 배정하고 조인 처리한 뒤, 입장 관련 이벤트를 전송한다.
    */
   assignAndJoin(socket: Socket, user: AuthenticatedUser): JoinResult {
-    const result = this.service.findOrCreateRoom();
+    const result = this.roomService.findOrCreateRoom();
 
     if (!result.success || !result.message) {
       return { success: false, message: "Failed to assign room" };
@@ -43,13 +43,13 @@ class RoomPresenceGateway {
 
     const roomId = result.message;
 
-    const roomData = this.service.getRoomData(roomId);
+    const roomData = this.roomService.getRoomData(roomId);
     const existingPlayers =
       roomData.success && roomData.message
         ? roomData.message.getAllPlayersData()
         : [];
 
-    const joinResult = this.service.joinPlayer(
+    const joinResult = this.roomService.joinPlayer(
       roomId,
       user.userId,
       user.nickname,
@@ -95,7 +95,7 @@ class RoomPresenceGateway {
       return { success: false, message: "Not in a room" };
     }
 
-    const removeResult = this.service.removePlayer(roomId, userId);
+    const removeResult = this.roomService.removePlayer(roomId, userId);
 
     if (!removeResult.success) {
       return { success: false, message: "Failed to leave room" };

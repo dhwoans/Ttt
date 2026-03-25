@@ -6,48 +6,40 @@ class Room {
         this.MAX_PLAYERS = max;
     }
     /**
-     * 플레이어 추가
-     * @param {number} connId - WebSocket 접속 ID
-     * @param {string} nickname
-     * @returns {object}
+     * Add player to room and return player info
      */
-    addPlayer(connId, nickname) {
+    addPlayer(connId, nickname, avatar) {
         const playerInfo = {
             nickname: nickname,
             isReady: false,
+            ...(avatar && { avatar }),
         };
-        // 플레이어 정보 객체 생성 및 Map에 저장
         this.players.set(connId, playerInfo);
         return playerInfo;
     }
     /**
-     * 접속 ID로 플레이어를 Map에서 제거
-     * @param {string} connId - WebSocket 접속 ID
-     * @returns {boolean} 제거 성공 여부
+     * Remove player from room by connection ID
      */
     removePlayer(connId) {
         return this.players.delete(connId);
     }
     /**
-     * 방이 가득 찼는지 확인
-     * @returns {boolean}
+     * Check if room is at max capacity
      */
     isFull() {
         return this.players.size === this.MAX_PLAYERS;
     }
     /**
-     * 방안 특정 플레이어 정보 목록을 반환
-     * @returns
+     * Get player info by connection ID
      */
     getPlayerDate(connId) {
         const player = this.players.get(connId);
         if (!player)
-            throw new Error(`${this.constructor.name} : 존재 하지 않는 플레이어`);
+            throw new Error(`Player not found: connId=${connId}`);
         return player;
     }
     /**
-     * 방안 모든 플레이어 정보 목록을 반환
-     * @returns {Array<Object>}
+     * Get all players in room with connection IDs
      */
     getAllPlayersData() {
         return Array.from(this.players.entries()).map(([connId, data]) => ({
@@ -56,7 +48,7 @@ class Room {
         }));
     }
     /**
-     * 현재 플레이어 수를 반환
+     * Get current player count
      */
     getCurrentPlayer() {
         return this.players.size;

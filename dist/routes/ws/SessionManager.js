@@ -2,6 +2,9 @@ import WebSocket from "ws";
 /* ========================================================= */
 /* 웹소켓 세션 관리                                          */
 /* ========================================================= */
+/**
+ * @deprecated `WsSocketManager`와 함께 사용되던 ws 기반 세션 관리자. 현재 미사용.
+ */
 class SessionManager {
     sessionMap;
     constructor() {

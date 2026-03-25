@@ -5,10 +5,10 @@ class Receiver {
         this.controller = controller;
         this.routes = {
             JOIN: this.controller.handleJoin,
-            MOVE: this.controller.handleMove,
             LEAVE: this.controller.handleLeave,
-            CHAT: this.controller.handleChat,
             READY: this.controller.handleReady,
+            CHAT: this.controller.handleChat,
+            MOVE: this.controller.handleMove,
         };
     }
     /**

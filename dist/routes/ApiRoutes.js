@@ -4,19 +4,21 @@ import morgan from "morgan";
 class ApiRoutes {
     app;
     port;
-    controller;
+    apiController;
+    userController;
     errorHandler;
-    constructor(port, controller, errorHandler) {
+    constructor(port, apiController, userController, errorHandler) {
         const envPort = process.env.PORT ? parseInt(process.env.PORT, 10) : port;
         this.port = envPort;
         this.app = express();
-        this.controller = controller;
-        this.errorHandler = errorHandler; // errorHandler를 클래스 멤버 변수에 저장
+        this.apiController = apiController;
+        this.userController = userController;
+        this.errorHandler = errorHandler;
         this.app.set("port", this.port);
         this.app.use(morgan("dev"));
         // CORS 설정
         this.app.use(cors({
-            origin: ["http://localhost:3000", "http://localhost:4000"],
+            origin: ["http://localhost:3000", "http://localhost:80"],
             methods: ["GET", "POST", "PUT", "DELETE"],
             credentials: true,
         }));
@@ -25,22 +27,38 @@ class ApiRoutes {
         this.app.use((err, req, res, next) => this.errorHandler.handle(err, req, res, next));
     }
     route() {
+        /* ========================================================= */
+        /* Room */
+        /* ========================================================= */
         // 방 생성 (POST)
         this.app.post("/api/room", (req, res, next) => {
-            this.controller.createRoom(req, res, next);
+            this.apiController.createRoom(req, res, next);
         });
         // 방 확인
         this.app.get("/api/room", (req, res, next) => {
-            console.log("신호들어옴");
-            this.controller.checkRoom(req, res, next);
+            this.apiController.checkRoom(req, res, next);
         });
         // 대기실 목록 렌더링
         this.app.get("/api/roomList", (req, res, next) => {
-            this.controller.getRoomList(req, res, next);
+            this.apiController.getRoomList(req, res, next);
+        });
+        /* ========================================================= */
+        /* User */
+        /* ========================================================= */
+        // 사용자 생성 (POST)
+        this.app.post("/api/user", (req, res, next) => {
+            this.userController.createUser(req, res, next);
+        });
+        /* ========================================================= */
+        /* Ticket */
+        /* ========================================================= */
+        // 티켓 발급 (POST)
+        this.app.post("/api/ticket", (req, res, next) => {
+            this.apiController.issueTicket(req, res, next);
         });
     }
     /**
-     * Express 애플리케이션 인스턴스를 반환합니다.
+     * Express 애플리케이션 인스턴스를 반환
      */
     getApp() {
         return this.app;

@@ -1,4 +1,7 @@
 import WebSocket from "ws";
+/**
+ * @deprecated `WsSocketManager`와 함께 사용되던 ws 기반 세션 관리자. 현재 미사용.
+ */
 declare class SessionManager {
     sessionMap: Map<number, WebSocket>;
     constructor();

@@ -2,6 +2,9 @@ import { WebSocketServer } from "ws";
 import Receiver from "../Receiver.js";
 import SessionManager from "./SessionManager.js";
 import http from "http";
+/**
+ * @deprecated `socket.io` 기반 `SocketIOManager`로 대체됨. 참조하는 곳 없음.
+ */
 class WsSocketManager {
     receiver;
     sessionManger;

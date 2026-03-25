@@ -1,4 +1,4 @@
-import type RedisManager from "../../utils/redis.js";
+import type RedisManager from "../utils/redis.js";
 
 type AuthenticatedTicket = {
   userId: string;

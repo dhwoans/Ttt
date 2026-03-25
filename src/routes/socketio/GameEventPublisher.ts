@@ -11,7 +11,7 @@ type PlayerPayload = {
 /**
  * Socket 이벤트 송신 전담 클래스.
  *
- * 프레즌스/게임 이벤트 payload 포맷을 한 곳에서 관리하여
+ * payload 포맷을 한 곳에서 관리하여
  * 전송 규격을 일관되게 유지한다.
  */
 class GameEventPublisher {
@@ -100,8 +100,21 @@ class GameEventPublisher {
   }
 
   /** 유효한 MOVE 적용 결과를 방 전체에 전파한다. */
-  emitMoveMade(roomId: string, payload: { connId: string; move: number }) {
+  emitMoveMade(
+    roomId: string,
+    payload: { connId: string; move: number; isAuto?: boolean },
+  ) {
     this.io.to(roomId).emit("MOVE_MADE", payload);
+  }
+
+  emitTurnTimeoutStarted(
+    roomId: string,
+    payload: { timeoutMs: number; currentTurnPlayerId: string },
+  ) {
+    this.io.to(roomId).emit("TURN_TIMEOUT_STARTED", {
+      roomId,
+      ...payload,
+    });
   }
 
   /** 다음 턴 플레이어 정보를 방 전체에 전송한다. */
@@ -134,6 +147,83 @@ class GameEventPublisher {
   /** 방 범위 에러를 공통 포맷으로 전송한다. */
   emitRoomError(roomId: string, message: string) {
     this.io.to(roomId).emit("ERROR", { message, roomId });
+  }
+
+  emitReadyTimeoutStarted(roomId: string, timeoutMs: number) {
+    this.io.to(roomId).emit("READY_TIMEOUT_STARTED", {
+      roomId,
+      timeoutMs,
+    });
+  }
+
+  emitReadyTimeoutStartedToSocket(
+    socket: Socket,
+    roomId: string,
+    timeoutMs: number,
+  ) {
+    socket.emit("READY_TIMEOUT_STARTED", {
+      roomId,
+      timeoutMs,
+    });
+  }
+
+  emitReadyTimeoutExpired(roomId: string, connId: string, message: string) {
+    this.io.to(roomId).emit("READY_TIMEOUT_EXPIRED", {
+      roomId,
+      connId,
+      message,
+    });
+  }
+
+  emitReadyTimeoutCanceled(
+    roomId: string,
+    reason: "ROOM_NOT_FULL" | "ALL_READY" | "ROOM_UNAVAILABLE",
+  ) {
+    this.io.to(roomId).emit("READY_TIMEOUT_CANCELED", {
+      roomId,
+      reason,
+    });
+  }
+
+  async evictPlayerFromRoom(
+    roomId: string,
+    userId: string,
+    reason: string,
+  ): Promise<void> {
+    const sockets = await this.io.in(roomId).fetchSockets();
+
+    for (const socket of sockets) {
+      const socketUserId = socket.data.userId as string | undefined;
+      if (socketUserId !== userId) {
+        continue;
+      }
+
+      const nickname = socket.data.nickname as string | undefined;
+      const avatar = socket.data.avatar as string | undefined;
+
+      socket.leave(roomId);
+      delete socket.data.roomId;
+      delete socket.data.userId;
+      delete socket.data.nickname;
+      delete socket.data.avatar;
+
+      socket.emit("READY_TIMEOUT_EXPIRED", {
+        roomId,
+        connId: userId,
+        message: reason,
+      });
+
+      this.emitReadyTimeoutExpired(roomId, userId, reason);
+
+      this.io.to(roomId).emit("PLAYER_LEFT", {
+        connId: userId,
+        nickname: nickname ?? "unknown",
+        ...(avatar ? { avatar } : {}),
+        roomId,
+      });
+
+      return;
+    }
   }
 }
 

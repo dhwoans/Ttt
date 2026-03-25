@@ -1,20 +1,17 @@
 import { Server, Socket } from "socket.io";
-import Receiver from "../Receiver.js";
 import type SocketManager from "../SocketManger.js";
 import http from "http";
-import LobbyIOManager from "./LobbyIOManager.js";
-import RoomIOManager from "./RoomIOManager.js";
-import type Service from "../../service/Service.js";
+import type RoomService from "../../service/RoomService.js";
 import type RedisManager from "../../utils/redis.js";
 import type { ServerEvents, ClientEvents } from "@share";
 import SocketServerFactory from "./SocketServerFactory.js";
 import SocketMonitoringHook from "./SocketMonitoringHook.js";
 import SocketMetricsReporter from "./SocketMetricsReporter.js";
 import SocketErrorResponder from "./SocketErrorResponder.js";
-import TicketAuthService from "./TicketAuthService.js";
+import TicketAuthService from "../../service/TicketAuthService.js";
 import RoomPresenceGateway from "./RoomPresenceGateway.js";
 import GameEventPublisher from "./GameEventPublisher.js";
-import GameFlowService from "./GameFlowService.js";
+import GameFlowService from "../../service/GameFlowService.js";
 
 /**
  * Socket.IO 라우팅 계층의 조립자(Composition Root).
@@ -24,8 +21,6 @@ import GameFlowService from "./GameFlowService.js";
  */
 class SocketIOManager implements SocketManager {
   io: Server<ClientEvents, ServerEvents>;
-  lobby: LobbyIOManager;
-  room: RoomIOManager;
   monitoringHook: SocketMonitoringHook;
   metricsReporter: SocketMetricsReporter;
   errors: SocketErrorResponder;
@@ -36,13 +31,10 @@ class SocketIOManager implements SocketManager {
 
   constructor(
     server: http.Server,
-    receiver: Receiver,
-    service: Service,
+    roomService: RoomService,
     redis: RedisManager,
   ) {
     this.io = SocketServerFactory.create(server);
-    this.lobby = new LobbyIOManager(this.io.of("/lobby"), service);
-    this.room = new RoomIOManager(this.io.of("/room"), receiver);
 
     this.monitoringHook = new SocketMonitoringHook();
     this.metricsReporter = new SocketMetricsReporter();
@@ -50,11 +42,15 @@ class SocketIOManager implements SocketManager {
     this.authService = new TicketAuthService(redis);
     this.publisher = new GameEventPublisher(this.io);
     this.presence = new RoomPresenceGateway(
-      service,
+      roomService,
       this.errors,
       this.publisher,
     );
-    this.gameFlow = new GameFlowService(service, this.errors, this.publisher);
+    this.gameFlow = new GameFlowService(
+      roomService,
+      this.errors,
+      this.publisher,
+    );
   }
 
   /**
@@ -63,7 +59,6 @@ class SocketIOManager implements SocketManager {
   init() {
     console.log("[SocketIOManager] Initializing event listeners...");
     this.setupEventListeners();
-    this.sendEvent();
     this.monitoringHook.bind(this.io);
 
     console.log(
@@ -106,9 +101,18 @@ class SocketIOManager implements SocketManager {
         return;
       }
 
+      this.gameFlow.syncReadyTimeoutForSocket(socket, joinResult.roomId);
+      this.gameFlow.onRoomStateChanged(joinResult.roomId);
+
       socket.on("LEAVE", () => {
         console.log(`[SocketIOManager] 🚪 LEAVE event from ${socket.id}`);
-        this.presence.handleLeaveEvent(socket);
+        const leaveResult = this.presence.leave(socket, true);
+        if (!leaveResult.success) {
+          this.errors.emit(socket, leaveResult.message);
+          return;
+        }
+
+        this.gameFlow.onRoomStateChanged(leaveResult.roomId);
       });
 
       socket.on("READY", (data: { isReady: boolean }) => {
@@ -128,24 +132,21 @@ class SocketIOManager implements SocketManager {
         console.log(
           `[SocketIOManager] 🔌 Disconnect: ${socket.id}, reason: ${reason}`,
         );
-        this.presence.handleDisconnect(socket);
+        const leaveResult = this.presence.leave(socket, false);
+        if (!leaveResult.success) {
+          console.log(
+            "[SocketIOManager] No room/user data found for disconnecting socket",
+          );
+          return;
+        }
+
+        this.gameFlow.onRoomStateChanged(leaveResult.roomId);
       });
 
       console.log("=".repeat(60));
     });
 
     console.log("[SocketIOManager] Root namespace listener registered");
-    this.room.setupEventListeners();
-    this.lobby.setupEventListeners();
-    console.log("[SocketIOManager] All namespace listeners registered");
-  }
-
-  /**
-   * 기존 eventhandler 기반 네임스페이스 송신 훅을 활성화한다.
-   */
-  sendEvent() {
-    this.lobby.sendEvent();
-    this.room.sendEvent();
   }
 }
 

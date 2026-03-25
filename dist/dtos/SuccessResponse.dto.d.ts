@@ -1,5 +1,5 @@
-export interface SuccessResponse {
+export interface SuccessResponse<T = void> {
     success: true;
-    message?: string;
+    message?: T;
 }
 //# sourceMappingURL=SuccessResponse.dto.d.ts.map

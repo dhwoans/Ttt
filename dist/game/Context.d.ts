@@ -14,8 +14,8 @@ export default abstract class Context {
     abstract getState(): object;
     /**
      * @method changeState
-     * @description FSM의 상태를 새로운 상태로 전이(Transition)시키는 메서드입니다.
-     * 이 메서드는 현재 상태 클래스(예: PlayingState) 내부에서 호출됩니다.
+     * @description FSM의 상태를 새로운 상태로 전이(Transition)시키는 메서드.
+     * 현재 상태 클래스(예: PlayingState) 내부에서 호출.
      * @param {GameState} newState - 새로 전환될 상태 클래스의 인스턴스 (예: new PlayingState())
      */
     abstract changeState(): void;

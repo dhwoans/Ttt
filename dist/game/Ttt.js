@@ -1,17 +1,14 @@
 import IdleState from "../gameState/IdleState.js";
-import Context from "./Context.js";
 /**
- * @class Ttt
- * @description Tic-Tac-Toe 게임의 컨텍스트(Context) 클래스.
- * 게임의 모든 데이터(상태)를 보유하며, 모든 외부 요청을 현재 상태 객체(currentState)에 위임합니다.
- * 상태 패턴 FSM에서 Context 역할을 담당합니다.
+ * Tic-Tac-Toe game context class (FSM Context pattern)
+ * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
 class Ttt {
-    board;
-    winner;
-    status;
-    players;
-    currentTurn;
+    board; // 9-element array for 3x3 board
+    winner; // -2: draw, -1: no winner, 0/1: player index
+    status; // IDLE, PLAYING, GAME_OVER
+    players; // [player1Id, player2Id]
+    currentTurn; // Turn counter (even=player0, odd=player1)
     currentState;
     constructor() {
         this.board = Array(9).fill("");
@@ -22,18 +19,29 @@ class Ttt {
         this.currentState = new IdleState();
         this.currentState.onEnter(this);
     }
+    /**
+     * Add player ID to the game
+     */
     setPlayersId(playerId) {
         this.players.push(playerId);
     }
+    /**
+     * Transition to new state and invoke its entry logic
+     */
     changeState(newState) {
         console.log(`[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`);
         this.currentState = newState;
-        newState.onEnter(this); // 새 상태의 진입 로직 실행
+        newState.onEnter(this);
     }
+    /**
+     * Delegate action processing to current state
+     */
     processAction(action) {
-        // currentState에게 모든 로직 처리를 위임
         return this.currentState.handleAction(this, action);
     }
+    /**
+     * Get current game state snapshot
+     */
     getState() {
         return {
             board: this.board,

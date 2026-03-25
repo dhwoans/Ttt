@@ -1,12 +1,11 @@
-import Sender from "../routes/Sender.js";
 import type { Request, Response, NextFunction } from "express";
-import type SocketMessage from "../dtos/SocketMessage.dto.js";
-import type Service from "../service/Service.js";
-import type Controller from "./Controller.js";
-declare class ApiController implements Controller {
-    service: Service;
-    sender: Sender;
-    constructor(service: Service, sender: Sender);
+import type RoomService from "../service/RoomService.js";
+import type RedisManager from "../utils/redis.js";
+declare class ApiController {
+    roomService: RoomService;
+    redis: RedisManager;
+    constructor(roomService: RoomService, redis: RedisManager);
+    checkHealth(req: Request, res: Response, next: NextFunction): number;
     /**
      *
      * @param req
@@ -23,41 +22,16 @@ declare class ApiController implements Controller {
      */
     checkRoom(req: Request, res: Response, next: NextFunction): void;
     /**
-     *
-     * @param req
-     * @param res
-     * @param next
+     * Get list of all available rooms
      */
     getRoomList(req: Request, res: Response, next: NextFunction): void;
     /**
-     * @description 게임방에 연결
-     * @param rawMessage
-     * @param connId
+     * 클라이언트 요청 시 티켓을 발급하고 웹소켓 서버 URL을 반환
+     * @param req - { userId, nickname, avatar }
+     * @param res
+     * @param next
      */
-    handleJoin(rawMessage: SocketMessage, connId: number): void;
-    /**
-     * @description 채팅 처리
-     * @param rawMessage
-     */
-    handleChat(rawMessage: SocketMessage): void;
-    /**
-     * @description 게임방 퇴장 처리
-     * @param rawMessage
-     * @param connId
-     */
-    handleLeave(rawMessage: SocketMessage, connId: number): void;
-    /**
-     * @description 플레이어 레디 처리
-     * @param rawMessage
-     * @param connId
-     */
-    handleReady(rawMessage: SocketMessage, connId: number): void;
-    /**
-     *
-     * @param rawMessage
-     * @param connId
-     */
-    handleMove(rawMessage: SocketMessage, connId: number): void;
+    issueTicket(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 export default ApiController;
 //# sourceMappingURL=ApiController.d.ts.map

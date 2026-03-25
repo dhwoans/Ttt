@@ -1,45 +1,32 @@
+import type { ConnId } from "../type/socket.js";
 import type User from "../dtos/user/User.dto.js";
+import type { PlayerInfo } from "../dtos/user/User.dto.js";
 declare class Room {
-    players: Map<number, User>;
+    players: Map<string, User>;
     MAX_PLAYERS: number;
     constructor(max: number);
     /**
-     * 플레이어 추가
-     * @param {number} connId - WebSocket 접속 ID
-     * @param {string} nickname
-     * @returns {object}
+     * Add player to room and return player info
      */
-    addPlayer(connId: number, nickname: string): User;
+    addPlayer(connId: ConnId, nickname: string, avatar?: string): User;
     /**
-     * 접속 ID로 플레이어를 Map에서 제거
-     * @param {string} connId - WebSocket 접속 ID
-     * @returns {boolean} 제거 성공 여부
+     * Remove player from room by connection ID
      */
-    removePlayer(connId: number): boolean;
+    removePlayer(connId: ConnId): boolean;
     /**
-     * 방이 가득 찼는지 확인
-     * @returns {boolean}
+     * Check if room is at max capacity
      */
     isFull(): boolean;
     /**
-     * 방안 특정 플레이어 정보 목록을 반환
-     * @returns
+     * Get player info by connection ID
      */
-    getPlayerDate(connId: number): {
-        nickname: string;
-        isReady: boolean;
-    };
+    getPlayerDate(connId: string): User;
     /**
-     * 방안 모든 플레이어 정보 목록을 반환
-     * @returns {Array<Object>}
+     * Get all players in room with connection IDs
      */
-    getAllPlayersData(): Array<{
-        connId: number;
-        nickname: string;
-        isReady: boolean;
-    }>;
+    getAllPlayersData(): PlayerInfo[];
     /**
-     * 현재 플레이어 수를 반환
+     * Get current player count
      */
     getCurrentPlayer(): number;
 }
