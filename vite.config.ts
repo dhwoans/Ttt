@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
   const commonPlugins = [
     tailwindcss(),
     react(),
-    tsconfigPaths(), // 여기서 tsconfig의 paths를 읽어옵니다.
+    tsconfigPaths(),
   ];
   return {
     plugins: commonPlugins,

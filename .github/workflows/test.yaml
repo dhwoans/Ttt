@@ -3,8 +3,7 @@ name: Test
 
 on:
   push:
-    branches: [master, test/*, feat/*]
-  # pull_request:
+    branches: [master, test/*,feat/*,fix/*,design/*,infra/*,refactor/*,docs/*,chore/*]
 
 jobs:
   test:
