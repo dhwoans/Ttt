@@ -1,6 +1,6 @@
 ---
-name: 내부 작업/리팩터링 템플릿
-about: '"리팩터링, 환경 설정, 문서화 등 내부 작업을 기록합니다."'
+name: 📝 Decision Log
+about: '"리팩터링, 환경 설정, 문서화,주요 기술적/운영적 의사결정 등 내부 작업을 기록합니다."'
 title: "[Task]"
 labels: ''
 assignees: dhwoans
@@ -15,3 +15,7 @@ assignees: dhwoans
 
 ## 📋 체크리스트
 - [ ]
+
+## 🔗 관련 이슈 및 참고
+- 관련 이슈: #
+- 참고 링크:
