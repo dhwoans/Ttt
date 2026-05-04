@@ -1,7 +1,7 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
-import { calcBoard, whoIsWin } from "../../../shared/utils/ticTacToeUtils";
+import { calcBoard } from "@/shared/utils/ticTacToeUtils";
 import { useMultiNextTurn } from "./useNextTurn";
 import { useReceiveMoveMade } from "./useReceiveMoveMade";
 import { useReceiveGameOver } from "./useReceiveGameOver";
@@ -11,64 +11,53 @@ import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
 import type { UseTicTacToeProps } from "../types/GameHookTypes";
 
 export function useMultiTicTacToe({ playersInfos, onExit }: UseTicTacToeProps) {
-  const [showExitModal, setShowExitModal] = useState(false);
-  const [showGameOverModal, setShowGameOverModal] = useState(false);
-  const [currentTurnPlayerId, setCurrentTurnPlayerId] = useState<string | null>(
-    () => sessionStorage.getItem("currentTurnPlayerId"),
+  const gameStatus = useTicTacToeGameStore((state) => state.gameState.status);
+  const winner = useTicTacToeGameStore((state) => state.gameState.winner);
+  const result = useTicTacToeGameStore((state) => state.gameState.result);
+  const moveHistory = useTicTacToeGameStore((state) => state.moveHistory);
+  const currentTurnUserId = useTicTacToeGameStore(
+    (state) => state.gameState.turn.currentUserId,
   );
-  const [isWaitingForServer, setIsWaitingForServer] = useState(false);
+  const isWaitingForServer = useTicTacToeGameStore(
+    (state) => state.isWaitingForServer,
+  );
+  const openModal = useTicTacToeGameStore((state) => state.openModal);
+  const setOpenModal = useTicTacToeGameStore((state) => state.setOpenModal);
 
   const handleExitIntent = useCallback(() => {
-    setShowExitModal(true);
-  }, []);
+    setOpenModal("exit");
+  }, [setOpenModal]);
   useBackExitModal(handleExitIntent, true);
 
-  const handleExitCancel = () => setShowExitModal(false);
+  const handleExitCancel = () => setOpenModal(null);
   const handleExit = () => {
     onExit?.();
   };
 
-  useReceiveMoveMade({ playersInfos, setIsWaitingForServer });
+  useReceiveMoveMade({ playersInfos });
   useReceiveGameOver();
-  useReceiveGameStateUpdate(setCurrentTurnPlayerId);
-  const { currentTurnPlayerId: receivedTurnPlayerId } = useReceiveNextTurn();
-  const { turnTimeoutMs, turnTimeoutStartedAt } = useReceiveTurnTimeoutStarted(
-    setCurrentTurnPlayerId,
-  );
+  useReceiveGameStateUpdate();
+  useReceiveNextTurn();
+  const { turnTimeoutMs, turnTimeoutStartedAt } =
+    useReceiveTurnTimeoutStarted();
 
-  useEffect(() => {
-    if (receivedTurnPlayerId) {
-      setCurrentTurnPlayerId(receivedTurnPlayerId);
-    }
-  }, [receivedTurnPlayerId]);
-
-  const moveHistory = useTicTacToeGameStore((state) => state.moveHistory);
-  const turnStart = useTicTacToeGameStore((state) => state.turnStart);
-  const timeoutBy = useTicTacToeGameStore((state) => state.timeoutBy);
+  const isGameOver = gameStatus === "FINISHED";
+  const isDraw = result === "draw";
   const board = calcBoard(moveHistory);
-  const boardWinner = whoIsWin(board, moveHistory);
-  const isDraw = moveHistory.length === 9;
-  const timeoutWinner = timeoutBy
-    ? (playersInfos.find((p) => p.nickname !== timeoutBy)?.nickname ?? null)
-    : null;
-  const winner = timeoutWinner ?? boardWinner;
-  const isGameOver = !!winner || isDraw || !!timeoutBy;
-  const currentPlayer = currentTurnPlayerId
-    ? (playersInfos.find((p) => p.userId === currentTurnPlayerId) ??
+  const currentPlayer = currentTurnUserId
+    ? (playersInfos.find((p) => p.userId === currentTurnUserId) ??
       playersInfos[0])
     : (playersInfos[0] ?? null);
-  const isPlayerTurn = currentPlayer?.nickname === playersInfos[0]?.nickname;
 
   useEffect(() => {
     if (isGameOver) {
-      const timer = setTimeout(() => setShowGameOverModal(true), 3000);
+      const timer = setTimeout(() => setOpenModal("gameOver"), 3000);
       return () => clearTimeout(timer);
     }
-    setShowGameOverModal(false);
-  }, [isGameOver]);
+  }, [isGameOver, setOpenModal]);
 
   const { handleSquare, isCurrentUserTurnByServer } = useMultiNextTurn({
-    currentTurnPlayerId,
+    currentTurnPlayerId: currentTurnUserId,
     isGameOver,
   });
 
@@ -79,14 +68,14 @@ export function useMultiTicTacToe({ playersInfos, onExit }: UseTicTacToeProps) {
       !isGameOver && isCurrentUserTurnByServer && !isWaitingForServer,
     handleSquare,
     isGameOver,
+    isDraw,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    showExitModal,
-    showGameOverModal,
+    showExitModal: openModal === "exit",
+    showGameOverModal: openModal === "gameOver",
     handleExitCancel,
     handleExit,
-    isDraw,
     winner,
     countdownDurationMs: turnTimeoutMs ?? 10000,
-    countdownStartTime: turnTimeoutStartedAt ?? turnStart,
+    countdownStartTime: turnTimeoutStartedAt ?? Date.now(),
   };
 }

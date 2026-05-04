@@ -32,7 +32,6 @@ export interface UseMultiNextTurnConfig {
 
 export interface UseReceiveMoveMadeConfig {
   playersInfos: GamePlayerInfo[];
-  setIsWaitingForServer: (waiting: boolean) => void;
 }
 
 export interface UseTicTacToeProps {

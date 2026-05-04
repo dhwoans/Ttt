@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 import type { MoveMadeEvent } from "@share";
-import type { GamePlayerInfo } from "../types/TicTacToeGameTypes";
 import type { UseReceiveMoveMadeConfig } from "../types/GameHookTypes";
 
 /**
@@ -10,11 +9,11 @@ import type { UseReceiveMoveMadeConfig } from "../types/GameHookTypes";
  * - 누군가 수를 놨을 때 모두에게 브로드캐스트됨
  * - 대기 상태 해제, turn 추가
  */
-export function useReceiveMoveMade({
-  playersInfos,
-  setIsWaitingForServer,
-}: UseReceiveMoveMadeConfig) {
+export function useReceiveMoveMade({ playersInfos }: UseReceiveMoveMadeConfig) {
   const addMove = useTicTacToeGameStore((state) => state.addMove);
+  const setIsWaitingForServer = useTicTacToeGameStore(
+    (state) => state.setIsWaitingForServer,
+  );
 
   useEffect(() => {
     const handleMoveMade = (data: MoveMadeEvent) => {

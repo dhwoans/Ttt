@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 /**
  * NEXT_TURN 이벤트 수신 훅
- * - currentTurnPlayerId 상태 관리
- * - NEXT_TURN 이벤트 리스너 등록
- * - sessionStorage에 저장
+ * - store의 currentTurnUserId 업데이트
  */
 export function useReceiveNextTurn() {
-  const [currentTurnPlayerId, setCurrentTurnPlayerId] = useState<string | null>(
-    () => sessionStorage.getItem("currentTurnPlayerId"),
+  const setCurrentTurnUserId = useTicTacToeGameStore(
+    (state) => state.setCurrentTurnUserId,
   );
 
   useEffect(() => {
     const handleNextTurn = (data: any) => {
       if (data.nextPlayerId) {
-        setCurrentTurnPlayerId(data.nextPlayerId);
+        setCurrentTurnUserId(data.nextPlayerId);
         sessionStorage.setItem("currentTurnPlayerId", data.nextPlayerId);
       }
     };
@@ -24,7 +23,5 @@ export function useReceiveNextTurn() {
     return () => {
       eventManager.off("NEXT_TURN", handleNextTurn);
     };
-  }, []);
-
-  return { currentTurnPlayerId, setCurrentTurnPlayerId };
+  }, [setCurrentTurnUserId]);
 }

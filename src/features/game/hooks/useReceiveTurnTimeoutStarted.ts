@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 import type { TurnTimeoutStartedEvent } from "@share";
 
 const TURN_TIMEOUT_SNAPSHOT_KEY = "turnTimeoutSnapshot";
@@ -13,9 +14,11 @@ interface TurnTimeoutSnapshot {
  * TURN_TIMEOUT_STARTED 이벤트 수신 훅
  * - 멀티플레이 착수 제한 시간 시작 시각/지속시간을 서버 이벤트 기준으로 동기화
  */
-export function useReceiveTurnTimeoutStarted(
-  setCurrentTurnPlayerId: (playerId: string) => void,
-) {
+export function useReceiveTurnTimeoutStarted() {
+  const setCurrentTurnUserId = useTicTacToeGameStore(
+    (state) => state.setCurrentTurnUserId,
+  );
+
   const [snapshot, setSnapshot] = useState<TurnTimeoutSnapshot | null>(() => {
     const raw = sessionStorage.getItem(TURN_TIMEOUT_SNAPSHOT_KEY);
     if (!raw) {
@@ -57,7 +60,7 @@ export function useReceiveTurnTimeoutStarted(
       );
 
       if (data.currentTurnPlayerId) {
-        setCurrentTurnPlayerId(data.currentTurnPlayerId);
+        setCurrentTurnUserId(data.currentTurnPlayerId);
         sessionStorage.setItem("currentTurnPlayerId", data.currentTurnPlayerId);
       }
     };
@@ -66,7 +69,7 @@ export function useReceiveTurnTimeoutStarted(
     return () => {
       eventManager.off("TURN_TIMEOUT_STARTED", handleTurnTimeoutStarted);
     };
-  }, [setCurrentTurnPlayerId]);
+  }, [setCurrentTurnUserId]);
 
   return {
     turnTimeoutMs: snapshot?.timeoutMs,

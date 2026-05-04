@@ -14,7 +14,7 @@ export function useGameRestart(config: GameRestartConfig) {
   const handleRestart = () => {
     // 게임 종료 후 다시하기는 준비 화면으로 돌아가서 다시 ready를 받는다.
     config.setPhase("ready");
-
+    
     // 남아있는 로컬 상태 정리
     localStorage.removeItem("gameState");
     sessionStorage.removeItem("currentTurnPlayerId");

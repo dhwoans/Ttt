@@ -64,6 +64,7 @@ export type ReadyTimeoutExpiredEvent =
   ServerSchemas["ReadyTimeoutExpiredEvent"];
 export type TurnTimeoutStartedEvent = ServerSchemas["TurnTimeoutStartedEvent"];
 export type MoveMadeEvent = ServerSchemas["MoveMadeEvent"];
+export type GameOverEvent = ServerSchemas["GameOverEvent"];
 export type PlayerLeftEvent = ServerSchemas["PlayerLeftEvent"];
 export type LeaveSuccessEvent = ServerSchemas["LeaveSuccessEvent"];
 
@@ -82,6 +83,7 @@ export interface ServerEvents {
   READY_TIMEOUT_EXPIRED: (payload: ReadyTimeoutExpiredEvent) => void;
   TURN_TIMEOUT_STARTED: (payload: TurnTimeoutStartedEvent) => void;
   MOVE_MADE: (payload: MoveMadeEvent) => void;
+  GAME_OVER: (payload: GameOverEvent) => void;
   PLAYER_LEFT: (payload: PlayerLeftEvent) => void;
   LEAVE_SUCCESS: (payload: LeaveSuccessEvent) => void;
   [eventName: string]: (payload: unknown) => void;
