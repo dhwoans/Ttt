@@ -18,16 +18,13 @@ const preprocessGameStart = (botInfo: unknown[]) => {
   );
 };
 
-export function useSinglePlay({
-  setPhase,
-  playersInfos,
-  setPlayersInfos,
-}: UseSinglePlayProps) {
+export function useSinglePlay({ setPhase }: UseSinglePlayProps) {
   const navigate = useNavigate();
   const bridgeTimerRef = useRef<number | null>(null);
   const resetGame = useTicTacToeGameStore((state) => state.resetGame);
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
 
-  useSingleInitialBotSetup({ playersInfos, setPlayersInfos });
+  useSingleInitialBotSetup();
 
   useEffect(() => {
     return () => {

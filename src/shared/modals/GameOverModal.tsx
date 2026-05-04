@@ -1,17 +1,14 @@
 import { useGameResult } from "@/shared/hooks/useGameResult";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 interface GameOverModalProps {
   winner: string;
-  handleRestart: () => void;
   onExit: () => void;
 }
 
-export default function GameOverModal({
-  winner,
-  handleRestart,
-  onExit,
-}: GameOverModalProps) {
+export default function GameOverModal({ winner, onExit }: GameOverModalProps) {
   const { result, imgSrc } = useGameResult({ winner, onExit });
+  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
 
   const brutalBox =
     "border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]";
@@ -45,7 +42,7 @@ export default function GameOverModal({
 
         <div className="flex gap-4 justify-center mb-6">
           <button
-            onClick={handleRestart}
+            onClick={resetGame}
             className={`px-8 py-3 rounded-xl text-lg font-bold bg-accent hover:bg-yellow-400 ${brutalBtn}`}
           >
             다시하기

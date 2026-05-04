@@ -1,7 +1,10 @@
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+
 // 채팅박스 안 메시지 UI
 export default function SpeechBalloon({ type, message, sender }) {
+  const myNickname = useTicTacToeGameStore((state) => state.myPlayer?.nickname);
   const isSystem = sender === "system";
-  const isCurrentUser = sender === sessionStorage.getItem("nickname");
+  const isCurrentUser = sender === myNickname;
 
   if (isSystem) {
     return (

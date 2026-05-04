@@ -10,7 +10,6 @@ import type { GamePlayerInfo } from "../features/game/types/TicTacToeGameTypes";
 interface PlayingProps {
   playersInfos: GamePlayerInfo[];
   onExit?: () => void;
-  onRestart?: () => void;
 }
 
 interface TicTacToeViewProps {
@@ -29,7 +28,6 @@ interface TicTacToeViewProps {
   countdownDurationMs: number;
   countdownStartTime: number;
   countdownOnComplete?: () => void;
-  onRestart?: () => void;
 }
 
 function TicTacToeView({
@@ -48,7 +46,6 @@ function TicTacToeView({
   countdownDurationMs,
   countdownStartTime,
   countdownOnComplete,
-  onRestart,
 }: TicTacToeViewProps) {
   return (
     <main className="relative flex flex-col min-h-screen p-4 md:p-8 items-center justify-center">
@@ -85,21 +82,13 @@ function TicTacToeView({
       )}
 
       {showGameOverModal && (
-        <GameOverModal
-          winner={isDraw ? "DRAW" : winner}
-          handleRestart={onRestart}
-          onExit={handleExit}
-        />
+        <GameOverModal winner={isDraw ? "DRAW" : winner} onExit={handleExit} />
       )}
     </main>
   );
 }
 
-export function SingleTicTacToe({
-  playersInfos,
-  onExit,
-  onRestart,
-}: PlayingProps) {
+export function SingleTicTacToe({ playersInfos, onExit }: PlayingProps) {
   const {
     board,
     canSelectSquare,
@@ -134,16 +123,11 @@ export function SingleTicTacToe({
       countdownDurationMs={countdownDurationMs}
       countdownStartTime={countdownStartTime}
       countdownOnComplete={countdownOnComplete}
-      onRestart={onRestart}
     />
   );
 }
 
-export function MultiTicTacToe({
-  playersInfos,
-  onExit,
-  onRestart,
-}: PlayingProps) {
+export function MultiTicTacToe({ playersInfos, onExit }: PlayingProps) {
   const {
     board,
     canSelectSquare,
@@ -176,7 +160,6 @@ export function MultiTicTacToe({
       winner={winner}
       countdownDurationMs={countdownDurationMs}
       countdownStartTime={countdownStartTime}
-      onRestart={onRestart}
     />
   );
 }

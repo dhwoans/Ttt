@@ -6,16 +6,22 @@ import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/utils/AudioManager";
 import { ImageManager } from "@/shared/utils/ImageManger";
 import { ROUTES } from "@/shared/constants/routes";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { clearGameSession } from "@/shared/utils/playerStorage";
 
 const SettingsAndLogout = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const navigate = useNavigate();
   const { sfxMuted } = useAudioStore();
+  const clearMyPlayer = useTicTacToeGameStore((state) => state.clearMyPlayer);
+  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
   const playBeep = () => {
     if (!sfxMuted) audioManager.play("beep");
   };
   const handleLogout = () => {
-    sessionStorage.clear();
+    clearMyPlayer();
+    resetGame();
+    clearGameSession();
     navigate(ROUTES.login, { replace: true });
   };
   return (

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSendCreateUser } from "./useSendCreateUser";
 import { ROUTES } from "@/shared/constants/routes";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 interface HandleCreateUserOptions {
   nickname: string;
@@ -22,6 +23,7 @@ function useCreateUserState() {
 
 function useCreateUserActions() {
   const { createUser } = useSendCreateUser();
+  const setMyPlayer = useTicTacToeGameStore((state) => state.setMyPlayer);
 
   const createAndStoreUser = async ({
     nickname,
@@ -38,9 +40,11 @@ function useCreateUserActions() {
     });
 
     if (result && result.success) {
-      sessionStorage.setItem("avator", String(avatarIndex));
-      sessionStorage.setItem("nickname", nickname);
-      sessionStorage.setItem("userId", result.message ?? "");
+      setMyPlayer({
+        avatarIndex,
+        nickname,
+        userId: result.message ?? "",
+      });
       return true;
     }
 

@@ -11,11 +11,7 @@ import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 import { clearGameSession } from "@/shared/utils/playerStorage";
 import type { UseMultiPlayProps } from "../types/GameHookTypes";
 
-export function useMultiPlay({
-  phase,
-  setPhase,
-  setPlayersInfos,
-}: UseMultiPlayProps) {
+export function useMultiPlay({ phase, setPhase }: UseMultiPlayProps) {
   const navigate = useNavigate();
   const [playersReadyStatus, setPlayersReadyStatus] = useState<
     Record<string, boolean>
@@ -27,9 +23,9 @@ export function useMultiPlay({
 
   useGamePhaseEvents(setPhase);
   //
-  useMultiplayerPlayers(setPlayersInfos, setPlayersReadyStatus);
+  useMultiplayerPlayers(setPlayersReadyStatus);
   useReceivePlayerReady(setPlayersReadyStatus);
-  useReceivePlayerLeave(phase, setPlayersInfos, setPlayersReadyStatus);
+  useReceivePlayerLeave(setPlayersReadyStatus);
   useReadyTimeoutHandler();
 
   const handleReady = (isReady: boolean) => {

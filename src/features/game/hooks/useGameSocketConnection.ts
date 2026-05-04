@@ -1,14 +1,17 @@
 import { useEffect } from "react";
 import { gameSocketManager } from "@/shared/utils/SocketManager";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 /**
  * 게임 소켓 연결을 관리하는 훅
  * 컴포넌트 마운트 시 연결, 언마운트 시 종료
  */
 export function useGameSocketConnection(roomId: string) {
+  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
+
   useEffect(() => {
-    const userId = sessionStorage.getItem("userId");
-    const userNickname = sessionStorage.getItem("nickname");
+    const userId = myPlayer?.userId;
+    const userNickname = myPlayer?.nickname;
     const gameServerUrl = sessionStorage.getItem("gameServerUrl");
     const gameTicket = sessionStorage.getItem("gameTicket") ?? undefined;
     const socket = gameSocketManager.getSocket();
@@ -38,7 +41,7 @@ export function useGameSocketConnection(roomId: string) {
     return () => {
       gameSocketManager.disconnect();
     };
-  }, [roomId]);
+  }, [myPlayer, roomId]);
 
   const disconnect = () => {
     gameSocketManager.disconnect();

@@ -176,14 +176,6 @@ class GameSocketManager {
     }
   }
 
-  private getSessionInfo() {
-    return {
-      roomId: sessionStorage.getItem("roomId"),
-      userId: sessionStorage.getItem("userId"),
-      nickname: sessionStorage.getItem("nickname"),
-    };
-  }
-
   public disconnect() {
     if (this.socket) {
       console.log("[socket.disconnect] 소켓 연결 종료");

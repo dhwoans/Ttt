@@ -14,7 +14,6 @@ export interface GameRestartConfig {
 export interface UseMultiPlayProps {
   phase: RoomPhase;
   setPhase: (phase: RoomPhase) => void;
-  setPlayersInfos: SetPlayersInfos;
 }
 
 export interface UseSingleNextTurnConfig {
@@ -41,11 +40,8 @@ export interface UseTicTacToeProps {
 
 export interface UseSinglePlayProps {
   setPhase: (phase: RoomPhase) => void;
-  playersInfos: GamePlayerInfo[];
-  setPlayersInfos: SetPlayersInfos;
 }
 
 export interface UseSingleInitialBotSetupProps {
-  playersInfos: GamePlayerInfo[];
-  setPlayersInfos: SetPlayersInfos;
+  placeholder?: never;
 }

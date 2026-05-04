@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { gameSocketManager } from "@/shared/utils/SocketManager";
-import { getPlayerInfoFromStorage } from "@/shared/utils/playerStorage";
-import { eventManager } from "@/shared/utils/EventManager";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/shared/constants/routes";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { eventManager } from "@/shared/utils/EventManager";
 
 /**
  * 게임 서버 연결 (ticket 기반 인증)
@@ -12,14 +12,15 @@ import { ROUTES } from "@/shared/constants/routes";
  */
 export function useConnectGameServer() {
   const navigate = useNavigate();
+  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
 
   const connectGameServer = useCallback(
     (gameServerUrl: string, ticket: string) => {
-      const { nickname } = getPlayerInfoFromStorage();
-      const userId = sessionStorage.getItem("userId");
+      const nickname = myPlayer?.nickname;
+      const userId = myPlayer?.userId;
 
-      if (!userId || !ticket) {
-        console.error("userId or ticket not found");
+      if (!userId || !nickname || !ticket) {
+        console.error("userId or nickname or ticket not found");
         return;
       }
 
@@ -33,25 +34,6 @@ export function useConnectGameServer() {
       // Same-origin 연결 (nginx를 통해 backend로 프록시)
       // gameServerUrl 무시하고 현재 origin 사용
       gameSocketManager.connect(userId, nickname, "/", { ticket });
-
-      // EXISTING_PLAYERS를 한 번만 받아서 sessionStorage에 저장
-      console.log("[multi] EXISTING_PLAYERS 리스너 등록 (once)");
-
-      const handleExistingPlayers = (data: any) => {
-        console.log(
-          "[multi] EXISTING_PLAYERS 수신, sessionStorage에 저장:",
-          data,
-        );
-        sessionStorage.setItem("existingPlayers", JSON.stringify(data.players));
-        console.log(
-          "[multi] existingPlayers sessionStorage 저장 완료:",
-          data.players,
-        );
-      };
-
-      // once 사용: 한 번만 실행되고 자동으로 리스너 제거
-      eventManager.once("EXISTING_PLAYERS", handleExistingPlayers);
-      console.log("[multi] EXISTING_PLAYERS 리스너 등록 완료");
 
       // 서버에서 roomId 받기
       const handleRoomAssigned = (data: any) => {
@@ -69,7 +51,7 @@ export function useConnectGameServer() {
       // 한 번만 실행되도록 설정
       eventManager.once("ROOM_ASSIGNED", handleRoomAssigned);
     },
-    [navigate],
+    [myPlayer, navigate],
   );
 
   return { connectGameServer };

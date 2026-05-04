@@ -1,3 +1,5 @@
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+
 export const ROUTES = {
   root: "/",
   login: "/login",
@@ -14,7 +16,6 @@ export const ROUTES = {
 } as const;
 
 export const isAuthenticated = () => {
-  const userId = sessionStorage.getItem("userId");
-  const nickname = sessionStorage.getItem("nickname");
-  return !!(userId && nickname);
+  const myPlayer = useTicTacToeGameStore.getState().myPlayer;
+  return !!(myPlayer?.userId && myPlayer.nickname);
 };

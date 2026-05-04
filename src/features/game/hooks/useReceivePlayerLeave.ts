@@ -5,7 +5,6 @@ import { eventManager } from "@/shared/utils/EventManager";
 import { clearGameSession } from "@/shared/utils/playerStorage";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 import type { PlayerLeftEvent, LeaveSuccessEvent } from "@share";
-import type { GamePlayerInfo, RoomPhase } from "../types/TicTacToeGameTypes";
 
 /**
  * 플레이어 퇴장 이벤트 수신 처리
@@ -13,14 +12,16 @@ import type { GamePlayerInfo, RoomPhase } from "../types/TicTacToeGameTypes";
  * - LEAVE_SUCCESS: 본인 퇴장 성공
  */
 export function useReceivePlayerLeave(
-  phase: RoomPhase,
-  setPlayersInfos: React.Dispatch<React.SetStateAction<GamePlayerInfo[]>>,
   setPlayersReadyStatus: React.Dispatch<
     React.SetStateAction<Record<string, boolean>>
   >,
 ) {
   const navigate = useNavigate();
   const resetGame = useTicTacToeGameStore((state) => state.resetGame);
+  const removePlayerInfo = useTicTacToeGameStore(
+    (state) => state.removePlayerInfo,
+  );
+  const status = useTicTacToeGameStore((state) => state.gameState.status);
 
   // PLAYER_LEFT 이벤트 처리 (상대 플레이어 퇴장)
   useEffect(() => {
@@ -29,9 +30,7 @@ export function useReceivePlayerLeave(
       toast.warning(`${data.nickname}님이 게임을 나갔습니다.`);
 
       // 상대 플레이어 정보 제거
-      setPlayersInfos((prev) =>
-        prev.filter((p) => p.nickname !== data.nickname),
-      );
+      removePlayerInfo(data.nickname);
 
       // 준비 상태 제거
       setPlayersReadyStatus((prev) => {
@@ -42,7 +41,7 @@ export function useReceivePlayerLeave(
 
       // 게임 중이면 준비상태로 돌아가기로 구현 예정
       // 임시로 로비로 퇴장
-      if (phase === "playing") {
+      if (status === "PLAYING") {
         setTimeout(() => {
           resetGame();
           clearGameSession();
@@ -56,7 +55,7 @@ export function useReceivePlayerLeave(
       console.log("[room] PLAYER_LEFT 리스너 제거");
       eventManager.off("PLAYER_LEFT", handlePlayerLeft);
     };
-  }, [phase, setPlayersInfos, setPlayersReadyStatus, navigate, resetGame]);
+  }, [status, removePlayerInfo, setPlayersReadyStatus, navigate, resetGame]);
 
   // LEAVE_SUCCESS 이벤트 처리 (본인 퇴장 성공)
   useEffect(() => {

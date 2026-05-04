@@ -46,9 +46,11 @@ export function useMultiNextTurn({
   isGameOver,
 }: UseMultiNextTurnConfig) {
   const { sendMove } = useSendPlayerMove();
+  const currentUserId = useTicTacToeGameStore(
+    (state) => state.myPlayer?.userId,
+  );
 
   const isCurrentUserTurnByServer = useMemo(() => {
-    const sessionUserId = sessionStorage.getItem("userId");
     const socketConnId =
       sessionStorage.getItem("socketId") ??
       gameSocketManager.getSocket()?.id ??
@@ -56,10 +58,10 @@ export function useMultiNextTurn({
 
     return (
       !!currentTurnPlayerId &&
-      (currentTurnPlayerId === sessionUserId ||
+      (currentTurnPlayerId === currentUserId ||
         currentTurnPlayerId === socketConnId)
     );
-  }, [currentTurnPlayerId]);
+  }, [currentTurnPlayerId, currentUserId]);
 
   const handleSquare = useCallback(
     (row: number, col: number) => {

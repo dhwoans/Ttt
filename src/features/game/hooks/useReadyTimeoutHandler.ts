@@ -12,13 +12,14 @@ import type { ReadyTimeoutExpiredEvent } from "@share";
 export function useReadyTimeoutHandler() {
   const navigate = useNavigate();
   const resetGame = useTicTacToeGameStore((state) => state.resetGame);
+  const currentUserId = useTicTacToeGameStore(
+    (state) => state.myPlayer?.userId,
+  );
 
   // READY_TIMEOUT_EXPIRED: 타임아웃 만료로 인한 강제 로비 이동
   useEffect(() => {
     const handleReadyTimeoutExpired = (data: ReadyTimeoutExpiredEvent) => {
       console.log("[room] READY_TIMEOUT_EXPIRED 수신:", data);
-
-      const currentUserId = sessionStorage.getItem("userId");
 
       // 현재 사용자가 타임아웃된 플레이어인 경우
       if (data.connId === currentUserId) {
@@ -44,5 +45,5 @@ export function useReadyTimeoutHandler() {
       console.log("[room] READY_TIMEOUT_EXPIRED 리스너 제거");
       eventManager.off("READY_TIMEOUT_EXPIRED", handleReadyTimeoutExpired);
     };
-  }, [navigate]);
+  }, [currentUserId, navigate, resetGame]);
 }

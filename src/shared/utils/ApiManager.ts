@@ -1,5 +1,5 @@
 import { animalList } from "../constants/avatarCandidates";
-import { getPlayerInfoFromStorage } from "./playerStorage";
+import { getPlayerInfoFromStore, getUserIdFromStore } from "./playerStorage";
 import type { IssueTicketRequest, IssueTicketResponse } from "@share";
 
 interface CreateUserResponse {
@@ -29,12 +29,12 @@ class ApiManager {
   // GET /api/room - 멀티플레이 서버 입장 정보 요청
   // 접속가능한 게임서버주소,입장티켓 리턴
   async joinRoom(): Promise<IssueTicketResponse | null> {
-    const userId = sessionStorage.getItem("userId");
-    const { nickname, avatarIndex } = getPlayerInfoFromStorage();
+    const userId = getUserIdFromStore();
+    const { nickname, avatarIndex } = getPlayerInfoFromStore();
     const avatar = animalList[avatarIndex]?.[0];
 
     if (!userId) {
-      console.error("[API] userId not found in sessionStorage");
+      console.error("[API] userId not found in store");
       return null;
     }
 

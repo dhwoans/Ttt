@@ -1,22 +1,17 @@
 import { useRoomState } from "../features/game/hooks/useRoomState";
-import { useGameRestart } from "../features/game/hooks/useGameRestart";
 import { useSinglePlay } from "../features/game/hooks/useSinglePlay";
 import GameRoomView from "./GameRoomView";
 import { SingleTicTacToe } from "./TicTacToe";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 export default function SingleGameRoomPage() {
-  const nickname = sessionStorage.getItem("nickname");
-  const { playersInfos, setPlayersInfos, phase, setPhase } = useRoomState();
+  const nickname = useTicTacToeGameStore(
+    (state) => state.myPlayer?.nickname ?? null,
+  );
+  const { playersInfos, phase, setPhase } = useRoomState();
 
   const { handleReady, handleExit } = useSinglePlay({
     setPhase,
-    playersInfos,
-    setPlayersInfos,
-  });
-
-  const { handleRestart } = useGameRestart({
-    setPhase,
-    triggerReady: () => handleReady(true),
   });
 
   return (
@@ -28,11 +23,7 @@ export default function SingleGameRoomPage() {
       onReady={handleReady}
       onExit={handleExit}
       playingView={
-        <SingleTicTacToe
-          playersInfos={playersInfos}
-          onExit={handleExit}
-          onRestart={handleRestart}
-        />
+        <SingleTicTacToe playersInfos={playersInfos} onExit={handleExit} />
       }
     />
   );

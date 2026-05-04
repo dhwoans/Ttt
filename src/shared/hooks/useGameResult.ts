@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import JSConfetti from "js-confetti";
 import { audioManager } from "@/shared/utils/AudioManager";
 import { ImageManager } from "@/shared/utils/ImageManger";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 const WIN = ImageManager.horns;
 const LOOSE = ImageManager.thumbsDown;
@@ -29,7 +30,7 @@ export function useGameResult({
   exitTime = 5000,
 }: UseGameResultProps) {
   console.log(winner);
-  const nickname = sessionStorage.getItem("nickname");
+  const nickname = useTicTacToeGameStore((state) => state.myPlayer?.nickname);
   const [result, setResult] = useState("무승부");
 
   const imgSrc = result === "승리" ? WIN : result === "패배" ? LOOSE : DRAW;
@@ -49,7 +50,7 @@ export function useGameResult({
     // 자동 onExit
     const timeoutId = setTimeout(onExit, exitTime);
     return () => clearTimeout(timeoutId);
-  }, [winner, nickname]);
+  }, [exitTime, nickname, onExit, winner]);
 
   return { result, imgSrc };
 }

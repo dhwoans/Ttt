@@ -1,15 +1,21 @@
-// sessionStorage에서 플레이어 정보를 읽어오는 헬퍼 함수
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 export interface PlayerInfo {
   nickname: string;
   avatarIndex: number;
 }
 
-export function getPlayerInfoFromStorage(): PlayerInfo {
+export function getPlayerInfoFromStore(): PlayerInfo {
+  const myPlayer = useTicTacToeGameStore.getState().myPlayer;
+
   return {
-    nickname: sessionStorage.getItem("nickname") || "플레이어",
-    avatarIndex: Number(sessionStorage.getItem("avator") || 3),
+    nickname: myPlayer?.nickname || "플레이어",
+    avatarIndex: myPlayer?.avatarIndex ?? 3,
   };
+}
+
+export function getUserIdFromStore(): string | null {
+  return useTicTacToeGameStore.getState().myPlayer?.userId ?? null;
 }
 
 /**
@@ -24,7 +30,6 @@ export function clearGameSession() {
   sessionStorage.removeItem("roomId");
   sessionStorage.removeItem("socketId");
   sessionStorage.removeItem("currentTurnPlayerId");
-  sessionStorage.removeItem("existingPlayers");
   sessionStorage.removeItem("gameServerUrl");
   sessionStorage.removeItem("gameTicket");
   sessionStorage.removeItem("readyTimeoutSnapshot");

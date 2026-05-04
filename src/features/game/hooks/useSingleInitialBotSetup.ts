@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { randomBot } from "@/shared/constants/avatarCandidates";
-import type { UseSingleInitialBotSetupProps } from "../types/GameHookTypes";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
-export function useSingleInitialBotSetup({
-  playersInfos,
-  setPlayersInfos,
-}: UseSingleInitialBotSetupProps) {
+export function useSingleInitialBotSetup() {
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const setPlayersInfos = useTicTacToeGameStore(
+    (state) => state.setPlayersInfos,
+  );
+
   useEffect(() => {
     if (playersInfos.length !== 1) return;
 

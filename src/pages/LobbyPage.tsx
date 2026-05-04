@@ -10,10 +10,14 @@ import LeftSideLayout from "./layouts/LeftSideLayout";
 import { ROUTES } from "@/shared/constants/routes";
 import ExitModal from "@/shared/modals/ExitModal";
 import { ImageManager } from "@/shared/utils/ImageManger";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { clearGameSession } from "@/shared/utils/playerStorage";
 
 export default function LobbyPage() {
   const navigate = useNavigate();
-  const nickname = sessionStorage.getItem("nickname");
+  const nickname = useTicTacToeGameStore((state) => state.myPlayer?.nickname);
+  const clearMyPlayer = useTicTacToeGameStore((state) => state.clearMyPlayer);
+  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
   const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {
@@ -37,9 +41,11 @@ export default function LobbyPage() {
   }, []);
 
   const handleLeaveLobby = useCallback(() => {
-    sessionStorage.clear();
+    clearMyPlayer();
+    resetGame();
+    clearGameSession();
     navigate(ROUTES.login, { replace: true });
-  }, [navigate]);
+  }, [clearMyPlayer, navigate, resetGame]);
 
   return (
     <>

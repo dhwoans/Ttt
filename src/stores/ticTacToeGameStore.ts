@@ -1,8 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { GamePlayerInfo } from "@/features/game/types/TicTacToeGameTypes";
 
 // 타입 정의
 type Player = {};
+
+type MyPlayer = {
+  userId: string;
+  nickname: string;
+  avatarIndex: number;
+};
 
 type MoveEntry = {
   square: { row: number; col: number };
@@ -33,6 +40,7 @@ interface TicTacToeGameStoreState {
   turnStart: number;
   openModal: "exit" | "gameOver" | null;
   isWaitingForServer: boolean;
+  myPlayer: MyPlayer | null;
   setGameState: (state: Partial<GameState>) => void;
   setStatus: (status: "IDLE" | "PLAYING" | "FINISHED") => void;
   setResult: (result: "win" | "draw" | null) => void;
@@ -45,7 +53,24 @@ interface TicTacToeGameStoreState {
   addHistory: (entry: any) => void;
   resetGame: () => void;
   nextTurn: (newUserId: string) => void;
+  playersInfos: GamePlayerInfo[];
+  setPlayersInfos: (infos: GamePlayerInfo[]) => void;
+  addPlayerInfo: (info: GamePlayerInfo) => void;
+  removePlayerInfo: (nickname: string) => void;
+  setMyPlayer: (player: MyPlayer) => void;
+  clearMyPlayer: () => void;
 }
+
+const createInitialStoreState = () => ({
+  gameState: initialState,
+  moveHistory: [] as MoveEntry[],
+  timeoutBy: null as string | null,
+  turnStart: Date.now(),
+  openModal: null as "exit" | "gameOver" | null,
+  isWaitingForServer: false,
+  myPlayer: null as MyPlayer | null,
+  playersInfos: [] as GamePlayerInfo[],
+});
 
 const initialState: GameState = {
   roomId: "",
@@ -64,12 +89,7 @@ const initialState: GameState = {
 export const useTicTacToeGameStore = create<TicTacToeGameStoreState>()(
   persist(
     (set, get) => ({
-      gameState: initialState,
-      moveHistory: [] as MoveEntry[],
-      timeoutBy: null as string | null,
-      turnStart: Date.now(),
-      openModal: null,
-      isWaitingForServer: false,
+      ...createInitialStoreState(),
       setOpenModal: (openModal) => set({ openModal }),
       setIsWaitingForServer: (isWaitingForServer) =>
         set({ isWaitingForServer }),
@@ -118,7 +138,20 @@ export const useTicTacToeGameStore = create<TicTacToeGameStoreState>()(
             history: [...s.gameState.history, entry],
           },
         })),
-      resetGame: () => set({ gameState: initialState }),
+      resetGame: () => set(createInitialStoreState()),
+      setPlayersInfos: (infos) => set({ playersInfos: infos }),
+      addPlayerInfo: (info) =>
+        set((s) => {
+          if (s.playersInfos.some((p) => p.nickname === info.nickname))
+            return s;
+          return { playersInfos: [...s.playersInfos, info] };
+        }),
+      removePlayerInfo: (nickname) =>
+        set((s) => ({
+          playersInfos: s.playersInfos.filter((p) => p.nickname !== nickname),
+        })),
+      setMyPlayer: (myPlayer) => set({ myPlayer }),
+      clearMyPlayer: () => set({ myPlayer: null }),
       nextTurn: (newUserId) =>
         set((s) => ({
           gameState: {
