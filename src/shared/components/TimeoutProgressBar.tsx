@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-
-const READY_TIMEOUT_SNAPSHOT_KEY = "readyTimeoutSnapshot";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 interface TimeoutProgressBarProps {
   /** 수신할 이벤트 이름 (기본값: "READY_TIMEOUT_STARTED") */
@@ -39,6 +38,12 @@ export function TimeoutProgressBar({
   label,
   onTimeout,
 }: TimeoutProgressBarProps) {
+  const readyTimeoutSnapshot = useTicTacToeGameStore(
+    (state) => state.readyTimeoutSnapshot,
+  );
+  const setReadyTimeoutSnapshot = useTicTacToeGameStore(
+    (state) => state.setReadyTimeoutSnapshot,
+  );
   const [timeoutMs, setTimeoutMs] = useState<number | null>(null);
   const [remainingMs, setRemainingMs] = useState<number>(0);
   const isCountingDownRef = useRef(false);
@@ -52,39 +57,26 @@ export function TimeoutProgressBar({
       return;
     }
 
-    const raw = sessionStorage.getItem(READY_TIMEOUT_SNAPSHOT_KEY);
-    if (!raw) {
+    if (!readyTimeoutSnapshot) {
       return;
     }
 
-    try {
-      const parsed = JSON.parse(raw) as {
-        timeoutMs?: number;
-        startedAt?: number;
-      };
-      const total = Number(parsed.timeoutMs);
-      const startedAt = Number(parsed.startedAt);
-      if (
-        !Number.isFinite(total) ||
-        !Number.isFinite(startedAt) ||
-        total <= 0
-      ) {
-        sessionStorage.removeItem(READY_TIMEOUT_SNAPSHOT_KEY);
-        return;
-      }
-
-      const elapsed = Date.now() - startedAt;
-      const remain = total - elapsed;
-      if (remain > 0) {
-        setTimeoutMs(total);
-        setRemainingMs(remain);
-      } else {
-        sessionStorage.removeItem(READY_TIMEOUT_SNAPSHOT_KEY);
-      }
-    } catch {
-      sessionStorage.removeItem(READY_TIMEOUT_SNAPSHOT_KEY);
+    const total = Number(readyTimeoutSnapshot.timeoutMs);
+    const startedAt = Number(readyTimeoutSnapshot.startedAt);
+    if (!Number.isFinite(total) || !Number.isFinite(startedAt) || total <= 0) {
+      setReadyTimeoutSnapshot(null);
+      return;
     }
-  }, [eventName]);
+
+    const elapsed = Date.now() - startedAt;
+    const remain = total - elapsed;
+    if (remain > 0) {
+      setTimeoutMs(total);
+      setRemainingMs(remain);
+    } else {
+      setReadyTimeoutSnapshot(null);
+    }
+  }, [eventName, readyTimeoutSnapshot, setReadyTimeoutSnapshot]);
 
   // 타임아웃 이벤트 수신
   useEffect(() => {
@@ -104,10 +96,10 @@ export function TimeoutProgressBar({
       setRemainingMs(nextTimeoutMs);
 
       if (eventName === "READY_TIMEOUT_STARTED") {
-        sessionStorage.setItem(
-          READY_TIMEOUT_SNAPSHOT_KEY,
-          JSON.stringify({ timeoutMs: nextTimeoutMs, startedAt: Date.now() }),
-        );
+        setReadyTimeoutSnapshot({
+          timeoutMs: nextTimeoutMs,
+          startedAt: Date.now(),
+        });
       }
     };
 
@@ -115,7 +107,7 @@ export function TimeoutProgressBar({
     return () => {
       eventManager.off(eventName, handleTimeoutStarted);
     };
-  }, [eventName]);
+  }, [eventName, setReadyTimeoutSnapshot]);
 
   // 취소 이벤트 수신 시 카운트다운 즉시 종료
   useEffect(() => {
@@ -124,7 +116,7 @@ export function TimeoutProgressBar({
       setTimeoutMs(null);
       setRemainingMs(0);
       if (cancelEventName === "READY_TIMEOUT_CANCELED") {
-        sessionStorage.removeItem(READY_TIMEOUT_SNAPSHOT_KEY);
+        setReadyTimeoutSnapshot(null);
       }
     };
 
@@ -132,7 +124,7 @@ export function TimeoutProgressBar({
     return () => {
       eventManager.off(cancelEventName, handleTimeoutCanceled);
     };
-  }, [cancelEventName]);
+  }, [cancelEventName, setReadyTimeoutSnapshot]);
 
   // 카운트다운 타이머
   useEffect(() => {

@@ -3,13 +3,11 @@ import { VersusBanner } from "@/features/game/components/VersusBanner";
 import ExitModal from "@/shared/modals/ExitModal";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
-import type { GamePlayerInfo } from "../features/game/types/TicTacToeGameTypes";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 interface SingleReadyProps {
   onReady: (isReady: boolean) => void;
   onExit: () => void;
-  playersInfos: GamePlayerInfo[];
-  playersReadyStatus?: Record<string, boolean>;
   readyDisabled?: boolean;
 }
 
@@ -20,10 +18,12 @@ const brutalBtn = `${brutalBox} hover:shadow-none hover:translate-x-[5px] hover:
 export default function Ready({
   onReady,
   onExit,
-  playersInfos,
-  playersReadyStatus = {},
   readyDisabled = false,
 }: SingleReadyProps) {
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const playersReadyStatus = useTicTacToeGameStore(
+    (state) => state.playersReadyStatus,
+  );
   const [isReady, setIsReady] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
 

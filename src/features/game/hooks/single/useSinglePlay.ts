@@ -1,8 +1,6 @@
 import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
-import { clearGameSession } from "@/shared/utils/playerStorage";
-import type { UseSinglePlayProps } from "../types/GameHookTypes";
 import { useSingleInitialBotSetup } from "./useSingleInitialBotSetup";
 
 const preprocessGameStart = (botInfo: unknown[]) => {
@@ -18,10 +16,11 @@ const preprocessGameStart = (botInfo: unknown[]) => {
   );
 };
 
-export function useSinglePlay({ setPhase }: UseSinglePlayProps) {
+export function useSinglePlay() {
   const navigate = useNavigate();
   const bridgeTimerRef = useRef<number | null>(null);
-  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
+  const resetGameBoard = useTicTacToeGameStore((state) => state.resetGameBoard);
+  const setStatus = useTicTacToeGameStore((state) => state.setStatus);
   const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
 
   useSingleInitialBotSetup();
@@ -34,24 +33,18 @@ export function useSinglePlay({ setPhase }: UseSinglePlayProps) {
 
   const handleReady = (isReady: boolean) => {
     if (isReady) {
-      resetGame();
-      setPhase("bridge");
       const bot = playersInfos[1];
       const botInfo = [bot?.avatar, bot?.nickname, bot?.imageSrc];
+      resetGameBoard();
       preprocessGameStart(botInfo);
-      bridgeTimerRef.current = window.setTimeout(
-        () => setPhase("playing"),
-        1500,
-      );
-    } else {
-      setPhase("ready");
+      setStatus("PLAYING");
     }
   };
 
   const handleExit = () => {
     if (bridgeTimerRef.current) clearTimeout(bridgeTimerRef.current);
-    resetGame();
-    clearGameSession();
+    resetGameBoard();
+    localStorage.removeItem("gameState");
     navigate("/lobby", { replace: true });
   };
 

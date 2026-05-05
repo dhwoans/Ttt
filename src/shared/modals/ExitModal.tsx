@@ -43,7 +43,6 @@ export default function ExitModal({
   const handleLeave = () => {
     sender.handleLeave();
     if (navigateToLobbyOnLeave) {
-      window.sessionStorage.removeItem("roomId");
       navigator("/lobby", { replace: true });
     }
   };

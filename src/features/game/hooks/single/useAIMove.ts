@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { ticTacToeAI } from "@/shared/utils/AIPlayer";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
-import type { GamePlayerInfo } from "../types/TicTacToeGameTypes";
 
 /**
  * AI의 자동 이동을 처리하는 훅
@@ -10,9 +9,9 @@ export function useAIMove(
   isGameOver: boolean,
   isPlayerTurn: boolean,
   board: string[][],
-  playersInfos: GamePlayerInfo[],
 ) {
   const addMove = useTicTacToeGameStore((state) => state.addMove);
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
 
   useEffect(() => {
     if (isGameOver || isPlayerTurn) {

@@ -1,15 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
-import { calcBoard, whoIsWin } from "../../../shared/utils/ticTacToeUtils";
+import { calcBoard, whoIsWin } from "@/shared/utils/ticTacToeUtils";
 import { useGameTimeout } from "./useGameTimeout";
-import { useSingleNextTurn } from "./useNextTurn";
-import type { UseTicTacToeProps } from "../types/GameHookTypes";
+import { useSingleNextTurn } from "./useSingleNextTurn";
+import type { UseTicTacToeProps } from "../../types/GameHookTypes";
 
-export function useSingleTicTacToe({
-  playersInfos,
-  onExit,
-}: UseTicTacToeProps) {
+export function useSingleTicTacToe({ onExit }: UseTicTacToeProps) {
   const [showExitModal, setShowExitModal] = useState(false);
   const [showGameOverModal, setShowGameOverModal] = useState(false);
 
@@ -26,6 +23,7 @@ export function useSingleTicTacToe({
   const moveHistory = useTicTacToeGameStore((state) => state.moveHistory);
   const turnStart = useTicTacToeGameStore((state) => state.turnStart);
   const timeoutBy = useTicTacToeGameStore((state) => state.timeoutBy);
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
   const board = calcBoard(moveHistory);
   const boardWinner = whoIsWin(board, moveHistory);
   const isDraw = moveHistory.length === 9;
@@ -49,15 +47,12 @@ export function useSingleTicTacToe({
 
   const { handleSquare } = useSingleNextTurn({
     isPlayerTurn,
-    playersInfos,
     moveHistory,
     board,
     isGameOver,
   });
 
   return {
-    playersInfos,
-    board,
     canSelectSquare: !isGameOver && isPlayerTurn,
     handleSquare,
     isGameOver,

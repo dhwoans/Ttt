@@ -11,7 +11,6 @@ import { ROUTES } from "@/shared/constants/routes";
 import ExitModal from "@/shared/modals/ExitModal";
 import { ImageManager } from "@/shared/utils/ImageManger";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
-import { clearGameSession } from "@/shared/utils/playerStorage";
 
 export default function LobbyPage() {
   const navigate = useNavigate();
@@ -43,7 +42,7 @@ export default function LobbyPage() {
   const handleLeaveLobby = useCallback(() => {
     clearMyPlayer();
     resetGame();
-    clearGameSession();
+    localStorage.removeItem("gameState");
     navigate(ROUTES.login, { replace: true });
   }, [clearMyPlayer, navigate, resetGame]);
 

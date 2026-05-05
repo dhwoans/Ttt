@@ -8,16 +8,17 @@ import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
  */
 export function useGameSocketConnection(roomId: string) {
   const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
+  const gameServerUrl = useTicTacToeGameStore((state) => state.gameServerUrl);
+  const gameTicket = useTicTacToeGameStore((state) => state.gameTicket);
+  const setRoomId = useTicTacToeGameStore((state) => state.setRoomId);
 
   useEffect(() => {
     const userId = myPlayer?.userId;
     const userNickname = myPlayer?.nickname;
-    const gameServerUrl = sessionStorage.getItem("gameServerUrl");
-    const gameTicket = sessionStorage.getItem("gameTicket") ?? undefined;
     const socket = gameSocketManager.getSocket();
 
     // URL 파라미터를 room 진입의 단일 소스로 사용한다.
-    sessionStorage.setItem("roomId", roomId);
+    setRoomId(roomId);
 
     if (socket?.connected) {
       return () => {
@@ -32,7 +33,7 @@ export function useGameSocketConnection(roomId: string) {
         gameServerUrl || "/room",
         {
           roomId,
-          ticket: gameTicket,
+          ticket: gameTicket ?? undefined,
         },
       );
     }
@@ -41,7 +42,7 @@ export function useGameSocketConnection(roomId: string) {
     return () => {
       gameSocketManager.disconnect();
     };
-  }, [myPlayer, roomId]);
+  }, [gameServerUrl, gameTicket, myPlayer, roomId, setRoomId]);
 
   const disconnect = () => {
     gameSocketManager.disconnect();

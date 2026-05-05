@@ -11,6 +11,11 @@ type MyPlayer = {
   avatarIndex: number;
 };
 
+type TimeoutSnapshot = {
+  timeoutMs: number;
+  startedAt: number;
+};
+
 type MoveEntry = {
   square: { row: number; col: number };
   symbol: string;
@@ -41,10 +46,16 @@ interface TicTacToeGameStoreState {
   openModal: "exit" | "gameOver" | null;
   isWaitingForServer: boolean;
   myPlayer: MyPlayer | null;
+  socketId: string | null;
+  gameServerUrl: string | null;
+  gameTicket: string | null;
+  readyTimeoutSnapshot: TimeoutSnapshot | null;
+  turnTimeoutSnapshot: TimeoutSnapshot | null;
   setGameState: (state: Partial<GameState>) => void;
   setStatus: (status: "IDLE" | "PLAYING" | "FINISHED") => void;
   setResult: (result: "win" | "draw" | null) => void;
   setWinner: (winner: string | null) => void;
+  setTimeoutBy: (nickname: string | null) => void;
   setCurrentTurnUserId: (userId: string) => void;
   setOpenModal: (modal: "exit" | "gameOver" | null) => void;
   setIsWaitingForServer: (waiting: boolean) => void;
@@ -52,13 +63,27 @@ interface TicTacToeGameStoreState {
   updatePlayer: (userId: string, player: Partial<Player>) => void;
   addHistory: (entry: any) => void;
   resetGame: () => void;
+  resetGameBoard: () => void;
   nextTurn: (newUserId: string) => void;
   playersInfos: GamePlayerInfo[];
   setPlayersInfos: (infos: GamePlayerInfo[]) => void;
   addPlayerInfo: (info: GamePlayerInfo) => void;
   removePlayerInfo: (nickname: string) => void;
+  playersReadyStatus: Record<string, boolean>;
+  setPlayersReadyStatus: (status: Record<string, boolean>) => void;
+  updatePlayerReadyStatus: (connId: string, isReady: boolean) => void;
+  removePlayerReadyStatus: (connId: string) => void;
   setMyPlayer: (player: MyPlayer) => void;
   clearMyPlayer: () => void;
+  setRoomId: (roomId: string) => void;
+  setSocketId: (socketId: string | null) => void;
+  setGameServerConnection: (params: {
+    gameServerUrl: string;
+    gameTicket: string;
+  }) => void;
+  clearGameServerConnection: () => void;
+  setReadyTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
+  setTurnTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
 }
 
 const createInitialStoreState = () => ({
@@ -70,6 +95,7 @@ const createInitialStoreState = () => ({
   isWaitingForServer: false,
   myPlayer: null as MyPlayer | null,
   playersInfos: [] as GamePlayerInfo[],
+  playersReadyStatus: {} as Record<string, boolean>,
 });
 
 const initialState: GameState = {
@@ -88,8 +114,13 @@ const initialState: GameState = {
 
 export const useTicTacToeGameStore = create<TicTacToeGameStoreState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...createInitialStoreState(),
+      socketId: null,
+      gameServerUrl: null,
+      gameTicket: null,
+      readyTimeoutSnapshot: null,
+      turnTimeoutSnapshot: null,
       setOpenModal: (openModal) => set({ openModal }),
       setIsWaitingForServer: (isWaitingForServer) =>
         set({ isWaitingForServer }),
@@ -121,6 +152,10 @@ export const useTicTacToeGameStore = create<TicTacToeGameStoreState>()(
         set((s) => ({
           gameState: { ...s.gameState, winner },
         })),
+      setTimeoutBy: (timeoutBy) =>
+        set((s) => ({
+          gameState: { ...s.gameState, timeoutBy },
+        })),
       updatePlayer: (userId, player) =>
         set((s) => ({
           gameState: {
@@ -139,6 +174,17 @@ export const useTicTacToeGameStore = create<TicTacToeGameStoreState>()(
           },
         })),
       resetGame: () => set(createInitialStoreState()),
+      resetGameBoard: () =>
+        set((s) => ({
+          gameState: initialState,
+          moveHistory: [],
+          timeoutBy: null,
+          turnStart: Date.now(),
+          openModal: null,
+          isWaitingForServer: false,
+          myPlayer: s.myPlayer,
+          playersInfos: s.playersInfos,
+        })),
       setPlayersInfos: (infos) => set({ playersInfos: infos }),
       addPlayerInfo: (info) =>
         set((s) => {
@@ -150,8 +196,39 @@ export const useTicTacToeGameStore = create<TicTacToeGameStoreState>()(
         set((s) => ({
           playersInfos: s.playersInfos.filter((p) => p.nickname !== nickname),
         })),
+      setPlayersReadyStatus: (playersReadyStatus) =>
+        set({ playersReadyStatus }),
+      updatePlayerReadyStatus: (connId, isReady) =>
+        set((s) => ({
+          playersReadyStatus: { ...s.playersReadyStatus, [connId]: isReady },
+        })),
+      removePlayerReadyStatus: (connId) =>
+        set((s) => {
+          const next = { ...s.playersReadyStatus };
+          delete next[connId];
+          return { playersReadyStatus: next };
+        }),
       setMyPlayer: (myPlayer) => set({ myPlayer }),
       clearMyPlayer: () => set({ myPlayer: null }),
+      setRoomId: (roomId) =>
+        set((s) => ({
+          gameState: {
+            ...s.gameState,
+            roomId,
+          },
+        })),
+      setSocketId: (socketId) => set({ socketId }),
+      setGameServerConnection: ({ gameServerUrl, gameTicket }) =>
+        set({ gameServerUrl, gameTicket }),
+      clearGameServerConnection: () =>
+        set({
+          gameServerUrl: null,
+          gameTicket: null,
+        }),
+      setReadyTimeoutSnapshot: (readyTimeoutSnapshot) =>
+        set({ readyTimeoutSnapshot }),
+      setTurnTimeoutSnapshot: (turnTimeoutSnapshot) =>
+        set({ turnTimeoutSnapshot }),
       nextTurn: (newUserId) =>
         set((s) => ({
           gameState: {

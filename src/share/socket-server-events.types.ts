@@ -14,7 +14,6 @@ export interface components {
             isReady: boolean;
             /** @description 아바타 키 (예: cat, dog) */
             avatar?: string;
-            skilled?: boolean;
         };
         /**
          * @description `socket.on("CONNECTED", handler)`

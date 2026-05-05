@@ -13,6 +13,7 @@ import { eventManager } from "@/shared/utils/EventManager";
 export function useConnectGameServer() {
   const navigate = useNavigate();
   const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
+  const setRoomId = useTicTacToeGameStore((state) => state.setRoomId);
 
   const connectGameServer = useCallback(
     (gameServerUrl: string, ticket: string) => {
@@ -39,7 +40,7 @@ export function useConnectGameServer() {
       const handleRoomAssigned = (data: any) => {
         console.log("[multi] ROOM_ASSIGNED received:", data);
         const assignedRoomId = data.roomId;
-        sessionStorage.setItem("roomId", assignedRoomId);
+        setRoomId(assignedRoomId);
 
         // 게임방으로 이동
         toast("🎟️ 입장권 내는 중...");
@@ -51,7 +52,7 @@ export function useConnectGameServer() {
       // 한 번만 실행되도록 설정
       eventManager.once("ROOM_ASSIGNED", handleRoomAssigned);
     },
-    [myPlayer, navigate],
+    [myPlayer, navigate, setRoomId],
   );
 
   return { connectGameServer };

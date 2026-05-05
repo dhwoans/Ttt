@@ -11,12 +11,14 @@ import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@share";
  * - EXISTING_PLAYERS 이벤트 처리
  * - PLAYER_JOINED 이벤트 처리
  */
-export function useMultiplayerPlayers(
-  setPlayersReadyStatus: React.Dispatch<
-    React.SetStateAction<Record<string, boolean>>
-  >,
-) {
+export function useMultiplayerPlayers() {
   const addPlayerInfo = useTicTacToeGameStore((state) => state.addPlayerInfo);
+  const setPlayersReadyStatus = useTicTacToeGameStore(
+    (state) => state.setPlayersReadyStatus,
+  );
+  const updatePlayerReadyStatus = useTicTacToeGameStore(
+    (state) => state.updatePlayerReadyStatus,
+  );
   // EXISTING_PLAYERS 이벤트 처리
   useEffect(() => {
     const handleExistingPlayers = (data: ExistingPlayersEvent) => {
@@ -58,10 +60,7 @@ export function useMultiplayerPlayers(
         userId: data.player.connId,
       });
 
-      setPlayersReadyStatus((prev) => ({
-        ...prev,
-        [data.player.connId]: data.player.isReady,
-      }));
+      updatePlayerReadyStatus(data.player.connId, data.player.isReady);
     };
 
     eventManager.on("PLAYER_JOINED", handlePlayerJoined);
@@ -69,5 +68,5 @@ export function useMultiplayerPlayers(
       console.log("[room] PLAYER_JOINED 리스너 제거");
       eventManager.off("PLAYER_JOINED", handlePlayerJoined);
     };
-  }, [addPlayerInfo, setPlayersReadyStatus]);
+  }, [addPlayerInfo, updatePlayerReadyStatus]);
 }

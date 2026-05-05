@@ -1,9 +1,14 @@
 import { useJoinRoom } from "./useJoinRoom";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 /**
  * API 서버로 게임 티켓 요청
  */
 export function useGetGameTicket() {
+  const setGameServerConnection = useTicTacToeGameStore(
+    (state) => state.setGameServerConnection,
+  );
+
   const getGameTicket = async () => {
     // API 서버로 게임 티켓 요청
     const response = await useJoinRoom();
@@ -15,9 +20,7 @@ export function useGetGameTicket() {
       const ticket = apiResponse.ticket;
 
       if (gameServerUrl && ticket) {
-        // 게임 서버 정보를 세션에 저장
-        sessionStorage.setItem("gameServerUrl", gameServerUrl);
-        sessionStorage.setItem("gameTicket", ticket);
+        setGameServerConnection({ gameServerUrl, gameTicket: ticket });
 
         return {
           success: true,

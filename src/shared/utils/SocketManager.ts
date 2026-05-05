@@ -4,9 +4,7 @@ import type { ServerEvents, ClientEvents } from "@share";
 
 import { eventManager } from "@/shared/utils/EventManager";
 import { GAME_EVENTS } from "@/shared/constants/eventList";
-
-const READY_TIMEOUT_SNAPSHOT_KEY = "readyTimeoutSnapshot";
-const TURN_TIMEOUT_SNAPSHOT_KEY = "turnTimeoutSnapshot";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 class GameSocketManager {
   private socket: Socket<ServerEvents, ClientEvents> | null = null;
@@ -75,9 +73,8 @@ class GameSocketManager {
 
     this.socket.on("connect", () => {
       console.log("[socket] 연결 성공, socket.id:", this.socket?.id);
-      // socket.id를 sessionStorage에 저장 (턴 비교용)
       if (this.socket?.id) {
-        sessionStorage.setItem("socketId", this.socket.id);
+        useTicTacToeGameStore.getState().setSocketId(this.socket.id);
         console.log("[socket] socket.id 저장:", this.socket.id);
       }
       if (roomId) {
@@ -108,20 +105,18 @@ class GameSocketManager {
         if (name === "READY_TIMEOUT_STARTED") {
           const timeoutMs = Number(data?.timeoutMs);
           if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
-            sessionStorage.setItem(
-              READY_TIMEOUT_SNAPSHOT_KEY,
-              JSON.stringify({ timeoutMs, startedAt: Date.now() }),
-            );
+            useTicTacToeGameStore
+              .getState()
+              .setReadyTimeoutSnapshot({ timeoutMs, startedAt: Date.now() });
           }
         }
 
         if (name === "TURN_TIMEOUT_STARTED") {
           const timeoutMs = Number(data?.timeoutMs);
           if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
-            sessionStorage.setItem(
-              TURN_TIMEOUT_SNAPSHOT_KEY,
-              JSON.stringify({ timeoutMs, startedAt: Date.now() }),
-            );
+            useTicTacToeGameStore
+              .getState()
+              .setTurnTimeoutSnapshot({ timeoutMs, startedAt: Date.now() });
           }
         }
 
@@ -130,7 +125,7 @@ class GameSocketManager {
           name === "READY_TIMEOUT_EXPIRED" ||
           name === "PLAYING"
         ) {
-          sessionStorage.removeItem(READY_TIMEOUT_SNAPSHOT_KEY);
+          useTicTacToeGameStore.getState().setReadyTimeoutSnapshot(null);
         }
 
         if (
@@ -138,7 +133,7 @@ class GameSocketManager {
           name === "GAME_OVER" ||
           name === "LEAVE_SUCCESS"
         ) {
-          sessionStorage.removeItem(TURN_TIMEOUT_SNAPSHOT_KEY);
+          useTicTacToeGameStore.getState().setTurnTimeoutSnapshot(null);
         }
 
         eventManager.emit(name, data);
@@ -182,6 +177,7 @@ class GameSocketManager {
       this.socket.disconnect();
       this.socket = null;
       this.currentTicket = null;
+      useTicTacToeGameStore.getState().setSocketId(null);
     }
   }
 

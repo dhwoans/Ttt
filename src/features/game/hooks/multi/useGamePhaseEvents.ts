@@ -1,46 +1,29 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { gameSocketManager } from "@/shared/utils/SocketManager";
-import type { RoomPhase } from "../types/TicTacToeGameTypes";
-
-// 시작전 게임정보 저장
-const preprocessGameStart = (botInfo: any) => {
-  localStorage.setItem(
-    "gameState",
-    JSON.stringify({
-      phase: "playing",
-      bot: botInfo,
-      turnStart: Date.now(),
-      moveHistory: [],
-      timeoutBy: null,
-    }),
-  );
-};
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import type { PlayingEvent } from "@/share";
 
 /**
  * 게임 페이즈 관련 이벤트 처리
  * - PLAYING: 게임 시작
  * - ROOM_ASSIGNED: 방 배정
  */
-export function useGamePhaseEvents(setPhase: (phase: RoomPhase) => void) {
+export function useGamePhaseEvents() {
+  const setStatus = useTicTacToeGameStore((state) => state.setStatus);
+  const setCurrentTurnUserId = useTicTacToeGameStore(
+    (state) => state.setCurrentTurnUserId,
+  );
+
   // PLAYING 신호 수신 시 phase 변경 및 전처리
   useEffect(() => {
-    const handlePlaying = (data: any) => {
+    const handlePlaying = (data: PlayingEvent) => {
       console.log("[room] PLAYING 이벤트 수신, 게임 시작:", data);
+      //게임 상태 변경
+      setStatus("PLAYING");
 
-      // socket.id 저장 (턴 ID 비교 시 필요)
-      const socketId = gameSocketManager.getSocket()?.id;
-      if (socketId) {
-        sessionStorage.setItem("socketId", socketId);
-        console.log("[room] socket.id 저장:", socketId);
-      }
-
-      preprocessGameStart(data.bot ?? null);
-      setPhase("playing");
-
-      // 멀티플레이: 게임 상태 정보 브로드캐스트
+      
       if (data.currentTurnPlayerId) {
-        sessionStorage.setItem("currentTurnPlayerId", data.currentTurnPlayerId);
+        setCurrentTurnUserId(data.currentTurnPlayerId);
         console.log(
           "[room] PLAYING 이벤트에서 currentTurnPlayerId 저장:",
           data.currentTurnPlayerId,
@@ -61,11 +44,11 @@ export function useGamePhaseEvents(setPhase: (phase: RoomPhase) => void) {
       console.log("[room] PLAYING 리스너 제거");
       eventManager.off("PLAYING", handlePlaying);
     };
-  }, [setPhase]);
+  }, [setCurrentTurnUserId, setStatus]);
 
   // 멀티플레이 시작: ROOM_ASSIGNED 수신
   useEffect(() => {
-    const handleRoomAssigned = (data: any) => {
+    const handleRoomAssigned = () => {
       console.log("[room] ROOM_ASSIGNED 수신, 멀티플레이 시작 준비");
     };
 

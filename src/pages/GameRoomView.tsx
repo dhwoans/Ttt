@@ -2,20 +2,12 @@ import type { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
 import Marquee from "react-fast-marquee";
 import Ready from "./Ready";
-import Bridge from "../shared/components/Bridge";
 import HeaderLayout from "./layouts/HeaderLayout";
-import type {
-  GamePlayerInfo,
-  RoomPhase,
-} from "../features/game/types/TicTacToeGameTypes";
 import { ImageManager } from "@/shared/utils/ImageManger";
 import LeftSideLayout from "@/pages/layouts/LeftSideLayout";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 interface GameRoomViewProps {
-  nickname: string | null;
-  phase: RoomPhase;
-  playersInfos: GamePlayerInfo[];
-  playersReadyStatus: Record<string, boolean>;
   readyDisabled?: boolean;
   onReady: (isReady: boolean) => void;
   onExit: () => void;
@@ -23,15 +15,16 @@ interface GameRoomViewProps {
 }
 
 export default function GameRoomView({
-  nickname,
-  phase,
-  playersInfos,
-  playersReadyStatus,
   readyDisabled = false,
   onReady,
   onExit,
   playingView,
 }: GameRoomViewProps) {
+  const nickname = useTicTacToeGameStore(
+    (state) => state.myPlayer?.nickname ?? "",
+  );
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const status = useTicTacToeGameStore((state) => state.gameState.status);
   return (
     <>
       <ToastContainer
@@ -56,12 +49,10 @@ export default function GameRoomView({
           </span>
         </Marquee>
       </HeaderLayout>
-      {phase === "ready" && (
+      {status === "IDLE" && (
         <Ready
           onReady={onReady}
           onExit={onExit}
-          playersInfos={playersInfos}
-          playersReadyStatus={playersReadyStatus}
           readyDisabled={readyDisabled}
         />
       )}
@@ -74,8 +65,7 @@ export default function GameRoomView({
           aria-hidden="true"
         />
       </LeftSideLayout>
-      {phase === "bridge" && <Bridge imageSrc={ImageManager.gameStart} />}
-      {phase === "playing" && playingView}
+      {status === "PLAYING" && playingView}
     </>
   );
 }

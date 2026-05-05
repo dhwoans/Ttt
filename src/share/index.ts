@@ -57,6 +57,7 @@ export type ReadyEventPayload = ClientSchemas["ReadyEventPayload"];
 export type MoveEventPayload = ClientSchemas["MoveEventPayload"];
 export type LeaveEventPayload = Record<string, never>;
 
+export type PlayingEvent = ServerSchemas["PlayingEvent"];
 export type ExistingPlayersEvent = ServerSchemas["ExistingPlayersEvent"];
 export type PlayerJoinedEvent = ServerSchemas["PlayerJoinedEvent"];
 export type PlayerReadyEvent = ServerSchemas["PlayerReadyEvent"];

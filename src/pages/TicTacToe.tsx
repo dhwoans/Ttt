@@ -3,18 +3,15 @@ import Players from "../features/game/components/Players";
 import GameOverModal from "@/shared/modals/GameOverModal";
 import Countdown from "@/shared/components/Countdown";
 import ExitModal from "@/shared/modals/ExitModal";
-import { useSingleTicTacToe } from "../features/game/hooks/useSingleTicTacToe";
-import { useMultiTicTacToe } from "../features/game/hooks/useMultiTicTacToe";
-import type { GamePlayerInfo } from "../features/game/types/TicTacToeGameTypes";
+import { useSingleTicTacToe } from "../features/game/hooks/single/useSingleTicTacToe";
+import { useMultiTicTacToe } from "../features/game/hooks/multi/useMultiTicTacToe";
+import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
 
 interface PlayingProps {
-  playersInfos: GamePlayerInfo[];
   onExit?: () => void;
 }
 
 interface TicTacToeViewProps {
-  playersInfos: GamePlayerInfo[];
-  board: (string | null)[][];
   canSelectSquare: boolean;
   handleSquare: (row: number, col: number) => void;
   isGameOver: boolean;
@@ -31,8 +28,6 @@ interface TicTacToeViewProps {
 }
 
 function TicTacToeView({
-  playersInfos,
-  board,
   canSelectSquare,
   handleSquare,
   isGameOver,
@@ -47,6 +42,7 @@ function TicTacToeView({
   countdownStartTime,
   countdownOnComplete,
 }: TicTacToeViewProps) {
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
   return (
     <main className="relative flex flex-col min-h-screen p-4 md:p-8 items-center justify-center">
       <div className="w-full md:w-auto mb-6 md:mb-0 flex flex-col items-center justify-center gap-4 md:absolute md:left-8 md:top-1/2 md:-translate-y-1/2">
@@ -55,10 +51,7 @@ function TicTacToeView({
       <div
         className={`w-full max-w-150 aspect-square flex items-center justify-center rounded-2xl backdrop-blur-sm p-4 md:p-6 mx-auto${isGameOver ? " animate__animated animate__hinge" : ""}`}
       >
-        <Board
-          list={board}
-          selectSquare={canSelectSquare ? handleSquare : false}
-        />
+        <Board selectSquare={canSelectSquare ? handleSquare : false} />
       </div>
 
       {!isGameOver && (
@@ -88,9 +81,8 @@ function TicTacToeView({
   );
 }
 
-export function SingleTicTacToe({ playersInfos, onExit }: PlayingProps) {
+export function SingleTicTacToe({ onExit }: PlayingProps) {
   const {
-    board,
     canSelectSquare,
     handleSquare,
     isGameOver,
@@ -104,12 +96,10 @@ export function SingleTicTacToe({ playersInfos, onExit }: PlayingProps) {
     countdownDurationMs,
     countdownStartTime,
     countdownOnComplete,
-  } = useSingleTicTacToe({ playersInfos, onExit });
+  } = useSingleTicTacToe({ onExit });
 
   return (
     <TicTacToeView
-      playersInfos={playersInfos}
-      board={board}
       canSelectSquare={canSelectSquare}
       handleSquare={handleSquare}
       isGameOver={isGameOver}
@@ -127,9 +117,8 @@ export function SingleTicTacToe({ playersInfos, onExit }: PlayingProps) {
   );
 }
 
-export function MultiTicTacToe({ playersInfos, onExit }: PlayingProps) {
+export function MultiTicTacToe({ onExit }: PlayingProps) {
   const {
-    board,
     canSelectSquare,
     handleSquare,
     isGameOver,
@@ -142,12 +131,10 @@ export function MultiTicTacToe({ playersInfos, onExit }: PlayingProps) {
     winner,
     countdownDurationMs,
     countdownStartTime,
-  } = useMultiTicTacToe({ playersInfos, onExit });
+  } = useMultiTicTacToe({ onExit });
 
   return (
     <TicTacToeView
-      playersInfos={playersInfos}
-      board={board}
       canSelectSquare={canSelectSquare}
       handleSquare={handleSquare}
       isGameOver={isGameOver}

@@ -15,7 +15,6 @@ export function useReceiveNextTurn() {
     const handleNextTurn = (data: any) => {
       if (data.nextPlayerId) {
         setCurrentTurnUserId(data.nextPlayerId);
-        sessionStorage.setItem("currentTurnPlayerId", data.nextPlayerId);
       }
     };
 

@@ -1,20 +1,18 @@
 import { useCallback, useEffect } from "react";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
-import { calcBoard } from "@/shared/utils/ticTacToeUtils";
-import { useMultiNextTurn } from "./useNextTurn";
+import { useMultiNextTurn } from "./useMultiNextTurn";
 import { useReceiveMoveMade } from "./useReceiveMoveMade";
 import { useReceiveGameOver } from "./useReceiveGameOver";
-import { useReceiveGameStateUpdate } from "./useReceiveGameStateUpdate";
 import { useReceiveNextTurn } from "./useReceiveNextTurn";
 import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
-import type { UseTicTacToeProps } from "../types/GameHookTypes";
+import type { UseTicTacToeProps } from "../../types/GameHookTypes";
 
-export function useMultiTicTacToe({ playersInfos, onExit }: UseTicTacToeProps) {
+export function useMultiTicTacToe({ onExit }: UseTicTacToeProps) {
   const gameStatus = useTicTacToeGameStore((state) => state.gameState.status);
   const winner = useTicTacToeGameStore((state) => state.gameState.winner);
   const result = useTicTacToeGameStore((state) => state.gameState.result);
-  const moveHistory = useTicTacToeGameStore((state) => state.moveHistory);
+  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
   const currentTurnUserId = useTicTacToeGameStore(
     (state) => state.gameState.turn.currentUserId,
   );
@@ -34,16 +32,14 @@ export function useMultiTicTacToe({ playersInfos, onExit }: UseTicTacToeProps) {
     onExit?.();
   };
 
-  useReceiveMoveMade({ playersInfos });
+  useReceiveMoveMade();
   useReceiveGameOver();
-  useReceiveGameStateUpdate();
   useReceiveNextTurn();
   const { turnTimeoutMs, turnTimeoutStartedAt } =
     useReceiveTurnTimeoutStarted();
 
   const isGameOver = gameStatus === "FINISHED";
   const isDraw = result === "draw";
-  const board = calcBoard(moveHistory);
   const currentPlayer = currentTurnUserId
     ? (playersInfos.find((p) => p.userId === currentTurnUserId) ??
       playersInfos[0])
@@ -62,8 +58,6 @@ export function useMultiTicTacToe({ playersInfos, onExit }: UseTicTacToeProps) {
   });
 
   return {
-    playersInfos,
-    board,
     canSelectSquare:
       !isGameOver && isCurrentUserTurnByServer && !isWaitingForServer,
     handleSquare,

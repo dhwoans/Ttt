@@ -11,14 +11,8 @@ export interface GameRestartConfig {
   triggerReady: () => void;
 }
 
-export interface UseMultiPlayProps {
-  phase: RoomPhase;
-  setPhase: (phase: RoomPhase) => void;
-}
-
 export interface UseSingleNextTurnConfig {
   isPlayerTurn: boolean;
-  playersInfos: GamePlayerInfo[];
   moveHistory: any[];
   board: string[][];
   isGameOver: boolean;
@@ -29,17 +23,8 @@ export interface UseMultiNextTurnConfig {
   isGameOver: boolean;
 }
 
-export interface UseReceiveMoveMadeConfig {
-  playersInfos: GamePlayerInfo[];
-}
-
 export interface UseTicTacToeProps {
-  playersInfos: GamePlayerInfo[];
   onExit?: () => void;
-}
-
-export interface UseSinglePlayProps {
-  setPhase: (phase: RoomPhase) => void;
 }
 
 export interface UseSingleInitialBotSetupProps {
