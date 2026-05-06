@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
 import type { GameOverEvent } from "@share";
 
 /**
@@ -9,9 +9,9 @@ import type { GameOverEvent } from "@share";
  * - gameStore의 status, result, winner 업데이트
  */
 export function useReceiveGameOver() {
-  const setStatus = useTicTacToeGameStore((state) => state.setStatus);
-  const setResult = useTicTacToeGameStore((state) => state.setResult);
-  const setWinner = useTicTacToeGameStore((state) => state.setWinner);
+  const setStatus = useGameStore((state) => state.setStatus);
+  const setResult = useGameStore((state) => state.setResult);
+  const setWinner = useGameStore((state) => state.setWinner);
 
   useEffect(() => {
     const handleGameOver = (data: GameOverEvent) => {

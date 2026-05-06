@@ -6,16 +6,15 @@ import { useReceivePlayerReady } from "./useReceivePlayerReady";
 import { useReceivePlayerLeave } from "./useReceivePlayerLeave";
 import { useReadyTimeoutHandler } from "./useReadyTimeoutHandler";
 import { useGamePhaseEvents } from "./useGamePhaseEvents";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 export function useMultiPlay() {
   const navigate = useNavigate();
   const { sendReady } = useSendPlayerReady();
   const { sendLeave } = useSendPlayerLeave();
-  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
-  const playersReadyStatus = useTicTacToeGameStore(
-    (state) => state.playersReadyStatus,
-  );
+  const resetGame = useGameStore((state) => state.resetGame);
+  const playersReadyStatus = useRoomStore((state) => state.playersReadyStatus);
 
   useGamePhaseEvents();
   useMultiplayerPlayers();

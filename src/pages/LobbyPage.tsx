@@ -10,13 +10,14 @@ import LeftSideLayout from "./layouts/LeftSideLayout";
 import { ROUTES } from "@/shared/constants/routes";
 import ExitModal from "@/shared/modals/ExitModal";
 import { ImageManager } from "@/shared/utils/ImageManger";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 export default function LobbyPage() {
   const navigate = useNavigate();
-  const nickname = useTicTacToeGameStore((state) => state.myPlayer?.nickname);
-  const clearMyPlayer = useTicTacToeGameStore((state) => state.clearMyPlayer);
-  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
+  const nickname = useUserStore((state) => state.myPlayer?.nickname);
+  const clearMyPlayer = useUserStore((state) => state.clearMyPlayer);
+  const resetGame = useGameStore((state) => state.resetGame);
   const [showExitModal, setShowExitModal] = useState(false);
 
   useEffect(() => {

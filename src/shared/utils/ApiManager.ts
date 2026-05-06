@@ -1,5 +1,5 @@
 import { animalList } from "../constants/avatarCandidates";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
 import type { IssueTicketRequest, IssueTicketResponse } from "@share";
 
 interface CreateUserResponse {
@@ -29,7 +29,7 @@ class ApiManager {
   // GET /api/room - 멀티플레이 서버 입장 정보 요청
   // 접속가능한 게임서버주소,입장티켓 리턴
   async joinRoom(): Promise<IssueTicketResponse | null> {
-    const myPlayer = useTicTacToeGameStore.getState().myPlayer;
+    const myPlayer = useUserStore.getState().myPlayer;
     const userId = myPlayer?.userId ?? null;
     const nickname = myPlayer?.nickname ?? "";
     const avatarIndex = myPlayer?.avatarIndex ?? 0;

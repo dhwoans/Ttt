@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { PlayerReadyEvent } from "@share";
 
 export function useReceivePlayerReady() {
-  const updatePlayerReadyStatus = useTicTacToeGameStore(
+  const updatePlayerReadyStatus = useRoomStore(
     (state) => state.updatePlayerReadyStatus,
   );
 

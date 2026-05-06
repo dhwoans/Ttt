@@ -5,7 +5,7 @@ import Countdown from "@/shared/components/Countdown";
 import ExitModal from "@/shared/modals/ExitModal";
 import { useSingleTicTacToe } from "../features/game/hooks/single/useSingleTicTacToe";
 import { useMultiTicTacToe } from "../features/game/hooks/multi/useMultiTicTacToe";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useModalStore } from "@/stores/useModalStore";
 
 interface PlayingProps {
   onExit?: () => void;
@@ -16,12 +16,8 @@ interface TicTacToeViewProps {
   handleSquare: (row: number, col: number) => void;
   isGameOver: boolean;
   currentTurnNickname: string;
-  showExitModal: boolean;
-  showGameOverModal: boolean;
   handleExitCancel: () => void;
   handleExit: () => void;
-  isDraw: boolean;
-  winner: string | null;
   countdownDurationMs: number;
   countdownStartTime: number;
   countdownOnComplete?: () => void;
@@ -31,22 +27,19 @@ function TicTacToeView({
   canSelectSquare,
   handleSquare,
   isGameOver,
-  currentTurnNickname,
-  showExitModal,
-  showGameOverModal,
   handleExitCancel,
   handleExit,
-  isDraw,
-  winner,
   countdownDurationMs,
   countdownStartTime,
   countdownOnComplete,
 }: TicTacToeViewProps) {
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const openModal = useModalStore((state) => state.openModal);
+  const showExitModal = openModal === "exit";
+  const showGameOverModal = openModal === "gameOver";
   return (
     <main className="relative flex flex-col min-h-screen p-4 md:p-8 items-center justify-center">
       <div className="w-full md:w-auto mb-6 md:mb-0 flex flex-col items-center justify-center gap-4 md:absolute md:left-8 md:top-1/2 md:-translate-y-1/2">
-        <Players playerInfos={playersInfos} isTurn={currentTurnNickname} />
+        <Players />
       </div>
       <div
         className={`w-full max-w-150 aspect-square flex items-center justify-center rounded-2xl backdrop-blur-sm p-4 md:p-6 mx-auto${isGameOver ? " animate__animated animate__hinge" : ""}`}
@@ -74,9 +67,7 @@ function TicTacToeView({
         />
       )}
 
-      {showGameOverModal && (
-        <GameOverModal winner={isDraw ? "DRAW" : winner} onExit={handleExit} />
-      )}
+      {showGameOverModal && <GameOverModal />}
     </main>
   );
 }
@@ -87,12 +78,8 @@ export function SingleTicTacToe({ onExit }: PlayingProps) {
     handleSquare,
     isGameOver,
     currentTurnNickname,
-    showExitModal,
-    showGameOverModal,
     handleExitCancel,
     handleExit,
-    isDraw,
-    winner,
     countdownDurationMs,
     countdownStartTime,
     countdownOnComplete,
@@ -104,12 +91,8 @@ export function SingleTicTacToe({ onExit }: PlayingProps) {
       handleSquare={handleSquare}
       isGameOver={isGameOver}
       currentTurnNickname={currentTurnNickname}
-      showExitModal={showExitModal}
-      showGameOverModal={showGameOverModal}
       handleExitCancel={handleExitCancel}
       handleExit={handleExit}
-      isDraw={isDraw}
-      winner={winner}
       countdownDurationMs={countdownDurationMs}
       countdownStartTime={countdownStartTime}
       countdownOnComplete={countdownOnComplete}
@@ -123,12 +106,8 @@ export function MultiTicTacToe({ onExit }: PlayingProps) {
     handleSquare,
     isGameOver,
     currentTurnNickname,
-    showExitModal,
-    showGameOverModal,
     handleExitCancel,
     handleExit,
-    isDraw,
-    winner,
     countdownDurationMs,
     countdownStartTime,
   } = useMultiTicTacToe({ onExit });
@@ -139,12 +118,8 @@ export function MultiTicTacToe({ onExit }: PlayingProps) {
       handleSquare={handleSquare}
       isGameOver={isGameOver}
       currentTurnNickname={currentTurnNickname}
-      showExitModal={showExitModal}
-      showGameOverModal={showGameOverModal}
       handleExitCancel={handleExitCancel}
       handleExit={handleExit}
-      isDraw={isDraw}
-      winner={winner}
       countdownDurationMs={countdownDurationMs}
       countdownStartTime={countdownStartTime}
     />

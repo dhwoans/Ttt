@@ -1,6 +1,8 @@
 import { useCallback, useEffect } from "react";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
+import { useModalStore } from "@/stores/useModalStore";
 import { useMultiNextTurn } from "./useMultiNextTurn";
 import { useReceiveMoveMade } from "./useReceiveMoveMade";
 import { useReceiveGameOver } from "./useReceiveGameOver";
@@ -9,18 +11,16 @@ import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
 import type { UseTicTacToeProps } from "../../types/GameHookTypes";
 
 export function useMultiTicTacToe({ onExit }: UseTicTacToeProps) {
-  const gameStatus = useTicTacToeGameStore((state) => state.gameState.status);
-  const winner = useTicTacToeGameStore((state) => state.gameState.winner);
-  const result = useTicTacToeGameStore((state) => state.gameState.result);
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
-  const currentTurnUserId = useTicTacToeGameStore(
+  const gameStatus = useGameStore((state) => state.gameState.status);
+  const winner = useGameStore((state) => state.gameState.winner);
+  const result = useGameStore((state) => state.gameState.result);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
+  const currentTurnUserId = useGameStore(
     (state) => state.gameState.turn.currentUserId,
   );
-  const isWaitingForServer = useTicTacToeGameStore(
-    (state) => state.isWaitingForServer,
-  );
-  const openModal = useTicTacToeGameStore((state) => state.openModal);
-  const setOpenModal = useTicTacToeGameStore((state) => state.setOpenModal);
+  const isWaitingForServer = useRoomStore((state) => state.isWaitingForServer);
+  const openModal = useModalStore((state) => state.openModal);
+  const setOpenModal = useModalStore((state) => state.setOpenModal);
 
   const handleExitIntent = useCallback(() => {
     setOpenModal("exit");
@@ -64,8 +64,6 @@ export function useMultiTicTacToe({ onExit }: UseTicTacToeProps) {
     isGameOver,
     isDraw,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    showExitModal: openModal === "exit",
-    showGameOverModal: openModal === "gameOver",
     handleExitCancel,
     handleExit,
     winner,

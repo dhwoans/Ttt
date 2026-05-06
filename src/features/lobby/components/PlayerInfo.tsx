@@ -3,10 +3,10 @@ import { Avatar } from "@/shared/components/Avatar";
 import { animalList } from "@/shared/constants/avatarCandidates";
 import Subtitle from "./Subtitle";
 import { ImageManager } from "@/shared/utils/ImageManger";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 const PlayerInfo = () => {
-  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
+  const myPlayer = useUserStore((state) => state.myPlayer);
   const index = myPlayer?.avatarIndex ?? 3;
   const nickname = myPlayer?.nickname ?? "플레이어";
   return (

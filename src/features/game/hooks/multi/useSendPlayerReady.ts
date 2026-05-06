@@ -1,7 +1,7 @@
 import { gameSocketManager } from "@/shared/utils/SocketManager";
 import type { ReadyEventPayload } from "@share";
 import { useCallback } from "react";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 /**
  * Ready 상태를 서버에 전송하는 훅
@@ -10,7 +10,7 @@ import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
  * - PLAYER_READY: 모든 플레이어에게 준비 상태 변경 알림 (GameRoomPage에서 처리)
  */
 export function useSendPlayerReady() {
-  const userId = useTicTacToeGameStore((state) => state.myPlayer?.userId);
+  const userId = useUserStore((state) => state.myPlayer?.userId);
 
   const sendReady = useCallback(
     (isReady: boolean) => {

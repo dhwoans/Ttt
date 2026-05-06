@@ -1,29 +1,30 @@
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
+import { useModalStore } from "@/stores/useModalStore";
 import { calcBoard, whoIsWin } from "@/shared/utils/ticTacToeUtils";
 import { useGameTimeout } from "./useGameTimeout";
 import { useSingleNextTurn } from "./useSingleNextTurn";
 import type { UseTicTacToeProps } from "../../types/GameHookTypes";
 
 export function useSingleTicTacToe({ onExit }: UseTicTacToeProps) {
-  const [showExitModal, setShowExitModal] = useState(false);
-  const [showGameOverModal, setShowGameOverModal] = useState(false);
+  const setOpenModal = useModalStore((state) => state.setOpenModal);
 
   const handleExitIntent = useCallback(() => {
-    setShowExitModal(true);
-  }, []);
+    setOpenModal("exit");
+  }, [setOpenModal]);
   useBackExitModal(handleExitIntent, true);
 
-  const handleExitCancel = () => setShowExitModal(false);
+  const handleExitCancel = () => setOpenModal(null);
   const handleExit = () => {
     onExit?.();
   };
 
-  const moveHistory = useTicTacToeGameStore((state) => state.moveHistory);
-  const turnStart = useTicTacToeGameStore((state) => state.turnStart);
-  const timeoutBy = useTicTacToeGameStore((state) => state.timeoutBy);
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const moveHistory = useGameStore((state) => state.moveHistory);
+  const turnStart = useGameStore((state) => state.turnStart);
+  const timeoutBy = useGameStore((state) => state.timeoutBy);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
   const board = calcBoard(moveHistory);
   const boardWinner = whoIsWin(board, moveHistory);
   const isDraw = moveHistory.length === 9;
@@ -39,11 +40,11 @@ export function useSingleTicTacToe({ onExit }: UseTicTacToeProps) {
 
   useEffect(() => {
     if (isGameOver) {
-      const timer = setTimeout(() => setShowGameOverModal(true), 3000);
+      const timer = setTimeout(() => setOpenModal("gameOver"), 3000);
       return () => clearTimeout(timer);
     }
-    setShowGameOverModal(false);
-  }, [isGameOver]);
+    setOpenModal(null);
+  }, [isGameOver, setOpenModal]);
 
   const { handleSquare } = useSingleNextTurn({
     isPlayerTurn,
@@ -57,8 +58,6 @@ export function useSingleTicTacToe({ onExit }: UseTicTacToeProps) {
     handleSquare,
     isGameOver,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    showExitModal,
-    showGameOverModal,
     handleExitCancel,
     handleExit,
     isDraw,

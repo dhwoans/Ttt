@@ -1,4 +1,4 @@
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
 import { calcBoard } from "@/shared/utils/ticTacToeUtils";
 
 export default function Board({
@@ -6,7 +6,7 @@ export default function Board({
 }: {
   selectSquare: ((row: number, col: number) => void) | false;
 }) {
-  const moveHistory = useTicTacToeGameStore((state) => state.moveHistory);
+  const moveHistory = useGameStore((state) => state.moveHistory);
   const list = calcBoard(moveHistory);
   return (
     <ol className="flex flex-col gap-2 p-4">

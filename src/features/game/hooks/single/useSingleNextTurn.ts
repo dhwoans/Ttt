@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { UseSingleNextTurnConfig } from "../../types/GameHookTypes";
 import { useAIMove } from "./useAIMove";
 
@@ -9,8 +10,8 @@ export function useSingleNextTurn({
   board,
   isGameOver,
 }: UseSingleNextTurnConfig) {
-  const addMove = useTicTacToeGameStore((state) => state.addMove);
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const addMove = useGameStore((state) => state.addMove);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
   useAIMove(isGameOver, isPlayerTurn, board);
 
   const handleSquare = useCallback(

@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { animalList } from "@/shared/constants/avatarCandidates";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { RoomPhase } from "../types/TicTacToeGameTypes";
 
 // 방 화면에서 공유하는 기본 상태 관리
 // 내 플레이어 정보, 현재 phase를 초기화 및 저장.
 export function useRoomState() {
   const saved = localStorage.getItem("gameState");
-  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
+  const myPlayer = useUserStore((state) => state.myPlayer);
   const myInfo = useMemo(() => {
     const avatarIndex = myPlayer?.avatarIndex ?? 3;
     const selectedAvatar =
@@ -21,10 +22,8 @@ export function useRoomState() {
     };
   }, [myPlayer]);
 
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
-  const setPlayersInfos = useTicTacToeGameStore(
-    (state) => state.setPlayersInfos,
-  );
+  const playersInfos = useRoomStore((state) => state.playersInfos);
+  const setPlayersInfos = useRoomStore((state) => state.setPlayersInfos);
 
   // 마운트 시 나 자신을 첫 번째 플레이어로 초기화
   useEffect(() => {

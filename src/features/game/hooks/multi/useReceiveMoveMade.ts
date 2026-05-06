@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { MoveMadeEvent } from "@share";
 
 /**
@@ -9,11 +10,11 @@ import type { MoveMadeEvent } from "@share";
  * - 대기 상태 해제, turn 추가
  */
 export function useReceiveMoveMade() {
-  const addMove = useTicTacToeGameStore((state) => state.addMove);
-  const setIsWaitingForServer = useTicTacToeGameStore(
+  const addMove = useGameStore((state) => state.addMove);
+  const setIsWaitingForServer = useRoomStore(
     (state) => state.setIsWaitingForServer,
   );
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
 
   useEffect(() => {
     const handleMoveMade = (data: MoveMadeEvent) => {

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
 import type { PlayingEvent } from "@/share";
 
 /**
@@ -9,8 +9,8 @@ import type { PlayingEvent } from "@/share";
  * - ROOM_ASSIGNED: 방 배정
  */
 export function useGamePhaseEvents() {
-  const setStatus = useTicTacToeGameStore((state) => state.setStatus);
-  const setCurrentTurnUserId = useTicTacToeGameStore(
+  const setStatus = useGameStore((state) => state.setStatus);
+  const setCurrentTurnUserId = useGameStore(
     (state) => state.setCurrentTurnUserId,
   );
 
@@ -21,7 +21,6 @@ export function useGamePhaseEvents() {
       //게임 상태 변경
       setStatus("PLAYING");
 
-      
       if (data.currentTurnPlayerId) {
         setCurrentTurnUserId(data.currentTurnPlayerId);
         console.log(

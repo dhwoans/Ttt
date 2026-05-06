@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSendCreateUser } from "./useSendCreateUser";
 import { ROUTES } from "@/shared/constants/routes";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface HandleCreateUserOptions {
   nickname: string;
@@ -23,7 +23,7 @@ function useCreateUserState() {
 
 function useCreateUserActions() {
   const { createUser } = useSendCreateUser();
-  const setMyPlayer = useTicTacToeGameStore((state) => state.setMyPlayer);
+  const setMyPlayer = useUserStore((state) => state.setMyPlayer);
 
   const createAndStoreUser = async ({
     nickname,

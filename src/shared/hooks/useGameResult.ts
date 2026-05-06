@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import JSConfetti from "js-confetti";
 import { audioManager } from "@/shared/utils/AudioManager";
 import { ImageManager } from "@/shared/utils/ImageManger";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 const WIN = ImageManager.horns;
 const LOOSE = ImageManager.thumbsDown;
@@ -18,39 +19,25 @@ const triggerConfetti = (result: string) => {
   });
 };
 
-interface UseGameResultProps {
-  winner: string;
-  onExit: () => void;
-  exitTime?: number;
-}
+export function useGameResult() {
+  const nickname = useUserStore((state) => state.myPlayer?.nickname);
+  const winner = useGameStore((state) => state.gameState.winner);
+  const result = useGameStore((state) => state.gameState.result);
 
-export function useGameResult({
-  winner,
-  onExit,
-  exitTime = 5000,
-}: UseGameResultProps) {
-  console.log(winner);
-  const nickname = useTicTacToeGameStore((state) => state.myPlayer?.nickname);
-  const [result, setResult] = useState("무승부");
+  const resolved =
+    result === "draw" ? "무승부" : winner === nickname ? "승리" : "패배";
 
-  const imgSrc = result === "승리" ? WIN : result === "패배" ? LOOSE : DRAW;
+  const imgSrc = resolved === "승리" ? WIN : resolved === "패배" ? LOOSE : DRAW;
 
   useEffect(() => {
-    if (!winner) return;
-
-    const resolved =
-      winner !== "DRAW" ? (winner === nickname ? "승리" : "패배") : "무승부";
+    if (!result) return;
 
     if (resolved === "승리") {
       audioManager.play("win");
     }
 
-    setResult(resolved);
     triggerConfetti(resolved);
-    // 자동 onExit
-    const timeoutId = setTimeout(onExit, exitTime);
-    return () => clearTimeout(timeoutId);
-  }, [exitTime, nickname, onExit, winner]);
+  }, [result, resolved]);
 
-  return { result, imgSrc };
+  return { result: resolved, imgSrc };
 }

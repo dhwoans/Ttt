@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 /**
  * NEXT_TURN 이벤트 수신 훅
  * - store의 currentTurnUserId 업데이트
  */
 export function useReceiveNextTurn() {
-  const setCurrentTurnUserId = useTicTacToeGameStore(
+  const setCurrentTurnUserId = useGameStore(
     (state) => state.setCurrentTurnUserId,
   );
 

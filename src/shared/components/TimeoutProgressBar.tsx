@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 interface TimeoutProgressBarProps {
   /** 수신할 이벤트 이름 (기본값: "READY_TIMEOUT_STARTED") */
@@ -38,10 +38,10 @@ export function TimeoutProgressBar({
   label,
   onTimeout,
 }: TimeoutProgressBarProps) {
-  const readyTimeoutSnapshot = useTicTacToeGameStore(
+  const readyTimeoutSnapshot = useRoomStore(
     (state) => state.readyTimeoutSnapshot,
   );
-  const setReadyTimeoutSnapshot = useTicTacToeGameStore(
+  const setReadyTimeoutSnapshot = useRoomStore(
     (state) => state.setReadyTimeoutSnapshot,
   );
   const [timeoutMs, setTimeoutMs] = useState<number | null>(null);

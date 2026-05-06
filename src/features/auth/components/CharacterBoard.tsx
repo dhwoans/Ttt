@@ -21,9 +21,6 @@ function shakeReducer(_: boolean, action: ShakeAction) {
   }
 }
 const shakeClass = "animate__animated animate__shakeX";
-const brutalBox =
-  "border-[0.25rem] border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]";
-const brutalBtn = `${brutalBox} hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all active:scale-95`;
 
 export default function CharacterBoard() {
   const { playBeep } = useAudio();
@@ -48,7 +45,7 @@ export default function CharacterBoard() {
 
   return (
     <div
-      className={`relative mx-auto my-12 max-w-120 overflow-visible rounded-2xl bg-linear-to-b from-dark-1 to-dark-2 p-8 ${brutalBox} 
+      className={`brutal-box relative mx-auto my-12 max-w-120 overflow-visible rounded-2xl bg-linear-to-b from-dark-1 to-dark-2 p-8 
     ${isShaking ? shakeClass : ""}`}
       onAnimationEnd={handleShakeAnimationEnd}
     >
@@ -60,7 +57,7 @@ export default function CharacterBoard() {
         {/* 이전 버튼 */}
         <button
           onClick={() => avatar.navigate("prev")}
-          className={`h-20 w-20 rounded-full text-2xl border-none font-bold flex items-center justify-center ${brutalBtn}`}
+          className="brutal-btn h-20 w-20 rounded-full text-2xl border-none font-bold flex items-center justify-center"
         >
           <ChevronLeft size={50} />
         </button>
@@ -116,7 +113,7 @@ export default function CharacterBoard() {
         {/* 다음 버튼 */}
         <button
           onClick={() => avatar.navigate("next")}
-          className={`h-20 w-20 rounded-full border-none flex items-center justify-center ${brutalBtn}`}
+          className="brutal-btn h-20 w-20 rounded-full border-none flex items-center justify-center"
         >
           <ChevronRight size={50} />
         </button>
@@ -132,7 +129,7 @@ export default function CharacterBoard() {
           })
         }
         disabled={isCreating}
-        className={`w-full rounded-2xl py-4 font-black bg-accent text-xl text-dark-1 ${brutalBtn} ${
+        className={`brutal-btn w-full rounded-2xl py-4 font-black bg-accent text-xl text-dark-1 ${
           isCreating ? "opacity-60 pointer-events-none" : ""
         }`}
       >

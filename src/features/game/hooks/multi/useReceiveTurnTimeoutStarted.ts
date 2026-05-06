@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { TurnTimeoutStartedEvent } from "@share";
 
 /**
@@ -8,13 +9,13 @@ import type { TurnTimeoutStartedEvent } from "@share";
  * - 멀티플레이 착수 제한 시간 시작 시각/지속시간을 서버 이벤트 기준으로 동기화
  */
 export function useReceiveTurnTimeoutStarted() {
-  const setCurrentTurnUserId = useTicTacToeGameStore(
+  const setCurrentTurnUserId = useGameStore(
     (state) => state.setCurrentTurnUserId,
   );
-  const turnTimeoutSnapshot = useTicTacToeGameStore(
+  const turnTimeoutSnapshot = useRoomStore(
     (state) => state.turnTimeoutSnapshot,
   );
-  const setTurnTimeoutSnapshot = useTicTacToeGameStore(
+  const setTurnTimeoutSnapshot = useRoomStore(
     (state) => state.setTurnTimeoutSnapshot,
   );
 

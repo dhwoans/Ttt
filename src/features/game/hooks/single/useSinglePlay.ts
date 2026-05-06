@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import { useSingleInitialBotSetup } from "./useSingleInitialBotSetup";
 
 const preprocessGameStart = (botInfo: unknown[]) => {
@@ -19,9 +20,9 @@ const preprocessGameStart = (botInfo: unknown[]) => {
 export function useSinglePlay() {
   const navigate = useNavigate();
   const bridgeTimerRef = useRef<number | null>(null);
-  const resetGameBoard = useTicTacToeGameStore((state) => state.resetGameBoard);
-  const setStatus = useTicTacToeGameStore((state) => state.setStatus);
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
+  const resetGameBoard = useGameStore((state) => state.resetGameBoard);
+  const setStatus = useGameStore((state) => state.setStatus);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
 
   useSingleInitialBotSetup();
 

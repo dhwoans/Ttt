@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Board from "../Board";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 const emptyMoveHistory: never[] = [];
 
@@ -17,7 +17,7 @@ const filledMoveHistory = [
 
 describe("Board", () => {
   it("보드에 9개 버튼 렌더링", () => {
-    useTicTacToeGameStore.setState({ moveHistory: emptyMoveHistory });
+    useGameStore.setState({ moveHistory: emptyMoveHistory });
     render(
       <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
     );
@@ -25,7 +25,7 @@ describe("Board", () => {
   });
 
   it("채워진 셀의 값이 화면에 표시", () => {
-    useTicTacToeGameStore.setState({ moveHistory: filledMoveHistory });
+    useGameStore.setState({ moveHistory: filledMoveHistory });
     render(
       <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
     );
@@ -34,7 +34,7 @@ describe("Board", () => {
   });
 
   it("채워진 셀 버튼은 비활성화", () => {
-    useTicTacToeGameStore.setState({ moveHistory: filledMoveHistory });
+    useGameStore.setState({ moveHistory: filledMoveHistory });
     render(
       <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
     );
@@ -46,7 +46,7 @@ describe("Board", () => {
   });
 
   it("빈 셀 클릭 시 selectSquare가 올바른 좌표와 함께 호출된다", async () => {
-    useTicTacToeGameStore.setState({ moveHistory: emptyMoveHistory });
+    useGameStore.setState({ moveHistory: emptyMoveHistory });
     const selectSquare = vi.fn() as unknown as (
       row: number,
       col: number,

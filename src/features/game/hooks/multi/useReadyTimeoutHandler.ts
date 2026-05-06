@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useUserStore } from "@/stores/useUserStore";
 import type { ReadyTimeoutExpiredEvent } from "@share";
 
 /**
@@ -10,10 +11,8 @@ import type { ReadyTimeoutExpiredEvent } from "@share";
  */
 export function useReadyTimeoutHandler() {
   const navigate = useNavigate();
-  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
-  const currentUserId = useTicTacToeGameStore(
-    (state) => state.myPlayer?.userId,
-  );
+  const resetGame = useGameStore((state) => state.resetGame);
+  const currentUserId = useUserStore((state) => state.myPlayer?.userId);
 
   // READY_TIMEOUT_EXPIRED: 타임아웃 만료로 인한 강제 로비 이동
   useEffect(() => {

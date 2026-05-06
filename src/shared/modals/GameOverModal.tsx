@@ -1,18 +1,15 @@
 import { useGameResult } from "@/shared/hooks/useGameResult";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useNavigate } from "react-router-dom";
 
-interface GameOverModalProps {
-  winner: string;
-  onExit: () => void;
-}
-
-export default function GameOverModal({ winner, onExit }: GameOverModalProps) {
-  const { result, imgSrc } = useGameResult({ winner, onExit });
-  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
-
-  const brutalBox =
-    "border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]";
-  const brutalBtn = `${brutalBox} hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all active:scale-95`;
+export default function GameOverModal() {
+  const navigator = useNavigate();
+  const { result, imgSrc } = useGameResult();
+  const resetGame = useGameStore((state) => state.resetGame);
+  const onExit = () => {
+    resetGame();
+    navigator("/lobby", { replace: true });
+  };
 
   return (
     <dialog
@@ -43,13 +40,13 @@ export default function GameOverModal({ winner, onExit }: GameOverModalProps) {
         <div className="flex gap-4 justify-center mb-6">
           <button
             onClick={resetGame}
-            className={`px-8 py-3 rounded-xl text-lg font-bold bg-accent hover:bg-yellow-400 ${brutalBtn}`}
+            className="brutal-btn px-8 py-3 rounded-xl text-lg font-bold bg-accent hover:bg-yellow-400"
           >
             다시하기
           </button>
           <button
             onClick={onExit}
-            className={`px-8 py-3 rounded-xl text-lg font-bold bg-gray-300 hover:bg-gray-400 ${brutalBtn}`}
+            className="brutal-btn px-8 py-3 rounded-xl text-lg font-bold bg-gray-300 hover:bg-gray-400"
           >
             나가기
           </button>

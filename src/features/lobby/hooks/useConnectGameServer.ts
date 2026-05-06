@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { gameSocketManager } from "@/shared/utils/SocketManager";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/shared/constants/routes";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { useGameStore } from "@/stores/useGameStore";
 import { eventManager } from "@/shared/utils/EventManager";
 
 /**
@@ -12,8 +13,8 @@ import { eventManager } from "@/shared/utils/EventManager";
  */
 export function useConnectGameServer() {
   const navigate = useNavigate();
-  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
-  const setRoomId = useTicTacToeGameStore((state) => state.setRoomId);
+  const myPlayer = useUserStore((state) => state.myPlayer);
+  const setRoomId = useGameStore((state) => state.setRoomId);
 
   const connectGameServer = useCallback(
     (gameServerUrl: string, ticket: string) => {

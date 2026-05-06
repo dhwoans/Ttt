@@ -1,12 +1,10 @@
 import { useEffect } from "react";
 import { randomBot } from "@/shared/constants/avatarCandidates";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 export function useSingleInitialBotSetup() {
-  const playersInfos = useTicTacToeGameStore((state) => state.playersInfos);
-  const setPlayersInfos = useTicTacToeGameStore(
-    (state) => state.setPlayersInfos,
-  );
+  const playersInfos = useRoomStore((state) => state.playersInfos);
+  const setPlayersInfos = useRoomStore((state) => state.setPlayersInfos);
 
   useEffect(() => {
     if (playersInfos.length !== 1) return;

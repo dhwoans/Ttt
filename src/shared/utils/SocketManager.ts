@@ -4,7 +4,7 @@ import type { ServerEvents, ClientEvents } from "@share";
 
 import { eventManager } from "@/shared/utils/EventManager";
 import { GAME_EVENTS } from "@/shared/constants/eventList";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 class GameSocketManager {
   private socket: Socket<ServerEvents, ClientEvents> | null = null;
@@ -74,7 +74,7 @@ class GameSocketManager {
     this.socket.on("connect", () => {
       console.log("[socket] 연결 성공, socket.id:", this.socket?.id);
       if (this.socket?.id) {
-        useTicTacToeGameStore.getState().setSocketId(this.socket.id);
+        useRoomStore.getState().setSocketId(this.socket.id);
         console.log("[socket] socket.id 저장:", this.socket.id);
       }
       if (roomId) {
@@ -105,7 +105,7 @@ class GameSocketManager {
         if (name === "READY_TIMEOUT_STARTED") {
           const timeoutMs = Number(data?.timeoutMs);
           if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
-            useTicTacToeGameStore
+            useRoomStore
               .getState()
               .setReadyTimeoutSnapshot({ timeoutMs, startedAt: Date.now() });
           }
@@ -114,7 +114,7 @@ class GameSocketManager {
         if (name === "TURN_TIMEOUT_STARTED") {
           const timeoutMs = Number(data?.timeoutMs);
           if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
-            useTicTacToeGameStore
+            useRoomStore
               .getState()
               .setTurnTimeoutSnapshot({ timeoutMs, startedAt: Date.now() });
           }
@@ -125,7 +125,7 @@ class GameSocketManager {
           name === "READY_TIMEOUT_EXPIRED" ||
           name === "PLAYING"
         ) {
-          useTicTacToeGameStore.getState().setReadyTimeoutSnapshot(null);
+          useRoomStore.getState().setReadyTimeoutSnapshot(null);
         }
 
         if (
@@ -133,7 +133,7 @@ class GameSocketManager {
           name === "GAME_OVER" ||
           name === "LEAVE_SUCCESS"
         ) {
-          useTicTacToeGameStore.getState().setTurnTimeoutSnapshot(null);
+          useRoomStore.getState().setTurnTimeoutSnapshot(null);
         }
 
         eventManager.emit(name, data);
@@ -177,7 +177,7 @@ class GameSocketManager {
       this.socket.disconnect();
       this.socket = null;
       this.currentTicket = null;
-      useTicTacToeGameStore.getState().setSocketId(null);
+      useRoomStore.getState().setSocketId(null);
     }
   }
 

@@ -6,9 +6,6 @@ import Badge from "@/shared/components/Badge";
 import { ImageManager } from "@/shared/utils/ImageManger";
 import Subtitle from "./Subtitle";
 import { LobbyContentsLayout } from "../../../pages/layouts/LobbyContentsLayout";
-
-const brutalBox =
-  "border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] rounded-2xl";
 const brutalHover =
   "hover:shadow-none hover:translate-x-1.5 hover:translate-y-1.5 transition-all hover-diagonal-stripes";
 
@@ -25,7 +22,7 @@ const LocalMode = () => {
     <motion.div
       onMouseDown={playBeep}
       onClick={handleLocalMode}
-      className={`flex-1 relative bg-[#fd5a46]  cursor-pointer p-6 flex flex-col items-center justify-center gap-2 h-full group  ${brutalBox} ${brutalHover}`}
+      className={`brutal-box rounded-2xl flex-1 relative bg-[#fd5a46]  cursor-pointer p-6 flex flex-col items-center justify-center gap-2 h-full group ${brutalHover}`}
     >
       <LobbyContentsLayout
         image={

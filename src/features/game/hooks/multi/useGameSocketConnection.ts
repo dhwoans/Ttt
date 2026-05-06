@@ -1,16 +1,18 @@
 import { useEffect } from "react";
 import { gameSocketManager } from "@/shared/utils/SocketManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { useRoomStore } from "@/stores/useRoomStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 /**
  * 게임 소켓 연결을 관리하는 훅
  * 컴포넌트 마운트 시 연결, 언마운트 시 종료
  */
 export function useGameSocketConnection(roomId: string) {
-  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
-  const gameServerUrl = useTicTacToeGameStore((state) => state.gameServerUrl);
-  const gameTicket = useTicTacToeGameStore((state) => state.gameTicket);
-  const setRoomId = useTicTacToeGameStore((state) => state.setRoomId);
+  const myPlayer = useUserStore((state) => state.myPlayer);
+  const gameServerUrl = useRoomStore((state) => state.gameServerUrl);
+  const gameTicket = useRoomStore((state) => state.gameTicket);
+  const setRoomId = useGameStore((state) => state.setRoomId);
 
   useEffect(() => {
     const userId = myPlayer?.userId;

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/utils/AudioManager";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
+import VolumeSlider from "@/shared/components/VolumeSlider";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -96,19 +97,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </div>
 
         {/* 슬라이더 */}
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={Math.round(tempVolume * 100)}
-          onChange={(e) => setTempVolume(parseInt(e.target.value) / 100)}
-          className="w-full h-3 bg-dark-1/20 rounded-lg appearance-none cursor-pointer accent-accent"
-          style={{
-            background: `linear-gradient(to right, #f8c031 0%, #f8c031 ${Math.round(
-              tempVolume * 100,
-            )}%, #e0e0e0 ${Math.round(tempVolume * 100)}%, #e0e0e0 100%)`,
-          }}
-        />
+        <VolumeSlider value={tempVolume} onChange={setTempVolume} />
       </div>
 
       {/* 효과음 볼륨 조절 섹션 */}
@@ -131,19 +120,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         </div>
 
         {/* 슬라이더 */}
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={Math.round(tempSfxVolume * 100)}
-          onChange={(e) => setSfxVolume(parseInt(e.target.value) / 100)}
-          className="w-full h-3 bg-dark-1/20 rounded-lg appearance-none cursor-pointer accent-accent"
-          style={{
-            background: `linear-gradient(to right, #f8c031 0%, #f8c031 ${Math.round(
-              tempSfxVolume * 100,
-            )}%, #e0e0e0 ${Math.round(tempSfxVolume * 100)}%, #e0e0e0 100%)`,
-          }}
-        />
+        <VolumeSlider value={tempSfxVolume} onChange={setTempSfxVolume} />
       </div>
 
       {/* 버튼 그룹 */}

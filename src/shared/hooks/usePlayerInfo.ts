@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 export interface PlayerInfo {
   nickname: string;
@@ -7,7 +7,7 @@ export interface PlayerInfo {
 }
 
 export function usePlayerInfo(): PlayerInfo {
-  const myPlayer = useTicTacToeGameStore((state) => state.myPlayer);
+  const myPlayer = useUserStore((state) => state.myPlayer);
 
   return useMemo<PlayerInfo>(() => {
     return {

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { eventManager } from "@/shared/utils/EventManager";
 import { animalList } from "@/shared/constants/avatarCandidates";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@share";
 
 /**
@@ -12,11 +12,11 @@ import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@share";
  * - PLAYER_JOINED 이벤트 처리
  */
 export function useMultiplayerPlayers() {
-  const addPlayerInfo = useTicTacToeGameStore((state) => state.addPlayerInfo);
-  const setPlayersReadyStatus = useTicTacToeGameStore(
+  const addPlayerInfo = useRoomStore((state) => state.addPlayerInfo);
+  const setPlayersReadyStatus = useRoomStore(
     (state) => state.setPlayersReadyStatus,
   );
-  const updatePlayerReadyStatus = useTicTacToeGameStore(
+  const updatePlayerReadyStatus = useRoomStore(
     (state) => state.updatePlayerReadyStatus,
   );
   // EXISTING_PLAYERS 이벤트 처리

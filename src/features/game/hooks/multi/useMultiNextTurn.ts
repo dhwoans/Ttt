@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useUserStore } from "@/stores/useUserStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import { gameSocketManager } from "@/shared/utils/SocketManager";
 import type { UseMultiNextTurnConfig } from "../../types/GameHookTypes";
 import { useSendPlayerMove } from "./useSendPlayerMove";
@@ -9,10 +10,8 @@ export function useMultiNextTurn({
   isGameOver,
 }: UseMultiNextTurnConfig) {
   const { sendMove } = useSendPlayerMove();
-  const currentUserId = useTicTacToeGameStore(
-    (state) => state.myPlayer?.userId,
-  );
-  const socketId = useTicTacToeGameStore((state) => state.socketId);
+  const currentUserId = useUserStore((state) => state.myPlayer?.userId);
+  const socketId = useRoomStore((state) => state.socketId);
 
   const isCurrentUserTurnByServer = useMemo(() => {
     const socketConnId = socketId ?? gameSocketManager.getSocket()?.id ?? null;

@@ -1,11 +1,11 @@
 import { useJoinRoom } from "./useJoinRoom";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 /**
  * API 서버로 게임 티켓 요청
  */
 export function useGetGameTicket() {
-  const setGameServerConnection = useTicTacToeGameStore(
+  const setGameServerConnection = useRoomStore(
     (state) => state.setGameServerConnection,
   );
 

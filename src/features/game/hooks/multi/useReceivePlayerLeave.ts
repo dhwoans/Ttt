@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { eventManager } from "@/shared/utils/EventManager";
-import { useTicTacToeGameStore } from "@/stores/ticTacToeGameStore";
+import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { PlayerLeftEvent, LeaveSuccessEvent } from "@share";
 
 /**
@@ -12,14 +13,12 @@ import type { PlayerLeftEvent, LeaveSuccessEvent } from "@share";
  */
 export function useReceivePlayerLeave() {
   const navigate = useNavigate();
-  const resetGame = useTicTacToeGameStore((state) => state.resetGame);
-  const removePlayerInfo = useTicTacToeGameStore(
-    (state) => state.removePlayerInfo,
-  );
-  const removePlayerReadyStatus = useTicTacToeGameStore(
+  const resetGame = useGameStore((state) => state.resetGame);
+  const removePlayerInfo = useRoomStore((state) => state.removePlayerInfo);
+  const removePlayerReadyStatus = useRoomStore(
     (state) => state.removePlayerReadyStatus,
   );
-  const status = useTicTacToeGameStore((state) => state.gameState.status);
+  const status = useGameStore((state) => state.gameState.status);
 
   // PLAYER_LEFT 이벤트 처리 (상대 플레이어 퇴장)
   useEffect(() => {
