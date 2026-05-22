@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { gameSocketManager } from "@/shared/utils/SocketManager";
+import { gameSocketManager } from "@/shared/services/SocketManager";
 import { toast } from "react-toastify";
 import { ROUTES } from "@/shared/constants/routes";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 
 /**
  * 게임 서버 연결 (ticket 기반 인증)

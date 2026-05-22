@@ -10,9 +10,9 @@ import { useGameStore } from "@/stores/useGameStore";
 import { ToastContainer } from "react-toastify";
 import Marquee from "react-fast-marquee";
 import Ready from "./Ready";
-import HeaderLayout from "./layouts/HeaderLayout";
-import { ImageManager } from "@/shared/utils/ImageManger";
-import LeftSideLayout from "@/pages/layouts/LeftSideLayout";
+import HeaderLayout from "@/layouts/HeaderLayout";
+import { ImageManager } from "@/shared/services/ImageManger";
+import LeftSideLayout from "@/layouts/LeftSideLayout";
 
 export default function MultiGameRoomPage() {
   const { roomId } = useParams<{ roomId: string }>();

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { animalList } from "@/shared/constants/avatarCandidates";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@share";
+import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@contract";
 
 /**
  * 멀티플레이 플레이어 목록 관리

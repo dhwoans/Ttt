@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 
 /**

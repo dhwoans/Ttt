@@ -1,10 +1,11 @@
 import io from "socket.io-client";
 import type { Socket } from "socket.io-client";
-import type { ServerEvents, ClientEvents } from "@share";
+import type { ServerEvents, ClientEvents } from "@contract";
 
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { GAME_EVENTS } from "@/shared/constants/eventList";
 import { useRoomStore } from "@/stores/useRoomStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 class GameSocketManager {
   private socket: Socket<ServerEvents, ClientEvents> | null = null;
@@ -114,7 +115,7 @@ class GameSocketManager {
         if (name === "TURN_TIMEOUT_STARTED") {
           const timeoutMs = Number(data?.timeoutMs);
           if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
-            useRoomStore
+            useGameStore
               .getState()
               .setTurnTimeoutSnapshot({ timeoutMs, startedAt: Date.now() });
           }
@@ -133,7 +134,7 @@ class GameSocketManager {
           name === "GAME_OVER" ||
           name === "LEAVE_SUCCESS"
         ) {
-          useRoomStore.getState().setTurnTimeoutSnapshot(null);
+          useGameStore.getState().setTurnTimeoutSnapshot(null);
         }
 
         eventManager.emit(name, data);

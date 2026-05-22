@@ -11,7 +11,7 @@
  *   ServerEvents,
  *   IssueTicketRequest,
  *   IssueTicketResponse
- * } from '@/share';
+ * } from '@/contract';
  *
  * // REST API
  * const ticketReq: IssueTicketRequest = {

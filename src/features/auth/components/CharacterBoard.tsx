@@ -6,7 +6,7 @@ import { useAvatarSelection } from "../hooks/useAvatarSelection";
 import { useNickname } from "../hooks/useNickname";
 import { useCreateUserAndLobbyMove } from "../hooks/useCreateUserAndLobbyMove";
 import Bridge from "@/shared/components/Bridge";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 
 type ShakeAction = { type: "trigger" } | { type: "end" };
 

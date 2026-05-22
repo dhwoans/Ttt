@@ -1,9 +1,13 @@
 import { useCallback, useMemo } from "react";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import { gameSocketManager } from "@/shared/utils/SocketManager";
-import type { UseMultiNextTurnConfig } from "../../types/GameHookTypes";
+import { gameSocketManager } from "@/shared/services/SocketManager";
 import { useSendPlayerMove } from "./useSendPlayerMove";
+
+interface UseMultiNextTurnConfig {
+  currentTurnPlayerId: string | null;
+  isGameOver: boolean;
+}
 
 export function useMultiNextTurn({
   currentTurnPlayerId,

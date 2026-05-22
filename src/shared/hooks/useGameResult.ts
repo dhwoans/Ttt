@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import JSConfetti from "js-confetti";
-import { audioManager } from "@/shared/utils/AudioManager";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { audioManager } from "@/shared/services/AudioManager";
+import { ImageManager } from "@/shared/services/ImageManger";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
 

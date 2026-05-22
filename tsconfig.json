@@ -24,8 +24,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@assets/*": ["./assets/*"],
-      "@share": ["./src/share/index"],
-      "@share/*": ["./src/share/*"]
+      "@contract": ["./src/contract/index"],
+      "@contract/*": ["./src/contract/*"]
     }
   },
   "include": ["src"]

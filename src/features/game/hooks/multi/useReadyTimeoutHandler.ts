@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useUserStore } from "@/stores/useUserStore";
-import type { ReadyTimeoutExpiredEvent } from "@share";
+import type { ReadyTimeoutExpiredEvent } from "@contract";
 
 /**
  * READY 타임아웃 이벤트 처리

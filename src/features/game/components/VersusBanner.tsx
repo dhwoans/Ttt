@@ -1,7 +1,7 @@
 import { Avatar } from "../../../shared/components/Avatar";
 import useAvatarRandomize from "../../../shared/hooks/useAvatarRandomize";
 import { avatarCandidates } from "../../../shared/constants/avatarCandidates";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 
 const FIRST_PLAYER_INDEX = 0;
 

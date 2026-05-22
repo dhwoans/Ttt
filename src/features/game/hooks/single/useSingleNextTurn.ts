@@ -1,8 +1,14 @@
 import { useCallback } from "react";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { UseSingleNextTurnConfig } from "../../types/GameHookTypes";
 import { useAIMove } from "./useAIMove";
+
+interface UseSingleNextTurnConfig {
+  isPlayerTurn: boolean;
+  moveHistory: any[];
+  board: string[][];
+  isGameOver: boolean;
+}
 
 export function useSingleNextTurn({
   isPlayerTurn,

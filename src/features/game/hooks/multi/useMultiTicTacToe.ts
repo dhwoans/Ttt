@@ -8,9 +8,12 @@ import { useReceiveMoveMade } from "./useReceiveMoveMade";
 import { useReceiveGameOver } from "./useReceiveGameOver";
 import { useReceiveNextTurn } from "./useReceiveNextTurn";
 import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
-import type { UseTicTacToeProps } from "../../types/GameHookTypes";
 
-export function useMultiTicTacToe({ onExit }: UseTicTacToeProps) {
+interface UseMultiTicTacToeProps {
+  onExit?: () => void;
+}
+
+export function useMultiTicTacToe({ onExit }: UseMultiTicTacToeProps) {
   const gameStatus = useGameStore((state) => state.gameState.status);
   const winner = useGameStore((state) => state.gameState.winner);
   const result = useGameStore((state) => state.gameState.result);

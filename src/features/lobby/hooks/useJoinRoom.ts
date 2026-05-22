@@ -1,4 +1,4 @@
-import { apiManager } from "../../../shared/utils/ApiManager";
+import { apiManager } from "../../../shared/services/ApiManager";
 
 interface JoinRoomResult {
   success: boolean;

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { gameSocketManager } from "@/shared/utils/SocketManager";
+import { gameSocketManager } from "@/shared/services/SocketManager";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";

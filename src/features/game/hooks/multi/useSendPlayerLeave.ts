@@ -1,5 +1,5 @@
-import { gameSocketManager } from "@/shared/utils/SocketManager";
-import type { LeaveEventPayload } from "@share";
+import { gameSocketManager } from "@/shared/services/SocketManager";
+import type { LeaveEventPayload } from "@contract";
 import { useCallback } from "react";
 
 /**

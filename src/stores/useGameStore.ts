@@ -17,6 +17,11 @@ export type Turn = {
   turnCount: number;
 };
 
+export type TimeoutSnapshot = {
+  timeoutMs: number;
+  startedAt: number;
+};
+
 export type GameState = {
   roomId: string;
   status: "IDLE" | "PLAYING" | "FINISHED";
@@ -32,6 +37,7 @@ interface GameStoreState {
   moveHistory: MoveEntry[];
   timeoutBy: string | null;
   turnStart: number;
+  turnTimeoutSnapshot: TimeoutSnapshot | null;
   setGameState: (state: Partial<GameState>) => void;
   setStatus: (status: "IDLE" | "PLAYING" | "FINISHED") => void;
   setResult: (result: "win" | "draw" | null) => void;
@@ -43,6 +49,7 @@ interface GameStoreState {
   addHistory: (entry: any) => void;
   nextTurn: (newUserId: string) => void;
   setRoomId: (roomId: string) => void;
+  setTurnTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
   resetGame: () => void;
   resetGameBoard: () => void;
 }
@@ -62,6 +69,7 @@ const initialGameStoreState = () => ({
   moveHistory: [] as MoveEntry[],
   timeoutBy: null as string | null,
   turnStart: Date.now(),
+  turnTimeoutSnapshot: null as TimeoutSnapshot | null,
 });
 
 export const useGameStore = create<GameStoreState>()((set) => ({
@@ -115,6 +123,7 @@ export const useGameStore = create<GameStoreState>()((set) => ({
     })),
   setRoomId: (roomId) =>
     set((s) => ({ gameState: { ...s.gameState, roomId } })),
+  setTurnTimeoutSnapshot: (turnTimeoutSnapshot) => set({ turnTimeoutSnapshot }),
   resetGame: () => {
     useUserStore.setState({ myPlayer: null });
     useRoomStore.setState({
@@ -123,7 +132,6 @@ export const useGameStore = create<GameStoreState>()((set) => ({
       gameServerUrl: null,
       gameTicket: null,
       readyTimeoutSnapshot: null,
-      turnTimeoutSnapshot: null,
       playersInfos: [],
       playersReadyStatus: {},
     });
@@ -138,6 +146,7 @@ export const useGameStore = create<GameStoreState>()((set) => ({
       moveHistory: [],
       timeoutBy: null,
       turnStart: Date.now(),
+      turnTimeoutSnapshot: null,
     });
   },
 }));

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { PlayerReadyEvent } from "@share";
+import type { PlayerReadyEvent } from "@contract";
 
 export function useReceivePlayerReady() {
   const updatePlayerReadyStatus = useRoomStore(

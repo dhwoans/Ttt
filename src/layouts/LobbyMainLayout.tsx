@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import PlayerInfo from "../../features/lobby/components/PlayerInfo";
-import SingleMode from "../../features/lobby/components/SingleMode";
-import LocalMode from "../../features/lobby/components/LocalMode";
-import MultiMode from "../../features/lobby/components/MultiMode";
-import SettingsAndLogout from "../../features/lobby/components/SettingsAndLogout";
+import PlayerInfo from "@/features/lobby/components/PlayerInfo";
+import SingleMode from "@/features/lobby/components/SingleMode";
+import LocalMode from "@/features/lobby/components/LocalMode";
+import MultiMode from "@/features/lobby/components/MultiMode";
+import SettingsAndLogout from "@/features/lobby/components/SettingsAndLogout";
 
 export default function LobbyContentsLayout() {
   const mainLayout = "flex flex-row gap-6 w-full h-[75vh]";

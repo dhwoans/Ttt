@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useAudioStore } from "@/stores/audioStore";
-import { audioManager } from "@/shared/utils/AudioManager";
+import { audioManager } from "@/shared/services/AudioManager";
 import { toast } from "react-toastify";
 import Badge from "@/shared/components/Badge";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 import Subtitle from "./Subtitle";
-import { LobbyContentsLayout } from "../../../pages/layouts/LobbyContentsLayout";
+import { LobbyContentsLayout } from "@/layouts/LobbyContentsLayout";
 import { ROUTES } from "@/shared/constants/routes";
 
 const SingleMode = () => {

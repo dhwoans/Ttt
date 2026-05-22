@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useRoomStore } from "@/stores/useRoomStore";
 
 interface TimeoutProgressBarProps {

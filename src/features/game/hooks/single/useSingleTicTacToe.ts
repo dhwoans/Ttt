@@ -6,9 +6,12 @@ import { useModalStore } from "@/stores/useModalStore";
 import { calcBoard, whoIsWin } from "@/shared/utils/ticTacToeUtils";
 import { useGameTimeout } from "./useGameTimeout";
 import { useSingleNextTurn } from "./useSingleNextTurn";
-import type { UseTicTacToeProps } from "../../types/GameHookTypes";
 
-export function useSingleTicTacToe({ onExit }: UseTicTacToeProps) {
+interface UseSingleTicTacToeProps {
+  onExit?: () => void;
+}
+
+export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
   const setOpenModal = useModalStore((state) => state.setOpenModal);
 
   const handleExitIntent = useCallback(() => {

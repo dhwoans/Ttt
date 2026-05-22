@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
-import type { GameOverEvent } from "@share";
+import type { GameOverEvent } from "@contract";
 
 /**
  * GAME_OVER 이벤트 수신 훅

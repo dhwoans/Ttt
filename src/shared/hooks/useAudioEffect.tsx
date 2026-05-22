@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { audioManager } from "@/shared/utils/AudioManager";
+import { audioManager } from "@/shared/services/AudioManager";
 import { useAudioStore } from "@/stores/audioStore";
 
 export const useAudio = () => {

@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
-import { useRoomStore } from "@/stores/useRoomStore";
-import type { TurnTimeoutStartedEvent } from "@share";
+import type { TurnTimeoutStartedEvent } from "@contract";
 
 /**
  * TURN_TIMEOUT_STARTED 이벤트 수신 훅
@@ -12,10 +11,10 @@ export function useReceiveTurnTimeoutStarted() {
   const setCurrentTurnUserId = useGameStore(
     (state) => state.setCurrentTurnUserId,
   );
-  const turnTimeoutSnapshot = useRoomStore(
+  const turnTimeoutSnapshot = useGameStore(
     (state) => state.turnTimeoutSnapshot,
   );
-  const setTurnTimeoutSnapshot = useRoomStore(
+  const setTurnTimeoutSnapshot = useGameStore(
     (state) => state.setTurnTimeoutSnapshot,
   );
 

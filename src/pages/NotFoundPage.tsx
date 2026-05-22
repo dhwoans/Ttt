@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { ImageManager } from "@/shared/utils/ImageManger";
-import FooterLayout from "./layouts/FooterLayout";
-import LeftSideLayout from "./layouts/LeftSideLayout";
-import RightSideLayout from "./layouts/RightSideLayout";
+import { ImageManager } from "@/shared/services/ImageManger";
+import FooterLayout from "@/layouts/FooterLayout";
+import LeftSideLayout from "@/layouts/LeftSideLayout";
+import RightSideLayout from "@/layouts/RightSideLayout";
 const brutal =
   "border-black font-bold rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]";
 export default function NotFoundPage() {

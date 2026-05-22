@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { MoveMadeEvent } from "@share";
+import type { MoveMadeEvent } from "@contract";
 
 /**
  * MOVE_MADE 이벤트 수신 훅

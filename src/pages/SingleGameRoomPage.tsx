@@ -4,9 +4,9 @@ import { SingleTicTacToe } from "./TicTacToe";
 import { ToastContainer } from "react-toastify";
 import Marquee from "react-fast-marquee";
 import Ready from "./Ready";
-import HeaderLayout from "./layouts/HeaderLayout";
-import { ImageManager } from "@/shared/utils/ImageManger";
-import LeftSideLayout from "@/pages/layouts/LeftSideLayout";
+import HeaderLayout from "@/layouts/HeaderLayout";
+import { ImageManager } from "@/shared/services/ImageManger";
+import LeftSideLayout from "@/layouts/LeftSideLayout";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
 

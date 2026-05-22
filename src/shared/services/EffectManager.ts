@@ -1,4 +1,4 @@
-import { eventManager } from "@/shared/utils/EventManager";
+import { eventManager } from "@/shared/services/EventManager";
 
 type CancelFunction = () => void;
 

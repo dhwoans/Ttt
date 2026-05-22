@@ -1,11 +1,11 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { useAudioStore } from "@/stores/audioStore";
-import { audioManager } from "@/shared/utils/AudioManager";
+import { audioManager } from "@/shared/services/AudioManager";
 import Badge from "@/shared/components/Badge";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 import Subtitle from "./Subtitle";
-import { LobbyContentsLayout } from "../../../pages/layouts/LobbyContentsLayout";
+import { LobbyContentsLayout } from "@/layouts/LobbyContentsLayout";
 const brutalHover =
   "hover:shadow-none hover:translate-x-1.5 hover:translate-y-1.5 transition-all hover-diagonal-stripes";
 

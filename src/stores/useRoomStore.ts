@@ -1,5 +1,11 @@
 import { create } from "zustand";
-import type { GamePlayerInfo } from "@/features/game/types/TicTacToeGameTypes";
+
+interface GamePlayerInfo {
+  nickname: string;
+  avatar: string;
+  imageSrc: string;
+  userId?: string;
+}
 
 export type TimeoutSnapshot = {
   timeoutMs: number;
@@ -12,7 +18,6 @@ interface RoomState {
   gameServerUrl: string | null;
   gameTicket: string | null;
   readyTimeoutSnapshot: TimeoutSnapshot | null;
-  turnTimeoutSnapshot: TimeoutSnapshot | null;
   playersInfos: GamePlayerInfo[];
   playersReadyStatus: Record<string, boolean>;
   setIsWaitingForServer: (waiting: boolean) => void;
@@ -29,7 +34,6 @@ interface RoomState {
   }) => void;
   clearGameServerConnection: () => void;
   setReadyTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
-  setTurnTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
 }
 
 export const useRoomStore = create<RoomState>()((set) => ({
@@ -38,7 +42,6 @@ export const useRoomStore = create<RoomState>()((set) => ({
   gameServerUrl: null,
   gameTicket: null,
   readyTimeoutSnapshot: null,
-  turnTimeoutSnapshot: null,
   playersInfos: [],
   playersReadyStatus: {},
   setIsWaitingForServer: (isWaitingForServer) => set({ isWaitingForServer }),
@@ -70,5 +73,4 @@ export const useRoomStore = create<RoomState>()((set) => ({
     set({ gameServerUrl: null, gameTicket: null }),
   setReadyTimeoutSnapshot: (readyTimeoutSnapshot) =>
     set({ readyTimeoutSnapshot }),
-  setTurnTimeoutSnapshot: (turnTimeoutSnapshot) => set({ turnTimeoutSnapshot }),
 }));

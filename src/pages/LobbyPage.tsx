@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LobbyMainLayout from "./layouts/LobbyMainLayout";
+import LobbyMainLayout from "@/layouts/LobbyMainLayout";
 import Marquee from "react-fast-marquee";
-import HeaderLayout from "./layouts/HeaderLayout";
+import HeaderLayout from "@/layouts/HeaderLayout";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import FooterLayout from "./layouts/FooterLayout";
-import LeftSideLayout from "./layouts/LeftSideLayout";
+import FooterLayout from "@/layouts/FooterLayout";
+import LeftSideLayout from "@/layouts/LeftSideLayout";
 import { ROUTES } from "@/shared/constants/routes";
 import ExitModal from "@/shared/modals/ExitModal";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
 
@@ -94,7 +94,6 @@ export default function LobbyPage() {
         <ExitModal
           onClose={handleStay}
           sender={{ handleLeave: handleLeaveLobby }}
-          title="로비를 나가시겠습니까?"
           navigateToLobbyOnLeave={false}
         />
       )}

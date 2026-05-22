@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { animalList } from "@/shared/constants/avatarCandidates";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { RoomPhase } from "../types/TicTacToeGameTypes";
+
+type RoomPhase = "ready" | "bridge" | "playing";
 
 // 방 화면에서 공유하는 기본 상태 관리
 // 내 플레이어 정보, 현재 phase를 초기화 및 저장.
