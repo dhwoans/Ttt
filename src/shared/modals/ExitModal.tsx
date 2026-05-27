@@ -6,14 +6,12 @@ interface ExitModalProps {
     handleLeave: () => void;
   };
   onClose?: () => void;
-  title?: string;
   navigateToLobbyOnLeave?: boolean;
 }
 
 export default function ExitModal({
   sender,
   onClose,
-  title = "나가시겠습니까?",
   navigateToLobbyOnLeave = true,
 }: ExitModalProps) {
   const navigator = useNavigate();
@@ -37,20 +35,15 @@ export default function ExitModal({
   }, []);
 
   const handleStay = () => {
-    if (onClose) onClose();
+    return onClose && onClose();
   };
 
   const handleLeave = () => {
     sender.handleLeave();
     if (navigateToLobbyOnLeave) {
-      window.sessionStorage.removeItem("roomId");
       navigator("/lobby", { replace: true });
     }
   };
-
-  const brutalBox =
-    "border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]";
-  const brutalBtn = `${brutalBox} hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all active:scale-95`;
 
   return (
     <dialog
@@ -60,19 +53,19 @@ export default function ExitModal({
       <div className="fixed inset-0 bg-black/50 -z-10" />
       <div className="bg-white rounded-2xl p-8 max-w-md w-full border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] animate__animated animate__bounceIn relative z-10">
         <h3 className="text-2xl font-black text-center mb-6 text-gray-800">
-          {title}
+          "나가시겠습니까?"
         </h3>
 
         <div className="flex gap-4 justify-center">
           <button
             onClick={handleStay}
-            className={`px-8 py-3 rounded-xl text-lg font-bold bg-gray-300 hover:bg-gray-400 ${brutalBtn}`}
+            className="brutal-btn px-8 py-3 rounded-xl text-lg font-bold bg-gray-300 hover:bg-gray-400"
           >
             머무르기
           </button>
           <button
             onClick={handleLeave}
-            className={`px-8 py-3 rounded-xl text-lg font-bold bg-red-500 hover:bg-red-600 text-white ${brutalBtn}`}
+            className="brutal-btn px-8 py-3 rounded-xl text-lg font-bold bg-red-500 hover:bg-red-600 text-white"
           >
             나가기
           </button>

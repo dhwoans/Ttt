@@ -1,7 +1,10 @@
+import { useUserStore } from "@/stores/useUserStore";
+
 // 채팅박스 안 메시지 UI
 export default function SpeechBalloon({ type, message, sender }) {
+  const myNickname = useUserStore((state) => state.currentUser?.nickname);
   const isSystem = sender === "system";
-  const isCurrentUser = sender === sessionStorage.getItem("nickname");
+  const iscurrentUser = sender === myNickname;
 
   if (isSystem) {
     return (
@@ -14,7 +17,7 @@ export default function SpeechBalloon({ type, message, sender }) {
   }
 
   if (type === "CHAT") {
-    if (isCurrentUser) {
+    if (iscurrentUser) {
       return (
         <li className="flex justify-end items-end gap-2">
           <small className="text-xs text-gray-600 mb-1">{sender}</small>

@@ -3,19 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import SettingsModal from "@/shared/modals/SettingsModal";
 import { useAudioStore } from "@/stores/audioStore";
-import { audioManager } from "@/shared/utils/AudioManager";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { audioManager } from "@/shared/services/AudioManager";
+import { ImageManager } from "@/shared/services/ImageManger";
 import { ROUTES } from "@/shared/constants/routes";
+import { useUserStore } from "@/stores/useUserStore";
+import { useGameStore } from "@/stores/useGameStore";
 
 const SettingsAndLogout = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const navigate = useNavigate();
   const { sfxMuted } = useAudioStore();
+  const clearCurrentUser = useUserStore((state) => state.clearCurrentUser);
+  const resetGame = useGameStore((state) => state.resetGame);
   const playBeep = () => {
     if (!sfxMuted) audioManager.play("beep");
   };
   const handleLogout = () => {
-    sessionStorage.clear();
+    clearCurrentUser();
+    resetGame();
+    localStorage.removeItem("gameState");
     navigate(ROUTES.login, { replace: true });
   };
   return (

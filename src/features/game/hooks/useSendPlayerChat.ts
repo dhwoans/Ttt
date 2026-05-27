@@ -5,9 +5,9 @@
 //  */
 // export function useSendPlayerChat() {
 //   const getSessionInfo = () => ({
-//     roomId: sessionStorage.getItem("roomId"),
-//     userId: sessionStorage.getItem("userId"),
-//     nickname: sessionStorage.getItem("nickname"),
+//     roomId: "from-zustand",
+//     userId: "from-zustand",
+//     nickname: "from-zustand",
 //   });
 
 //   const sendChat = (message: string) => {

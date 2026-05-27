@@ -2,12 +2,12 @@
 // import io from "socket.io-client";
 // import { eventManager } from "@/shared/managers/EventManager";
 // import { LOBBY_EVENTS } from "@/shared/constants/eventList";
-// // 
+// //
 // export function useLobbySocket() {
 //   const socketRef = useRef(null);
 
 //   useEffect(() => {
-//     const userId = sessionStorage.getItem("userId");
+//     const userId = "from-zustand";
 
 //     // 소켓 연결
 //     socketRef.current = io("/lobby", {

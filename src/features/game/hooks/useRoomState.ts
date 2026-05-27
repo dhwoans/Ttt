@@ -1,20 +1,37 @@
-import { useState } from "react";
-import { getPlayerInfoFromStorage } from "@/shared/utils/playerStorage";
+import { useState, useEffect, useMemo } from "react";
 import { animalList } from "@/shared/constants/avatarCandidates";
-import type { GamePlayerInfo, RoomPhase } from "../types/TicTacToeGameTypes";
+import { useUserStore } from "@/stores/useUserStore";
+import { useRoomStore } from "@/stores/useRoomStore";
+
+type RoomPhase = "ready" | "bridge" | "playing";
 
 // 방 화면에서 공유하는 기본 상태 관리
 // 내 플레이어 정보, 현재 phase를 초기화 및 저장.
 export function useRoomState() {
   const saved = localStorage.getItem("gameState");
-  const playerInfo = getPlayerInfoFromStorage();
-  const myInfo: GamePlayerInfo = {
-    nickname: playerInfo.nickname,
-    avatar: animalList[playerInfo.avatarIndex][0],
-    imageSrc: animalList[playerInfo.avatarIndex][2],
-    userId: sessionStorage.getItem("userId") || undefined,
-  };
-  const [playersInfos, setPlayersInfos] = useState<GamePlayerInfo[]>([myInfo]);
+  const currentUser = useUserStore((state) => state.currentUser);
+  const myInfo = useMemo(() => {
+    const avatarIndex = currentUser?.avatarIndex ?? 3;
+    const selectedAvatar =
+      animalList[avatarIndex] ?? animalList[3] ?? animalList[0];
+
+    return {
+      nickname: currentUser?.nickname ?? "플레이어",
+      avatar: selectedAvatar[0],
+      imageSrc: selectedAvatar[2],
+      userId: currentUser?.userId,
+      isReady: false,
+    };
+  }, [currentUser]);
+
+  const playersInfos = useRoomStore((state) => state.playersInfos);
+  const setPlayersInfos = useRoomStore((state) => state.setPlayersInfos);
+
+  // 마운트 시 나 자신을 첫 번째 플레이어로 초기화
+  useEffect(() => {
+    setPlayersInfos([myInfo]);
+  }, [myInfo, setPlayersInfos]);
+
   const [phase, setPhase] = useState<RoomPhase>(() => {
     if (saved) {
       try {
@@ -27,7 +44,6 @@ export function useRoomState() {
 
   return {
     playersInfos,
-    setPlayersInfos,
     phase,
     setPhase,
   };

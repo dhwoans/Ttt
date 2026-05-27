@@ -1,14 +1,11 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { useAudioStore } from "@/stores/audioStore";
-import { audioManager } from "@/shared/utils/AudioManager";
+import { audioManager } from "@/shared/services/AudioManager";
 import Badge from "@/shared/components/Badge";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 import Subtitle from "./Subtitle";
-import { LobbyContentsLayout } from "../../../pages/layouts/LobbyContentsLayout";
-
-const brutalBox =
-  "border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] rounded-2xl";
+import { LobbyContentsLayout } from "@/layouts/LobbyContentsLayout";
 const brutalHover =
   "hover:shadow-none hover:translate-x-1.5 hover:translate-y-1.5 transition-all hover-diagonal-stripes";
 
@@ -25,7 +22,7 @@ const LocalMode = () => {
     <motion.div
       onMouseDown={playBeep}
       onClick={handleLocalMode}
-      className={`flex-1 relative bg-[#fd5a46]  cursor-pointer p-6 flex flex-col items-center justify-center gap-2 h-full group  ${brutalBox} ${brutalHover}`}
+      className={`brutal-box rounded-2xl flex-1 relative bg-[#fd5a46]  cursor-pointer p-6 flex flex-col items-center justify-center gap-2 h-full group ${brutalHover}`}
     >
       <LobbyContentsLayout
         image={

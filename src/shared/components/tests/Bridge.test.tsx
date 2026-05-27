@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import Bridge from "../Bridge";
-import { ImageManager } from "@/shared/utils/ImageManger";
+import { ImageManager } from "@/shared/services/ImageManger";
 
 describe("Bridge", () => {
   it("기본 이미지가 렌더링", () => {

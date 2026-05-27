@@ -1,8 +1,8 @@
 // import { useState, useEffect, useRef } from "react";
-// import { eventManager } from "@/shared/utils/EventManager";
+// import { eventManager } from "@/shared/services/EventManager";
 // import SpeechBalloon from "./SpeechBalloon";
 // import { ChevronDown, X, MessageSquare } from "lucide-react";
-// import { ImageManager } from "@/shared/utils/ImageManger";
+// import { ImageManager } from "@/shared/services/ImageManger";
 
 // export default function Chat({ sender }) {
 //   const [message, setMessage] = useState("");

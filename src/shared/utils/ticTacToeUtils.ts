@@ -1,5 +1,12 @@
-import { CellSymbol, Move } from "../../features/game/types/TicTacToeGameTypes";
 import { WINNING_COMBINATIONS } from "@/shared/constants/winning-combinations";
+
+type CellSymbol = string | null;
+
+interface Move {
+  row: number;
+  col: number;
+}
+
 // 틱택토 승리판정,초기화, 착수 관련 로직
 export interface TurnInfo {
   square: Move;

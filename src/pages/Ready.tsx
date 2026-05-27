@@ -3,27 +3,20 @@ import { VersusBanner } from "@/features/game/components/VersusBanner";
 import ExitModal from "@/shared/modals/ExitModal";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
-import type { GamePlayerInfo } from "../features/game/types/TicTacToeGameTypes";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 interface SingleReadyProps {
   onReady: (isReady: boolean) => void;
   onExit: () => void;
-  playersInfos: GamePlayerInfo[];
-  playersReadyStatus?: Record<string, boolean>;
   readyDisabled?: boolean;
 }
-
-const brutalBox =
-  "border-[0.25rem] border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]";
-const brutalBtn = `${brutalBox} hover:shadow-none hover:translate-x-[5px] hover:translate-y-[5px] transition-all active:scale-95`;
 
 export default function Ready({
   onReady,
   onExit,
-  playersInfos,
-  playersReadyStatus = {},
   readyDisabled = false,
 }: SingleReadyProps) {
+  const playersInfos = useRoomStore((state) => state.playersInfos);
   const [isReady, setIsReady] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -50,10 +43,7 @@ export default function Ready({
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen gap-8 p-8">
-      <VersusBanner
-        playersInfos={playersInfos}
-        playersReadyStatus={playersReadyStatus}
-      />
+      <VersusBanner playersInfos={playersInfos} />
 
       <TimeoutProgressBar
         eventName="READY_TIMEOUT_STARTED"
@@ -63,16 +53,16 @@ export default function Ready({
       <div className="flex flex-col gap-4">
         <button
           onClick={() => handleReadyClick()}
-          className={`px-10 py-4 rounded-2xl text-2xl font-black ${
+          className={`brutal-btn px-10 py-4 rounded-2xl text-2xl font-black ${
             isReady ? "bg-red-500" : "bg-accent"
-          } text-dark-1 ${brutalBtn}`}
+          } text-dark-1`}
           disabled={readyDisabled}
         >
           {isReady ? "취소" : "준비"}
         </button>
         <button
           onClick={handleExit}
-          className={`px-10 py-4 rounded-2xl text-2xl font-black bg-white text-dark-1 ${brutalBtn}`}
+          className="brutal-btn px-10 py-4 rounded-2xl text-2xl font-black bg-white text-dark-1"
         >
           나가기
         </button>
