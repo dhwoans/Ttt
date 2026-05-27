@@ -9,12 +9,12 @@ export interface AvatarCandidate {
 
 // Vite가 자동으로 처리하는 아바타/봇 리소스 import (png/webm)
 const animalImages = import.meta.glob<{ default: string }>(
-  "./assets/animals/*.{png,webm}",
+  "../../../assets/animals/*.{png,webm}",
   { eager: true },
 );
 
 const botImages = import.meta.glob<{ default: string }>(
-  "./assets/bots/*.{png,webm}",
+  "../../../assets/bots/*.{png,webm}",
   {
     eager: true,
   },

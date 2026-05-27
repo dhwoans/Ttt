@@ -9,19 +9,20 @@ type RoomPhase = "ready" | "bridge" | "playing";
 // 내 플레이어 정보, 현재 phase를 초기화 및 저장.
 export function useRoomState() {
   const saved = localStorage.getItem("gameState");
-  const myPlayer = useUserStore((state) => state.myPlayer);
+  const currentUser = useUserStore((state) => state.currentUser);
   const myInfo = useMemo(() => {
-    const avatarIndex = myPlayer?.avatarIndex ?? 3;
+    const avatarIndex = currentUser?.avatarIndex ?? 3;
     const selectedAvatar =
       animalList[avatarIndex] ?? animalList[3] ?? animalList[0];
 
     return {
-      nickname: myPlayer?.nickname ?? "플레이어",
+      nickname: currentUser?.nickname ?? "플레이어",
       avatar: selectedAvatar[0],
       imageSrc: selectedAvatar[2],
-      userId: myPlayer?.userId,
+      userId: currentUser?.userId,
+      isReady: false,
     };
-  }, [myPlayer]);
+  }, [currentUser]);
 
   const playersInfos = useRoomStore((state) => state.playersInfos);
   const setPlayersInfos = useRoomStore((state) => state.setPlayersInfos);

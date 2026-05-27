@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
+import { useRoomStore } from "@/stores/useRoomStore";
 import type { GameOverEvent } from "@contract";
 
 /**
@@ -12,6 +13,7 @@ export function useReceiveGameOver() {
   const setStatus = useGameStore((state) => state.setStatus);
   const setResult = useGameStore((state) => state.setResult);
   const setWinner = useGameStore((state) => state.setWinner);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
 
   useEffect(() => {
     const handleGameOver = (data: GameOverEvent) => {
@@ -21,13 +23,17 @@ export function useReceiveGameOver() {
       setStatus("FINISHED");
       // 게임 결과 저장
       setResult(data.result);
-      // 승자 설정 (무승부 시 null)
-      setWinner(data.winner);
+      // 멀티 winner는 connId이므로 UI 표시에 맞게 nickname으로 정규화한다.
+      const normalizedWinner = data.winner
+        ? (playersInfos.find((player) => player.userId === data.winner)
+            ?.nickname ?? data.winner)
+        : null;
+      setWinner(normalizedWinner);
     };
 
     eventManager.on("GAME_OVER", handleGameOver);
     return () => {
       eventManager.off("GAME_OVER", handleGameOver);
     };
-  }, [setStatus, setResult, setWinner]);
+  }, [playersInfos, setStatus, setResult, setWinner]);
 }

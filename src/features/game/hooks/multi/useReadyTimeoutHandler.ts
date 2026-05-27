@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useUserStore } from "@/stores/useUserStore";
+import {useRoomStore} from "@/stores/useRoomStore";
 import type { ReadyTimeoutExpiredEvent } from "@contract";
 
 /**
@@ -12,7 +13,13 @@ import type { ReadyTimeoutExpiredEvent } from "@contract";
 export function useReadyTimeoutHandler() {
   const navigate = useNavigate();
   const resetGame = useGameStore((state) => state.resetGame);
-  const currentUserId = useUserStore((state) => state.myPlayer?.userId);
+  const clearGameServerConnection = useRoomStore(
+    (state) => state.clearGameServerConnection,
+  );
+  const setReadyTimeoutSnapshot = useRoomStore(
+    (state) => state.setReadyTimeoutSnapshot,
+  );
+  const currentUserId = useUserStore((state) => state.currentUser?.userId);
 
   // READY_TIMEOUT_EXPIRED: 타임아웃 만료로 인한 강제 로비 이동
   useEffect(() => {
@@ -25,6 +32,8 @@ export function useReadyTimeoutHandler() {
 
         // 로비로 이동
         setTimeout(() => {
+          clearGameServerConnection();
+          setReadyTimeoutSnapshot(null);
           resetGame();
           localStorage.removeItem("gameState");
           navigate("/lobby", { replace: true });
@@ -43,5 +52,11 @@ export function useReadyTimeoutHandler() {
       console.log("[room] READY_TIMEOUT_EXPIRED 리스너 제거");
       eventManager.off("READY_TIMEOUT_EXPIRED", handleReadyTimeoutExpired);
     };
-  }, [currentUserId, navigate, resetGame]);
+  }, [
+    clearGameServerConnection,
+    currentUserId,
+    navigate,
+    resetGame,
+    setReadyTimeoutSnapshot,
+  ]);
 }

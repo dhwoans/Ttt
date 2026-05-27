@@ -16,6 +16,6 @@ export const ROUTES = {
 } as const;
 
 export const isAuthenticated = () => {
-  const myPlayer = useUserStore.getState().myPlayer;
-  return !!(myPlayer?.userId && myPlayer.nickname);
+  const currentUser = useUserStore.getState().currentUser;
+  return !!(currentUser?.userId && currentUser.nickname);
 };

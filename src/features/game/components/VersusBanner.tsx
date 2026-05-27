@@ -17,8 +17,12 @@ interface VersusBannerProps {
   left?: SideProps;
   right?: SideProps;
   sides?: SideProps[];
-  playersInfos?: { nickname: string; imageSrc: string; userId?: string }[];
-  playersReadyStatus?: Record<string, boolean>;
+  playersInfos?: {
+    nickname: string;
+    imageSrc: string;
+    userId?: string;
+    isReady?: boolean;
+  }[];
   dividerText?: string;
   className?: string;
 }
@@ -87,7 +91,6 @@ export function VersusBanner({
   right,
   sides, // 여러명 버전
   playersInfos,
-  playersReadyStatus = {},
   className = "",
 }: VersusBannerProps) {
   // playersInfos가 있으면 우선 사용, 아니면 기존 방식
@@ -97,7 +100,8 @@ export function VersusBanner({
       name: p.nickname,
       imageSrc: p.imageSrc,
       userId: p.userId,
-      isReady: p.userId ? (playersReadyStatus[p.userId] ?? false) : true,
+      isReady:
+        typeof p.isReady === "boolean" ? p.isReady : p.userId ? false : true,
     }));
   } else if (sides && sides.length > 0) {
     participants = sides;

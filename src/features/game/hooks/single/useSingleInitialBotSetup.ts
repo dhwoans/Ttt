@@ -28,6 +28,7 @@ export function useSingleInitialBotSetup() {
         nickname: botData[1],
         avatar: botData[0],
         imageSrc: botData[2],
+        isReady: true,
       },
     ]);
   }, [playersInfos, setPlayersInfos]);

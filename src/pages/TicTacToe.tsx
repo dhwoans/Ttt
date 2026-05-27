@@ -27,6 +27,7 @@ function TicTacToeView({
   canSelectSquare,
   handleSquare,
   isGameOver,
+  currentTurnNickname,
   handleExitCancel,
   handleExit,
   countdownDurationMs,
@@ -39,7 +40,7 @@ function TicTacToeView({
   return (
     <main className="relative flex flex-col min-h-screen p-4 md:p-8 items-center justify-center">
       <div className="w-full md:w-auto mb-6 md:mb-0 flex flex-col items-center justify-center gap-4 md:absolute md:left-8 md:top-1/2 md:-translate-y-1/2">
-        <Players />
+        <Players currentTurnNickname={currentTurnNickname} />
       </div>
       <div
         className={`w-full max-w-150 aspect-square flex items-center justify-center rounded-2xl backdrop-blur-sm p-4 md:p-6 mx-auto${isGameOver ? " animate__animated animate__hinge" : ""}`}

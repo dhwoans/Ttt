@@ -1,9 +1,6 @@
 import { create } from "zustand";
-import { useUserStore } from "./useUserStore";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { useRoomStore } from "./useRoomStore";
-import { useModalStore } from "./useModalStore";
-
-type Player = Record<string, unknown>;
 
 export type MoveEntry = {
   square: { row: number; col: number };
@@ -27,8 +24,6 @@ export type GameState = {
   status: "IDLE" | "PLAYING" | "FINISHED";
   result: "win" | "draw" | null;
   turn: Turn;
-  players: Record<string, Player>;
-  history: any[];
   winner: string | null;
 };
 
@@ -45,8 +40,6 @@ interface GameStoreState {
   setTimeoutBy: (nickname: string | null) => void;
   setCurrentTurnUserId: (userId: string) => void;
   addMove: (entry: MoveEntry) => void;
-  updatePlayer: (userId: string, player: Partial<Player>) => void;
-  addHistory: (entry: any) => void;
   nextTurn: (newUserId: string) => void;
   setRoomId: (roomId: string) => void;
   setTurnTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
@@ -59,9 +52,7 @@ const initialGameState: GameState = {
   status: "IDLE",
   result: null,
   turn: { currentUserId: "", remainTime: 10, turnCount: 0 },
-  players: {},
   winner: null,
-  history: [],
 };
 
 const initialGameStoreState = () => ({
@@ -72,81 +63,73 @@ const initialGameStoreState = () => ({
   turnTimeoutSnapshot: null as TimeoutSnapshot | null,
 });
 
-export const useGameStore = create<GameStoreState>()((set) => ({
-  ...initialGameStoreState(),
-  setGameState: (state) =>
-    set((s) => ({ gameState: { ...s.gameState, ...state } })),
-  setStatus: (status) =>
-    set((s) => ({ gameState: { ...s.gameState, status } })),
-  setResult: (result) =>
-    set((s) => ({ gameState: { ...s.gameState, result } })),
-  setWinner: (winner) =>
-    set((s) => ({ gameState: { ...s.gameState, winner } })),
-  setTimeoutBy: (timeoutBy) => set({ timeoutBy }),
-  setCurrentTurnUserId: (userId) =>
-    set((s) => ({
-      gameState: {
-        ...s.gameState,
-        turn: { ...s.gameState.turn, currentUserId: userId },
+export const useGameStore = create<GameStoreState>()(
+  persist(
+    (set) => ({
+      ...initialGameStoreState(),
+      setGameState: (state) =>
+        set((s) => ({ gameState: { ...s.gameState, ...state } })),
+      setStatus: (status) =>
+        set((s) => ({ gameState: { ...s.gameState, status } })),
+      setResult: (result) =>
+        set((s) => ({ gameState: { ...s.gameState, result } })),
+      setWinner: (winner) =>
+        set((s) => ({ gameState: { ...s.gameState, winner } })),
+      setTimeoutBy: (timeoutBy) => set({ timeoutBy }),
+      setCurrentTurnUserId: (userId) =>
+        set((s) => ({
+          gameState: {
+            ...s.gameState,
+            turn: { ...s.gameState.turn, currentUserId: userId },
+          },
+        })),
+      addMove: (entry) =>
+        set((s) => ({
+          moveHistory: [...s.moveHistory, entry],
+          turnStart: Date.now(),
+        })),
+      nextTurn: (newUserId) =>
+        set((s) => ({
+          gameState: {
+            ...s.gameState,
+            turn: {
+              ...s.gameState.turn,
+              currentUserId: newUserId,
+              turnCount: s.gameState.turn.turnCount + 1,
+              remainTime: 10,
+            },
+          },
+        })),
+      setRoomId: (roomId) =>
+        set((s) => ({ gameState: { ...s.gameState, roomId } })),
+      setTurnTimeoutSnapshot: (turnTimeoutSnapshot) =>
+        set({ turnTimeoutSnapshot }),
+      resetGame: () => {
+        useRoomStore.setState({
+          playersInfos: [],
+        });
+        set(initialGameStoreState());
       },
-    })),
-  addMove: (entry) =>
-    set((s) => ({
-      moveHistory: [...s.moveHistory, entry],
-      turnStart: Date.now(),
-    })),
-  updatePlayer: (userId, player) =>
-    set((s) => ({
-      gameState: {
-        ...s.gameState,
-        players: {
-          ...s.gameState.players,
-          [userId]: { ...s.gameState.players[userId], ...player },
-        },
+      resetGameBoard: () => {
+        set({
+          gameState: initialGameState,
+          moveHistory: [],
+          timeoutBy: null,
+          turnStart: Date.now(),
+          turnTimeoutSnapshot: null,
+        });
       },
-    })),
-  addHistory: (entry) =>
-    set((s) => ({
-      gameState: { ...s.gameState, history: [...s.gameState.history, entry] },
-    })),
-  nextTurn: (newUserId) =>
-    set((s) => ({
-      gameState: {
-        ...s.gameState,
-        turn: {
-          ...s.gameState.turn,
-          currentUserId: newUserId,
-          turnCount: s.gameState.turn.turnCount + 1,
-          remainTime: 10,
-        },
-      },
-    })),
-  setRoomId: (roomId) =>
-    set((s) => ({ gameState: { ...s.gameState, roomId } })),
-  setTurnTimeoutSnapshot: (turnTimeoutSnapshot) => set({ turnTimeoutSnapshot }),
-  resetGame: () => {
-    useUserStore.setState({ myPlayer: null });
-    useRoomStore.setState({
-      isWaitingForServer: false,
-      socketId: null,
-      gameServerUrl: null,
-      gameTicket: null,
-      readyTimeoutSnapshot: null,
-      playersInfos: [],
-      playersReadyStatus: {},
-    });
-    useModalStore.setState({ openModal: null });
-    set(initialGameStoreState());
-  },
-  resetGameBoard: () => {
-    useModalStore.setState({ openModal: null });
-    useRoomStore.setState({ isWaitingForServer: false });
-    set({
-      gameState: initialGameState,
-      moveHistory: [],
-      timeoutBy: null,
-      turnStart: Date.now(),
-      turnTimeoutSnapshot: null,
-    });
-  },
-}));
+    }),
+    {
+      name: "ttt-game-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        gameState: state.gameState,
+        moveHistory: state.moveHistory,
+        timeoutBy: state.timeoutBy,
+        turnStart: state.turnStart,
+        turnTimeoutSnapshot: state.turnTimeoutSnapshot,
+      }),
+    },
+  ),
+);

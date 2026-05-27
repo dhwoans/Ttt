@@ -24,7 +24,7 @@ export default function MultiGameRoomPage() {
   useGameSocketConnection(roomId);
   useRoomState();
 
-  const nickname = useUserStore((state) => state.myPlayer?.nickname ?? "");
+  const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
   const playersInfos = useRoomStore((state) => state.playersInfos);
   const status = useGameStore((state) => state.gameState.status);
   const multiPlay = useMultiPlay();

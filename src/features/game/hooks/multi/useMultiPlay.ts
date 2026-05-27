@@ -14,7 +14,12 @@ export function useMultiPlay() {
   const { sendReady } = useSendPlayerReady();
   const { sendLeave } = useSendPlayerLeave();
   const resetGame = useGameStore((state) => state.resetGame);
-  const playersReadyStatus = useRoomStore((state) => state.playersReadyStatus);
+  const clearGameServerConnection = useRoomStore(
+    (state) => state.clearGameServerConnection,
+  );
+  const setReadyTimeoutSnapshot = useRoomStore(
+    (state) => state.setReadyTimeoutSnapshot,
+  );
 
   useGamePhaseEvents();
   useMultiplayerPlayers();
@@ -29,9 +34,11 @@ export function useMultiPlay() {
 
   const handleExit = () => {
     sendLeave();
+    clearGameServerConnection();
+    setReadyTimeoutSnapshot(null);
     resetGame();
     navigate("/lobby", { replace: true });
   };
 
-  return { handleReady, handleExit, playersReadyStatus, sendReady };
+  return { handleReady, handleExit, sendReady };
 }

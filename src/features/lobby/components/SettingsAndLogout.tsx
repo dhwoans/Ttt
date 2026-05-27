@@ -13,13 +13,13 @@ const SettingsAndLogout = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const navigate = useNavigate();
   const { sfxMuted } = useAudioStore();
-  const clearMyPlayer = useUserStore((state) => state.clearMyPlayer);
+  const clearCurrentUser = useUserStore((state) => state.clearCurrentUser);
   const resetGame = useGameStore((state) => state.resetGame);
   const playBeep = () => {
     if (!sfxMuted) audioManager.play("beep");
   };
   const handleLogout = () => {
-    clearMyPlayer();
+    clearCurrentUser();
     resetGame();
     localStorage.removeItem("gameState");
     navigate(ROUTES.login, { replace: true });

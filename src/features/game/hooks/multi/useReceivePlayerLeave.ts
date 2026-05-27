@@ -15,8 +15,11 @@ export function useReceivePlayerLeave() {
   const navigate = useNavigate();
   const resetGame = useGameStore((state) => state.resetGame);
   const removePlayerInfo = useRoomStore((state) => state.removePlayerInfo);
-  const removePlayerReadyStatus = useRoomStore(
-    (state) => state.removePlayerReadyStatus,
+  const clearGameServerConnection = useRoomStore(
+    (state) => state.clearGameServerConnection,
+  );
+  const setReadyTimeoutSnapshot = useRoomStore(
+    (state) => state.setReadyTimeoutSnapshot,
   );
   const status = useGameStore((state) => state.gameState.status);
 
@@ -27,10 +30,11 @@ export function useReceivePlayerLeave() {
       toast.warning(`${data.nickname}님이 게임을 나갔습니다.`);
 
       removePlayerInfo(data.nickname);
-      removePlayerReadyStatus(data.connId);
 
       if (status === "PLAYING") {
         setTimeout(() => {
+          clearGameServerConnection();
+          setReadyTimeoutSnapshot(null);
           resetGame();
           navigate("/lobby", { replace: true });
         }, 1500);
@@ -42,12 +46,14 @@ export function useReceivePlayerLeave() {
       console.log("[room] PLAYER_LEFT 리스너 제거");
       eventManager.off("PLAYER_LEFT", handlePlayerLeft);
     };
-  }, [status, removePlayerInfo, removePlayerReadyStatus, navigate, resetGame]);
+  }, [status, removePlayerInfo, navigate, resetGame]);
 
   // LEAVE_SUCCESS 이벤트 처리 (본인 퇴장 성공)
   useEffect(() => {
     const handleLeaveSuccess = (data: LeaveSuccessEvent) => {
       if (data.success) {
+        clearGameServerConnection();
+        setReadyTimeoutSnapshot(null);
         resetGame();
         navigate("/lobby", { replace: true });
       }
@@ -57,5 +63,5 @@ export function useReceivePlayerLeave() {
     return () => {
       // cleanup
     };
-  }, [navigate, resetGame]);
+  }, [clearGameServerConnection, navigate, resetGame, setReadyTimeoutSnapshot]);
 }

@@ -13,9 +13,7 @@ import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@contract";
  */
 export function useMultiplayerPlayers() {
   const addPlayerInfo = useRoomStore((state) => state.addPlayerInfo);
-  const setPlayersReadyStatus = useRoomStore(
-    (state) => state.setPlayersReadyStatus,
-  );
+  const setPlayersInfos = useRoomStore((state) => state.setPlayersInfos);
   const updatePlayerReadyStatus = useRoomStore(
     (state) => state.updatePlayerReadyStatus,
   );
@@ -24,18 +22,17 @@ export function useMultiplayerPlayers() {
     const handleExistingPlayers = (data: ExistingPlayersEvent) => {
       console.log("[room] EXISTING_PLAYERS 이벤트 수신:", data.players);
 
-      const readyStatus: Record<string, boolean> = {};
-      data.players.forEach((player) => {
+      const nextPlayers = data.players.map((player) => {
         const found = animalList.find((animal) => animal[0] === player.avatar);
-        addPlayerInfo({
+        return {
           nickname: player.nickname,
           avatar: player.avatar ?? "",
           imageSrc: found ? found[2] : "",
           userId: player.connId,
-        });
-        readyStatus[player.connId] = player.isReady;
+          isReady: player.isReady,
+        };
       });
-      setPlayersReadyStatus(readyStatus);
+      setPlayersInfos(nextPlayers);
     };
 
     eventManager.on("EXISTING_PLAYERS", handleExistingPlayers);
@@ -43,7 +40,7 @@ export function useMultiplayerPlayers() {
       console.log("[room] EXISTING_PLAYERS 리스너 제거");
       eventManager.off("EXISTING_PLAYERS", handleExistingPlayers);
     };
-  }, [addPlayerInfo, setPlayersReadyStatus]);
+  }, [setPlayersInfos]);
 
   useEffect(() => {
     const handlePlayerJoined = (data: PlayerJoinedEvent) => {
@@ -58,6 +55,7 @@ export function useMultiplayerPlayers() {
         avatar: data.player.avatar ?? "",
         imageSrc: found ? found[2] : "",
         userId: data.player.connId,
+        isReady: data.player.isReady,
       });
 
       updatePlayerReadyStatus(data.player.connId, data.player.isReady);

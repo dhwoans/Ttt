@@ -3,22 +3,28 @@ import { Avatar } from "@/shared/components/Avatar";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
 
+interface PlayersProps {
+  currentTurnNickname?: string;
+}
+
 //턴 알림
-export default function Players() {
+export default function Players({ currentTurnNickname }: PlayersProps) {
   const playerInfos = useRoomStore((state) => state.playersInfos);
   const currentTurnUserId = useGameStore(
     (state) => state.gameState.turn.currentUserId,
   );
 
-  const currentTurnNickname =
+  const currentTurnNicknameFromStore =
     playerInfos.find((player) => player.userId === currentTurnUserId)
       ?.nickname ?? "";
+  const activeTurnNickname =
+    currentTurnNickname ?? currentTurnNicknameFromStore;
 
   return (
     <ol className="flex flex-row md:flex-col gap-10 md:gap-6">
       {playerInfos.map((player, index) => {
         const animClass =
-          player.nickname === currentTurnNickname
+          player.nickname === activeTurnNickname
             ? "animate__animated animate__bounce animate__infinite"
             : "";
         return (

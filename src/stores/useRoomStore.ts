@@ -1,10 +1,12 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface GamePlayerInfo {
   nickname: string;
   avatar: string;
   imageSrc: string;
   userId?: string;
+  isReady?: boolean;
 }
 
 export type TimeoutSnapshot = {
@@ -19,14 +21,11 @@ interface RoomState {
   gameTicket: string | null;
   readyTimeoutSnapshot: TimeoutSnapshot | null;
   playersInfos: GamePlayerInfo[];
-  playersReadyStatus: Record<string, boolean>;
   setIsWaitingForServer: (waiting: boolean) => void;
   setPlayersInfos: (infos: GamePlayerInfo[]) => void;
   addPlayerInfo: (info: GamePlayerInfo) => void;
   removePlayerInfo: (nickname: string) => void;
-  setPlayersReadyStatus: (status: Record<string, boolean>) => void;
   updatePlayerReadyStatus: (connId: string, isReady: boolean) => void;
-  removePlayerReadyStatus: (connId: string) => void;
   setSocketId: (socketId: string | null) => void;
   setGameServerConnection: (params: {
     gameServerUrl: string;
@@ -36,41 +35,51 @@ interface RoomState {
   setReadyTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
 }
 
-export const useRoomStore = create<RoomState>()((set) => ({
-  isWaitingForServer: false,
-  socketId: null,
-  gameServerUrl: null,
-  gameTicket: null,
-  readyTimeoutSnapshot: null,
-  playersInfos: [],
-  playersReadyStatus: {},
-  setIsWaitingForServer: (isWaitingForServer) => set({ isWaitingForServer }),
-  setPlayersInfos: (playersInfos) => set({ playersInfos }),
-  addPlayerInfo: (info) =>
-    set((s) => {
-      if (s.playersInfos.some((p) => p.nickname === info.nickname)) return s;
-      return { playersInfos: [...s.playersInfos, info] };
+export const useRoomStore = create<RoomState>()(
+  persist(
+    (set) => ({
+      isWaitingForServer: false,
+      socketId: null,
+      gameServerUrl: null,
+      gameTicket: null,
+      readyTimeoutSnapshot: null,
+      playersInfos: [],
+      setIsWaitingForServer: (isWaitingForServer) =>
+        set({ isWaitingForServer }),
+      setPlayersInfos: (playersInfos) => set({ playersInfos }),
+      addPlayerInfo: (info) =>
+        set((s) => {
+          if (s.playersInfos.some((p) => p.nickname === info.nickname))
+            return s;
+          return { playersInfos: [...s.playersInfos, info] };
+        }),
+      removePlayerInfo: (nickname) =>
+        set((s) => ({
+          playersInfos: s.playersInfos.filter((p) => p.nickname !== nickname),
+        })),
+      updatePlayerReadyStatus: (connId, isReady) =>
+        set((s) => ({
+          playersInfos: s.playersInfos.map((player) =>
+            player.userId === connId ? { ...player, isReady } : player,
+          ),
+        })),
+      setSocketId: (socketId) => set({ socketId }),
+      setGameServerConnection: ({ gameServerUrl, gameTicket }) =>
+        set({ gameServerUrl, gameTicket }),
+      clearGameServerConnection: () =>
+        set({ gameServerUrl: null, gameTicket: null }),
+      setReadyTimeoutSnapshot: (readyTimeoutSnapshot) =>
+        set({ readyTimeoutSnapshot }),
     }),
-  removePlayerInfo: (nickname) =>
-    set((s) => ({
-      playersInfos: s.playersInfos.filter((p) => p.nickname !== nickname),
-    })),
-  setPlayersReadyStatus: (playersReadyStatus) => set({ playersReadyStatus }),
-  updatePlayerReadyStatus: (connId, isReady) =>
-    set((s) => ({
-      playersReadyStatus: { ...s.playersReadyStatus, [connId]: isReady },
-    })),
-  removePlayerReadyStatus: (connId) =>
-    set((s) => {
-      const next = { ...s.playersReadyStatus };
-      delete next[connId];
-      return { playersReadyStatus: next };
-    }),
-  setSocketId: (socketId) => set({ socketId }),
-  setGameServerConnection: ({ gameServerUrl, gameTicket }) =>
-    set({ gameServerUrl, gameTicket }),
-  clearGameServerConnection: () =>
-    set({ gameServerUrl: null, gameTicket: null }),
-  setReadyTimeoutSnapshot: (readyTimeoutSnapshot) =>
-    set({ readyTimeoutSnapshot }),
-}));
+    {
+      name: "ttt-room-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        gameServerUrl: state.gameServerUrl,
+        gameTicket: state.gameTicket,
+        readyTimeoutSnapshot: state.readyTimeoutSnapshot,
+        playersInfos: state.playersInfos,
+      }),
+    },
+  ),
+);

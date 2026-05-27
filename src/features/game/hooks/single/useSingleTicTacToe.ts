@@ -13,6 +13,9 @@ interface UseSingleTicTacToeProps {
 
 export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
   const setOpenModal = useModalStore((state) => state.setOpenModal);
+  const setStatus = useGameStore((state) => state.setStatus);
+  const setResult = useGameStore((state) => state.setResult);
+  const setWinner = useGameStore((state) => state.setWinner);
 
   const handleExitIntent = useCallback(() => {
     setOpenModal("exit");
@@ -40,6 +43,25 @@ export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
   const isPlayerTurn = currentPlayer?.nickname === playersInfos[0]?.nickname;
 
   const { handleTimeout } = useGameTimeout(currentPlayer?.nickname ?? "");
+
+  useEffect(() => {
+    if (!isGameOver) {
+      setStatus("PLAYING");
+      setResult(null);
+      setWinner(null);
+      return;
+    }
+
+    setStatus("FINISHED");
+    if (isDraw) {
+      setResult("draw");
+      setWinner(null);
+      return;
+    }
+
+    setResult("win");
+    setWinner(winner);
+  }, [isGameOver, isDraw, winner, setStatus, setResult, setWinner]);
 
   useEffect(() => {
     if (isGameOver) {

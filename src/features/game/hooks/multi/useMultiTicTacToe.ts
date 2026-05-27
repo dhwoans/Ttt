@@ -55,14 +55,14 @@ export function useMultiTicTacToe({ onExit }: UseMultiTicTacToeProps) {
     }
   }, [isGameOver, setOpenModal]);
 
-  const { handleSquare, isCurrentUserTurnByServer } = useMultiNextTurn({
+  const { handleSquare, iscurrentUserTurnByServer } = useMultiNextTurn({
     currentTurnPlayerId: currentTurnUserId,
     isGameOver,
   });
 
   return {
     canSelectSquare:
-      !isGameOver && isCurrentUserTurnByServer && !isWaitingForServer,
+      !isGameOver && iscurrentUserTurnByServer && !isWaitingForServer,
     handleSquare,
     isGameOver,
     isDraw,

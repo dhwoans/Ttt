@@ -20,7 +20,7 @@ const triggerConfetti = (result: string) => {
 };
 
 export function useGameResult() {
-  const nickname = useUserStore((state) => state.myPlayer?.nickname);
+  const nickname = useUserStore((state) => state.currentUser?.nickname);
   const winner = useGameStore((state) => state.gameState.winner);
   const result = useGameStore((state) => state.gameState.result);
 

@@ -23,7 +23,7 @@ function useCreateUserState() {
 
 function useCreateUserActions() {
   const { createUser } = useSendCreateUser();
-  const setMyPlayer = useUserStore((state) => state.setMyPlayer);
+  const setCurrentUser = useUserStore((state) => state.setCurrentUser);
 
   const createAndStoreUser = async ({
     nickname,
@@ -40,7 +40,7 @@ function useCreateUserActions() {
     });
 
     if (result && result.success) {
-      setMyPlayer({
+      setCurrentUser({
         avatarIndex,
         nickname,
         userId: result.message ?? "",

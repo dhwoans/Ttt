@@ -13,13 +13,13 @@ import { eventManager } from "@/shared/services/EventManager";
  */
 export function useConnectGameServer() {
   const navigate = useNavigate();
-  const myPlayer = useUserStore((state) => state.myPlayer);
+  const currentUser = useUserStore((state) => state.currentUser);
   const setRoomId = useGameStore((state) => state.setRoomId);
 
   const connectGameServer = useCallback(
     (gameServerUrl: string, ticket: string) => {
-      const nickname = myPlayer?.nickname;
-      const userId = myPlayer?.userId;
+      const nickname = currentUser?.nickname;
+      const userId = currentUser?.userId;
 
       if (!userId || !nickname || !ticket) {
         console.error("userId or nickname or ticket not found");
@@ -33,9 +33,10 @@ export function useConnectGameServer() {
         ticket,
       });
 
-      // Same-origin 연결 (nginx를 통해 backend로 프록시)
-      // gameServerUrl 무시하고 현재 origin 사용
-      gameSocketManager.connect(userId, nickname, "/", { ticket });
+      // ticket API가 반환한 서버 URL을 우선 사용하고, 없으면 same-origin을 사용한다.
+      gameSocketManager.connect(userId, nickname, gameServerUrl || "/", {
+        ticket,
+      });
 
       // 서버에서 roomId 받기
       const handleRoomAssigned = (data: any) => {
@@ -53,7 +54,7 @@ export function useConnectGameServer() {
       // 한 번만 실행되도록 설정
       eventManager.once("ROOM_ASSIGNED", handleRoomAssigned);
     },
-    [myPlayer, navigate, setRoomId],
+    [currentUser, navigate, setRoomId],
   );
 
   return { connectGameServer };

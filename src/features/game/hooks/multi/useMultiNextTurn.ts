@@ -14,10 +14,10 @@ export function useMultiNextTurn({
   isGameOver,
 }: UseMultiNextTurnConfig) {
   const { sendMove } = useSendPlayerMove();
-  const currentUserId = useUserStore((state) => state.myPlayer?.userId);
+  const currentUserId = useUserStore((state) => state.currentUser?.userId);
   const socketId = useRoomStore((state) => state.socketId);
 
-  const isCurrentUserTurnByServer = useMemo(() => {
+  const iscurrentUserTurnByServer = useMemo(() => {
     const socketConnId = socketId ?? gameSocketManager.getSocket()?.id ?? null;
     return (
       !!currentTurnPlayerId &&
@@ -30,7 +30,7 @@ export function useMultiNextTurn({
     (row: number, col: number) => {
       console.log("[Playing] handleSquare 호출:", { row, col });
 
-      if (isGameOver || !isCurrentUserTurnByServer) {
+      if (isGameOver || !iscurrentUserTurnByServer) {
         console.log("[Playing] 클릭 거부: 내 턴이 아니거나 게임 종료 상태");
         return;
       }
@@ -38,8 +38,8 @@ export function useMultiNextTurn({
       console.log("[Playing] sendMove 호출:", { row, col });
       sendMove(row, col);
     },
-    [isGameOver, isCurrentUserTurnByServer, sendMove],
+    [isGameOver, iscurrentUserTurnByServer, sendMove],
   );
 
-  return { handleSquare, isCurrentUserTurnByServer };
+  return { handleSquare, iscurrentUserTurnByServer };
 }

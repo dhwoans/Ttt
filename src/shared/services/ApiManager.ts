@@ -19,8 +19,34 @@ class ApiManager {
   async request<T>(path: string, options: RequestInit = {}): Promise<T | null> {
     try {
       const res = await fetch(this.basePath + path, options);
-      const data = await res.json();
-      return data;
+      const text = await res.text();
+
+      if (!text) {
+        if (!res.ok) {
+          console.error(
+            `[network] request failed ${path}: ${res.status} ${res.statusText}`,
+          );
+        }
+        return null;
+      }
+
+      let data: unknown;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        console.error(`[network] non-json response ${path}:`, text);
+        return null;
+      }
+
+      if (!res.ok) {
+        console.error(
+          `[network] request failed ${path}: ${res.status} ${res.statusText}`,
+          data,
+        );
+        return null;
+      }
+
+      return data as T;
     } catch (err) {
       console.error(`[network] request error ${path}:`, err);
       return null;
@@ -29,10 +55,10 @@ class ApiManager {
   // GET /api/room - 멀티플레이 서버 입장 정보 요청
   // 접속가능한 게임서버주소,입장티켓 리턴
   async joinRoom(): Promise<IssueTicketResponse | null> {
-    const myPlayer = useUserStore.getState().myPlayer;
-    const userId = myPlayer?.userId ?? null;
-    const nickname = myPlayer?.nickname ?? "";
-    const avatarIndex = myPlayer?.avatarIndex ?? 0;
+    const currentUser = useUserStore.getState().currentUser;
+    const userId = currentUser?.userId ?? null;
+    const nickname = currentUser?.nickname ?? "";
+    const avatarIndex = currentUser?.avatarIndex ?? 0;
     const avatar = animalList[avatarIndex]?.[0];
 
     if (!userId) {

@@ -9,6 +9,13 @@ interface JoinRoomResult {
 export async function useJoinRoom(): Promise<JoinRoomResult> {
   try {
     const response = await apiManager.joinRoom();
+    if (!response) {
+      return {
+        success: false,
+        error: "티켓 발급 응답이 없습니다.",
+      };
+    }
+
     const resultObj: JoinRoomResult = { success: true, data: response };
     return resultObj;
   } catch (error: any) {

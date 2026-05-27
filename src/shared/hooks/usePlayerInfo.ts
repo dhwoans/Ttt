@@ -7,12 +7,12 @@ export interface PlayerInfo {
 }
 
 export function usePlayerInfo(): PlayerInfo {
-  const myPlayer = useUserStore((state) => state.myPlayer);
+  const currentUser = useUserStore((state) => state.currentUser);
 
   return useMemo<PlayerInfo>(() => {
     return {
-      nickname: myPlayer?.nickname || "플레이어",
-      avatarIndex: myPlayer?.avatarIndex ?? 3,
+      nickname: currentUser?.nickname || "플레이어",
+      avatarIndex: currentUser?.avatarIndex ?? 3,
     };
-  }, [myPlayer]);
+  }, [currentUser]);
 }

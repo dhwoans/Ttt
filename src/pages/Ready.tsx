@@ -17,7 +17,6 @@ export default function Ready({
   readyDisabled = false,
 }: SingleReadyProps) {
   const playersInfos = useRoomStore((state) => state.playersInfos);
-  const playersReadyStatus = useRoomStore((state) => state.playersReadyStatus);
   const [isReady, setIsReady] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -44,10 +43,7 @@ export default function Ready({
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen gap-8 p-8">
-      <VersusBanner
-        playersInfos={playersInfos}
-        playersReadyStatus={playersReadyStatus}
-      />
+      <VersusBanner playersInfos={playersInfos} />
 
       <TimeoutProgressBar
         eventName="READY_TIMEOUT_STARTED"

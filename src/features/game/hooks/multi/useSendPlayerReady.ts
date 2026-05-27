@@ -10,7 +10,7 @@ import { useUserStore } from "@/stores/useUserStore";
  * - PLAYER_READY: 모든 플레이어에게 준비 상태 변경 알림 (GameRoomPage에서 처리)
  */
 export function useSendPlayerReady() {
-  const userId = useUserStore((state) => state.myPlayer?.userId);
+  const userId = useUserStore((state) => state.currentUser?.userId);
 
   const sendReady = useCallback(
     (isReady: boolean) => {

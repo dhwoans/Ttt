@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
+import type { NextTurnEvent } from "@contract";
 
 /**
  * NEXT_TURN 이벤트 수신 훅
@@ -12,7 +13,7 @@ export function useReceiveNextTurn() {
   );
 
   useEffect(() => {
-    const handleNextTurn = (data: any) => {
+    const handleNextTurn = (data: NextTurnEvent) => {
       if (data.nextPlayerId) {
         setCurrentTurnUserId(data.nextPlayerId);
       }

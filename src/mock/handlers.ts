@@ -31,8 +31,8 @@ export const handlers = [
       { status: 201 },
     );
   }),
-  // GET /api/room - 멀티플레이 서버 입장 정보 요청
-  http.get("/api/room", async () => {
+  // POST /api/ticket - 멀티플레이 서버 입장 정보 요청
+  http.post("/api/ticket", async () => {
     // 가장 접속자가 적은 서버 선택
     const bestServer = GAME_SERVERS.reduce((prev, curr) =>
       prev.users <= curr.users ? prev : curr,

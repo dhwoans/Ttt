@@ -15,8 +15,8 @@ import { useGameStore } from "@/stores/useGameStore";
 
 export default function LobbyPage() {
   const navigate = useNavigate();
-  const nickname = useUserStore((state) => state.myPlayer?.nickname);
-  const clearMyPlayer = useUserStore((state) => state.clearMyPlayer);
+  const nickname = useUserStore((state) => state.currentUser?.nickname);
+  const clearCurrentUser = useUserStore((state) => state.clearCurrentUser);
   const resetGame = useGameStore((state) => state.resetGame);
   const [showExitModal, setShowExitModal] = useState(false);
 
@@ -41,11 +41,11 @@ export default function LobbyPage() {
   }, []);
 
   const handleLeaveLobby = useCallback(() => {
-    clearMyPlayer();
+    clearCurrentUser();
     resetGame();
     localStorage.removeItem("gameState");
     navigate(ROUTES.login, { replace: true });
-  }, [clearMyPlayer, navigate, resetGame]);
+  }, [clearCurrentUser, navigate, resetGame]);
 
   return (
     <>

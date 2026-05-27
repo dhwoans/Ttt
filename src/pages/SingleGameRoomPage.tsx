@@ -13,7 +13,7 @@ import { useGameStore } from "@/stores/useGameStore";
 export default function SingleGameRoomPage() {
   useRoomState();
   const { handleReady, handleExit } = useSinglePlay();
-  const nickname = useUserStore((state) => state.myPlayer?.nickname ?? "");
+  const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
   const status = useGameStore((state) => state.gameState.status);
 
   return (

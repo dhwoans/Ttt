@@ -1,24 +1,24 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type MyPlayer = {
+export type UserProfile = {
   userId: string;
   nickname: string;
   avatarIndex: number;
 };
 
 interface UserState {
-  myPlayer: MyPlayer | null;
-  setMyPlayer: (player: MyPlayer) => void;
-  clearMyPlayer: () => void;
+  currentUser: UserProfile | null;
+  setCurrentUser: (user: UserProfile) => void;
+  clearCurrentUser: () => void;
 }
 
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
-      myPlayer: null,
-      setMyPlayer: (myPlayer) => set({ myPlayer }),
-      clearMyPlayer: () => set({ myPlayer: null }),
+      currentUser: null,
+      setCurrentUser: (currentUser) => set({ currentUser }),
+      clearCurrentUser: () => set({ currentUser: null }),
     }),
     { name: "user-storage" },
   ),
