@@ -1,4 +1,3 @@
-
 ## 기술 스택
 
 | 항목        | 기술                                  |
@@ -13,13 +12,12 @@
 | 테스트      | Vitest, @testing-library/react, jsdom |
 | 목업 API    | MSW                                   |
 
-
 ## 프로젝트 구조
 
 ```text
 .
 ├─ assets/                     # 정적 리소스
-├─ public/                     
+├─ public/
 └─ src/
    ├─ features/
    │  ├─ auth/                 # 로그인/아바타 선택 관련 기능
@@ -87,3 +85,27 @@
 - MSW request delay 조정
 - 프로젝트 구조/네이밍 컨벤션 문서화
 
+## Storybook
+
+UI 컴포넌트 단위 검증을 위해 Storybook을 사용합니다.
+
+### 실행 방법
+
+```bash
+pnpm install
+pnpm storybook
+```
+
+빌드 산출물을 생성하려면 아래 명령을 사용합니다.
+
+```bash
+pnpm build-storybook
+```
+
+### 스토리 작성 기본 규칙
+
+- 파일명은 `ComponentName.stories.tsx` 형식을 사용합니다.
+- `Meta`와 `StoryObj` 타입을 사용해 타입 안전성을 유지합니다.
+- `args`와 `argTypes`를 정의해 Controls 패널에서 상태/variant를 전환할 수 있게 작성합니다.
+- 기본 상태(`default`) 외에 `hover`, `active`, `disabled`, `variation` 상태 스토리를 함께 제공합니다.
+- 스토리 전역 스타일/프로바이더는 `.storybook/preview.tsx`의 decorator를 통해 공통 적용합니다.
