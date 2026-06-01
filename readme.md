@@ -89,6 +89,22 @@
 
 UI 컴포넌트 단위 검증을 위해 Storybook을 사용합니다.
 
+## 디자인 시스템
+
+현재 저장소는 Figma MCP 결과물을 직접 당겨오는 런타임 연결은 없지만, 연동을 받아들일 수 있는 구조를 갖추도록 정리했습니다.
+
+- 디자인 토큰 레지스트리는 `src/design-system/tokens.ts`에서 관리합니다.
+- 실제 스타일 소스는 `src/index.css`의 CSS 변수이며, 앱과 Storybook이 같은 토큰을 공유합니다.
+- 공용 UI 컴포넌트는 `src/shared/components`에 두고 Storybook에서 상태별로 검증합니다.
+- 토큰 카탈로그는 `Foundations/Design Tokens` 스토리에서 확인할 수 있습니다.
+
+### Figma MCP 연결 권장 흐름
+
+1. Figma MCP 또는 디자인 토큰 export 단계에서 색상, 타이포, spacing, radius를 JSON 또는 TS 객체로 추출합니다.
+2. 그 결과물을 `src/design-system/tokens.ts` 구조에 맞게 매핑합니다.
+3. 공용 컴포넌트는 raw hex 값 대신 semantic token 또는 CSS 변수만 사용합니다.
+4. 변경 검증은 Storybook에서 먼저 하고, 이후 실제 페이지에 반영합니다.
+
 ### 실행 방법
 
 ```bash

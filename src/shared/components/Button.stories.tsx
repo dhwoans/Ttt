@@ -1,28 +1,20 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-type ButtonVariant = "primary" | "secondary" | "danger";
 type InteractionState = "default" | "hover" | "active";
+import { Button } from "./Button";
 
-interface StoryButtonProps {
+interface StoryButtonProps extends Omit<React.ComponentProps<typeof Button>, "children"> {
   label: string;
-  variant: ButtonVariant;
-  disabled: boolean;
   interactionState: InteractionState;
 }
 
 function StoryButton({
   label,
-  variant,
-  disabled,
   interactionState,
+  className,
+  ...props
 }: StoryButtonProps) {
-  const variantClassMap: Record<ButtonVariant, string> = {
-    primary: "bg-yellow-400 text-black",
-    secondary: "bg-white text-black",
-    danger: "bg-red-500 text-white",
-  };
-
   const interactionClassMap: Record<InteractionState, string> = {
     default: "",
     hover: "translate-x-[5px] translate-y-[5px] shadow-none",
@@ -30,13 +22,12 @@ function StoryButton({
   };
 
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      className={`brutal-btn rounded-xl px-5 py-3 text-sm font-bold transition-transform ${variantClassMap[variant]} ${interactionClassMap[interactionState]} ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+    <Button
+      className={`${interactionClassMap[interactionState]} ${className ?? ""}`.trim()}
+      {...props}
     >
       {label}
-    </button>
+    </Button>
   );
 }
 
@@ -47,6 +38,7 @@ const meta = {
   args: {
     label: "Play",
     variant: "primary",
+    size: "md",
     disabled: false,
     interactionState: "default",
   },
@@ -55,6 +47,10 @@ const meta = {
     variant: {
       control: { type: "inline-radio" },
       options: ["primary", "secondary", "danger"],
+    },
+    size: {
+      control: { type: "inline-radio" },
+      options: ["sm", "md", "lg"],
     },
     disabled: { control: "boolean" },
     interactionState: {
