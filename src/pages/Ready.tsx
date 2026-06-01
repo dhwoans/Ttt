@@ -3,6 +3,7 @@ import { VersusBanner } from "@/features/game/components/VersusBanner";
 import ExitModal from "@/shared/modals/ExitModal";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
+import { Button } from "@/shared/components/Button";
 import { useRoomStore } from "@/stores/useRoomStore";
 
 interface SingleReadyProps {
@@ -51,21 +52,24 @@ export default function Ready({
       />
 
       <div className="flex flex-col gap-4">
-        <button
+        <Button
           onClick={() => handleReadyClick()}
-          className={`brutal-btn px-10 py-4 rounded-2xl text-2xl font-black ${
-            isReady ? "bg-red-500" : "bg-accent"
-          } text-dark-1`}
+          size="lg"
+          className={`px-10 py-4 text-2xl font-black text-dark-1 ${
+            isReady ? "bg-red-500" : ""
+          }`}
           disabled={readyDisabled}
         >
           {isReady ? "취소" : "준비"}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleExit}
-          className="brutal-btn px-10 py-4 rounded-2xl text-2xl font-black bg-white text-dark-1"
+          size="lg"
+          variant="secondary"
+          className="px-10 py-4 text-2xl font-black text-dark-1"
         >
           나가기
-        </button>
+        </Button>
       </div>
 
       {showExitModal && (

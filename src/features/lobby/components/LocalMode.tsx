@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import Badge from "@/shared/components/Badge";
+import { InteractiveCard } from "@/shared/components/InteractiveCard";
 import { ImageManager } from "@/shared/services/ImageManger";
 import Subtitle from "./Subtitle";
 import { LobbyContentsLayout } from "@/layouts/LobbyContentsLayout";
-const brutalHover =
-  "hover:shadow-none hover:translate-x-1.5 hover:translate-y-1.5 transition-all hover-diagonal-stripes";
 
 const LocalMode = () => {
   const navigate = useNavigate();
@@ -19,10 +18,13 @@ const LocalMode = () => {
     // navigate(ROUTES.game.)
   };
   return (
-    <motion.div
+    <InteractiveCard
+      as={motion.div}
       onMouseDown={playBeep}
       onClick={handleLocalMode}
-      className={`brutal-box rounded-2xl flex-1 relative bg-[#fd5a46]  cursor-pointer p-6 flex flex-col items-center justify-center gap-2 h-full group ${brutalHover}`}
+      backgroundClassName="bg-[#fd5a46]"
+      overlayText="로컬 모드"
+      className="brutal-box"
     >
       <LobbyContentsLayout
         image={
@@ -41,13 +43,7 @@ const LocalMode = () => {
         title={<Subtitle text="로컬 모드" className="text-[#ffc567]" />}
         content={<Badge>모바일 연동</Badge>}
       />
-
-      <div className="pointer-events-none select-none absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-        <span className="text-3xl font-extrabold text-black drop-shadow-lg">
-          로컬 모드
-        </span>
-      </div>
-    </motion.div>
+    </InteractiveCard>
   );
 };
 export default LocalMode;

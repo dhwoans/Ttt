@@ -8,7 +8,7 @@ export const designTokens = {
       700: "var(--color-primary-700)",
       900: "var(--color-primary-900)",
     },
-    gray: {
+    neutral: {
       0: "var(--color-gray-0)",
       50: "var(--color-gray-50)",
       100: "var(--color-gray-100)",
@@ -18,11 +18,35 @@ export const designTokens = {
       900: "var(--color-gray-900)",
       1000: "var(--color-gray-1000)",
     },
+    secondary: {
+      50: "var(--color-secondary-50)",
+      100: "var(--color-secondary-100)",
+      300: "var(--color-secondary-300)",
+      500: "var(--color-secondary-500)",
+      700: "var(--color-secondary-700)",
+      900: "var(--color-secondary-900)",
+    },
+    accent: {
+      emerald: "var(--color-accent-emerald)",
+      sky: "var(--color-accent-sky)",
+      rose: "var(--color-accent-rose)",
+      coral: "var(--color-accent-coral)",
+    },
     semantic: {
       success: "var(--color-success)",
       warning: "var(--color-warning)",
       error: "var(--color-error)",
       info: "var(--color-info)",
+    },
+    gray: {
+      0: "var(--color-gray-0)",
+      50: "var(--color-gray-50)",
+      100: "var(--color-gray-100)",
+      200: "var(--color-gray-200)",
+      400: "var(--color-gray-400)",
+      700: "var(--color-gray-700)",
+      900: "var(--color-gray-900)",
+      1000: "var(--color-gray-1000)",
     },
   },
   typography: {

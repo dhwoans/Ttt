@@ -3,8 +3,8 @@ import { ImageManager } from "@/shared/services/ImageManger";
 import FooterLayout from "@/layouts/FooterLayout";
 import LeftSideLayout from "@/layouts/LeftSideLayout";
 import RightSideLayout from "@/layouts/RightSideLayout";
-const brutal =
-  "border-black font-bold rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]";
+import { Button } from "@/shared/components/Button";
+
 export default function NotFoundPage() {
   const navigate = useNavigate();
 
@@ -15,12 +15,12 @@ export default function NotFoundPage() {
           src={ImageManager.notFound404}
           className="max-w-[50%] max-h-[50%] object-contain"
         />
-        <button
+        <Button
           onClick={() => navigate("/login")}
-          className={`${brutal} px-6 py-2 border-4 bg-accent  hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all mb-24`}
+          className="mb-24 px-6 py-2 hover:translate-x-1 hover:translate-y-1"
         >
           홈으로
-        </button>
+        </Button>
       </main>
       <FooterLayout>
         <img src={ImageManager.toBeContinue} />
