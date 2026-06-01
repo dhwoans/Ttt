@@ -3,7 +3,11 @@
 @import "tailwindcss";
 
 :root {
-  /* Color - Primary */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Color Palette                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  /* Primary Color */
   --color-primary-50: #f6f4dc;
   --color-primary-100: #ede9b9;
   --color-primary-300: #d5cb6f;
@@ -11,7 +15,7 @@
   --color-primary-700: #8a6f14;
   --color-primary-900: #3f3b00;
 
-  /* Color - Secondary */
+  /* Secondary Color */
   --color-secondary-50: #efe8ff;
   --color-secondary-100: #d8c7ff;
   --color-secondary-300: #a88af5;
@@ -19,7 +23,7 @@
   --color-secondary-700: #3f2188;
   --color-secondary-900: #281455;
 
-  /* Color - Neutral Scale */
+  /* Neutral Color */
   --color-gray-0: #ffffff;
   --color-gray-50: #f5f5f5;
   --color-gray-100: #e1dec7;
@@ -29,23 +33,49 @@
   --color-gray-900: #282617;
   --color-gray-1000: #000000;
 
-  /* Color - Accent */
+  /* Accent Color */
   --color-accent-emerald: #00995e;
   --color-accent-sky: #058cd7;
   --color-accent-rose: #fb7da8;
   --color-accent-coral: #fd5a46;
 
-  /* Color - Semantic */
+  /* Semantic Color */
   --color-success: #16a34a;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
   --color-info: #0ea5e9;
 
-  /* Typography - Font Family */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Token Layer                                                     */
+  /* -------------------------------------------------------------------------- */
+
+  /* Surface Tokens */
+  --token-color-surface-canvas: var(--color-gray-50);
+  --token-color-surface-panel: var(--color-gray-100);
+  --token-color-surface-inverse: var(--color-gray-900);
+
+  /* Text Tokens */
+  --token-color-text-primary: var(--color-gray-1000);
+  --token-color-text-secondary: var(--color-gray-700);
+  --token-color-text-inverse: var(--color-gray-0);
+
+  /* Action Tokens */
+  --token-color-action-primary-bg: var(--color-primary-500);
+  --token-color-action-primary-text: var(--color-gray-1000);
+  --token-color-action-secondary-bg: var(--color-gray-0);
+  --token-color-action-secondary-text: var(--color-gray-1000);
+  --token-color-action-danger-bg: var(--color-error);
+  --token-color-action-danger-text: var(--color-gray-0);
+
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Type Scale                                                      */
+  /* -------------------------------------------------------------------------- */
+
+  /* Font Family */
   --font-family-display: "Black Han Sans", sans-serif;
   --font-family-body: "Lexend Mega", sans-serif;
 
-  /* Typography - Font Size */
+  /* Font Size */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -53,42 +83,68 @@
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
 
-  /* Typography - Line Height */
+  /* Line Height */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.7;
 
-  /* Typography - Weight */
+  /* Font Weight */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-black: 900;
 
-  /* Spacing */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Spacing Scale                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  --spacing-0: 0;
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
   --spacing-4: 1rem;
   --spacing-5: 1.25rem;
   --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
   --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
   --spacing-10: 2.5rem;
   --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
 
-  /* Radius */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Border Radius Scale                                             */
+  /* -------------------------------------------------------------------------- */
+
   --radius-xs: 0.25rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.875rem;
   --radius-full: 9999px;
 
-  /* Radius aliases for framework mapping */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Shadow Scale                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  --shadow-xs: 2px 2px 0 0 var(--color-gray-1000);
+  --shadow-sm: 3px 3px 0 0 var(--color-gray-1000);
+  --shadow-md: 5px 5px 0 0 var(--color-gray-1000);
+  --shadow-lg: 8px 8px 0 0 var(--color-gray-1000);
+  --shadow-soft: 0 0 8px rgba(0, 0, 0, 0.4);
+
+  /* Alias Tokens */
   --token-radius-sm: var(--radius-sm);
   --token-radius-md: var(--radius-md);
   --token-radius-lg: var(--radius-lg);
+  --token-shadow-brutal: var(--shadow-md);
 }
 
 @theme {
@@ -105,7 +161,7 @@
   --color-black: var(--color-gray-1000);
 
   /* Layout */
-  --box-shadow: 5px 5px var(--color-black);
+  --box-shadow: var(--token-shadow-brutal);
   --thick-border: 0.25rem solid var(--color-black);
   --radius-lg: var(--token-radius-lg);
   --radius-md: var(--token-radius-md);
