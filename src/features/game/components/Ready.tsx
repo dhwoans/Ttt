@@ -3,7 +3,7 @@ import { VersusBanner } from "@/features/game/components/VersusBanner";
 import ExitModal from "@/shared/modals/ExitModal";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/components/ui/button";
 import { useRoomStore } from "@/stores/useRoomStore";
 
 interface SingleReadyProps {

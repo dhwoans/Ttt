@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/components/ui/button";
 import { ModalShell } from "@/shared/components/ModalShell";
-
+import { useModalStore } from "@/stores/useModalStore";
 interface ExitModalProps {
   sender: {
     handleLeave: () => void;
@@ -17,6 +17,7 @@ export default function ExitModal({
   navigateToLobbyOnLeave = true,
 }: ExitModalProps) {
   const navigator = useNavigate();
+  const setOpenModal = useModalStore((state) => state.setOpenModal);
   useEffect(() => {
     // 히스토리 트랩 설정 중복 방지
     history.pushState(null, "", location.href);
@@ -36,10 +37,6 @@ export default function ExitModal({
     };
   }, []);
 
-  const handleStay = () => {
-    return onClose && onClose();
-  };
-
   const handleLeave = () => {
     sender.handleLeave();
     if (navigateToLobbyOnLeave) {
@@ -54,10 +51,17 @@ export default function ExitModal({
       </h3>
 
       <div className="flex gap-4 justify-center">
-        <Button onClick={handleStay} size="lg" variant="secondary">
+        <Button
+          onClick={() => {
+            onClose?.();
+            setOpenModal(null);
+          }}
+          size="lg"
+          variant="secondary"
+        >
           머무르기
         </Button>
-        <Button onClick={handleLeave} size="lg" variant="danger">
+        <Button onClick={handleLeave} size="lg" variant="destructive">
           나가기
         </Button>
       </div>

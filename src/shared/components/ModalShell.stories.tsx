@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { Button } from "./Button";
+import { Button } from "@/components/ui/button";
 import { ModalShell } from "./ModalShell";
 
 type InteractionState = "default" | "hover" | "active" | "disabled";
@@ -45,7 +45,7 @@ function StoryModalShell({
             취소
           </Button>
           <Button
-            variant={variant === "danger" ? "danger" : "primary"}
+            variant={variant === "danger" ? "destructive" : "default"}
             className={stateClassMap[interactionState]}
           >
             확인

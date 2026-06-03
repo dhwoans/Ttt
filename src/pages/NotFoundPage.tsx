@@ -3,7 +3,7 @@ import { ImageManager } from "@/shared/services/ImageManger";
 import FooterLayout from "@/layouts/FooterLayout";
 import LeftSideLayout from "@/layouts/LeftSideLayout";
 import RightSideLayout from "@/layouts/RightSideLayout";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/components/ui/button";
 
 export default function NotFoundPage() {
   const navigate = useNavigate();

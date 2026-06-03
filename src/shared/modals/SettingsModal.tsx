@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
-import { Button } from "@/shared/components/Button";
+import { Button } from "@/components/ui/button";
 import { ModalShell } from "@/shared/components/ModalShell";
 import VolumeSlider from "@/shared/components/VolumeSlider";
 

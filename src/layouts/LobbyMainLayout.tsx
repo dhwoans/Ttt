@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import PlayerInfo from "@/features/lobby/components/PlayerInfo";
 import SingleMode from "@/features/lobby/components/SingleMode";
-import LocalMode from "@/features/lobby/components/LocalMode";
 import MultiMode from "@/features/lobby/components/MultiMode";
+import LocalMode from "@/features/lobby/components/LocalMode";
 import SettingsAndLogout from "@/features/lobby/components/SettingsAndLogout";
 
 export default function LobbyContentsLayout() {
-  const mainLayout = "flex flex-row gap-6 w-full h-[75vh]";
-  const mobileLayout = "flex flex-col gap-6 w-full h-[75vh]";
+  const fixedWidth = "w-[1200px] max-w-full";
+  const mainLayout = `flex flex-row gap-6 ${fixedWidth} h-[75vh]`;
+  const mobileLayout = `flex flex-col gap-6 ${fixedWidth} h-[75vh]`;
   const [isPortrait, setIsPortrait] = useState<boolean>(false);
 
   useEffect(() => {

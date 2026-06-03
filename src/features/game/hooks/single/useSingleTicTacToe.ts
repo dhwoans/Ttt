@@ -7,11 +7,7 @@ import { calcBoard, whoIsWin } from "@/shared/utils/ticTacToeUtils";
 import { useGameTimeout } from "./useGameTimeout";
 import { useSingleNextTurn } from "./useSingleNextTurn";
 
-interface UseSingleTicTacToeProps {
-  onExit?: () => void;
-}
-
-export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
+export function useSingleTicTacToe() {
   const setOpenModal = useModalStore((state) => state.setOpenModal);
   const setStatus = useGameStore((state) => state.setStatus);
   const setResult = useGameStore((state) => state.setResult);
@@ -21,11 +17,6 @@ export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
     setOpenModal("exit");
   }, [setOpenModal]);
   useBackExitModal(handleExitIntent, true);
-
-  const handleExitCancel = () => setOpenModal(null);
-  const handleExit = () => {
-    onExit?.();
-  };
 
   const moveHistory = useGameStore((state) => state.moveHistory);
   const turnStart = useGameStore((state) => state.turnStart);
@@ -46,9 +37,6 @@ export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
 
   useEffect(() => {
     if (!isGameOver) {
-      setStatus("PLAYING");
-      setResult(null);
-      setWinner(null);
       return;
     }
 
@@ -83,8 +71,6 @@ export function useSingleTicTacToe({ onExit }: UseSingleTicTacToeProps) {
     handleSquare,
     isGameOver,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    handleExitCancel,
-    handleExit,
     isDraw,
     winner,
     countdownDurationMs: 10000,
