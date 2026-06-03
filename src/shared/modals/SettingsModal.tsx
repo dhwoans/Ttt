@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ModalShell } from "@/shared/components/ModalShell";
 import VolumeSlider from "@/shared/components/VolumeSlider";
 
 interface SettingsModalProps {
@@ -10,7 +12,6 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const {
     bgmMuted,
     sfxMuted,
@@ -25,14 +26,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [tempSfxMuted, setTempSfxMuted] = useState(sfxMuted);
   const [tempVolume, setTempVolume] = useState(volume);
   const [tempSfxVolume, setTempSfxVolume] = useState(sfxVolume);
-
-  useEffect(() => {
-    if (isOpen && dialogRef.current) {
-      dialogRef.current.showModal();
-    } else if (dialogRef.current) {
-      dialogRef.current.close();
-    }
-  }, [isOpen]);
 
   const handleSave = () => {
     setBgmMuted(tempBgmMuted);
@@ -70,10 +63,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   if (!isOpen) return null;
 
   return (
-    <dialog
-      ref={dialogRef}
-      className="bg-white  m-auto rounded-xl border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 w-96 animate__animated animate__bounceIn"
-    >
+    <ModalShell className="w-96 rounded-xl" dialogClassName="m-auto">
       {/* 헤더 */}
       <h2 className="text-3xl font-bold text-dark-2 mb-8">설정</h2>
 
@@ -125,19 +115,17 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
       {/* 버튼 그룹 */}
       <div className="flex gap-4 justify-end">
-        <button
+        <Button
           onClick={handleCancel}
-          className="px-6 py-3 bg-white border-2 border-black rounded-lg font-bold text-dark-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+          variant="secondary"
+          className="px-6 py-3"
         >
           취소
-        </button>
-        <button
-          onClick={handleSave}
-          className="px-6 py-3 bg-accent border-2 border-black rounded-lg font-bold text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] active:shadow-none transition-all"
-        >
+        </Button>
+        <Button onClick={handleSave} className="px-6 py-3 text-white">
           저장
-        </button>
+        </Button>
       </div>
-    </dialog>
+    </ModalShell>
   );
 }

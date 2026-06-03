@@ -1,9 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Lexend+Mega:wght@100..900&display=swap");
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Color - Primary */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Color Palette                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  /* Primary Color */
   --color-primary-50: #f6f4dc;
   --color-primary-100: #ede9b9;
   --color-primary-300: #d5cb6f;
@@ -11,7 +20,15 @@
   --color-primary-700: #8a6f14;
   --color-primary-900: #3f3b00;
 
-  /* Color - Gray Scale */
+  /* Secondary Color */
+  --color-secondary-50: #efe8ff;
+  --color-secondary-100: #d8c7ff;
+  --color-secondary-300: #a88af5;
+  --color-secondary-500: #552cb7;
+  --color-secondary-700: #3f2188;
+  --color-secondary-900: #281455;
+
+  /* Neutral Color */
   --color-gray-0: #ffffff;
   --color-gray-50: #f5f5f5;
   --color-gray-100: #e1dec7;
@@ -21,17 +38,49 @@
   --color-gray-900: #282617;
   --color-gray-1000: #000000;
 
-  /* Color - Semantic */
+  /* Accent Color */
+  --color-accent-emerald: #00995e;
+  --color-accent-sky: #058cd7;
+  --color-accent-rose: #fb7da8;
+  --color-accent-coral: #fd5a46;
+
+  /* Semantic Color */
   --color-success: #16a34a;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
   --color-info: #0ea5e9;
 
-  /* Typography - Font Family */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Token Layer                                                     */
+  /* -------------------------------------------------------------------------- */
+
+  /* Surface Tokens */
+  --token-color-surface-canvas: var(--color-gray-50);
+  --token-color-surface-panel: var(--color-gray-100);
+  --token-color-surface-inverse: var(--color-gray-900);
+
+  /* Text Tokens */
+  --token-color-text-primary: var(--color-gray-1000);
+  --token-color-text-secondary: var(--color-gray-700);
+  --token-color-text-inverse: var(--color-gray-0);
+
+  /* Action Tokens */
+  --token-color-action-primary-bg: var(--color-primary-500);
+  --token-color-action-primary-text: var(--color-gray-1000);
+  --token-color-action-secondary-bg: var(--color-gray-0);
+  --token-color-action-secondary-text: var(--color-gray-1000);
+  --token-color-action-danger-bg: var(--color-error);
+  --token-color-action-danger-text: var(--color-gray-0);
+
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Type Scale                                                      */
+  /* -------------------------------------------------------------------------- */
+
+  /* Font Family */
   --font-family-display: "Black Han Sans", sans-serif;
   --font-family-body: "Lexend Mega", sans-serif;
 
-  /* Typography - Font Size */
+  /* Font Size */
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -39,42 +88,100 @@
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
 
-  /* Typography - Line Height */
+  /* Line Height */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.7;
 
-  /* Typography - Weight */
+  /* Font Weight */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-black: 900;
 
-  /* Spacing */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Spacing Scale                                                   */
+  /* -------------------------------------------------------------------------- */
+
+  --spacing-0: 0;
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
   --spacing-4: 1rem;
   --spacing-5: 1.25rem;
   --spacing-6: 1.5rem;
+  --spacing-7: 1.75rem;
   --spacing-8: 2rem;
+  --spacing-9: 2.25rem;
   --spacing-10: 2.5rem;
   --spacing-12: 3rem;
+  --spacing-14: 3.5rem;
+  --spacing-16: 4rem;
 
-  /* Radius */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Border Radius Scale                                             */
+  /* -------------------------------------------------------------------------- */
+
   --radius-xs: 0.25rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.875rem;
   --radius-full: 9999px;
 
-  /* Radius aliases for framework mapping */
+  /* -------------------------------------------------------------------------- */
+  /* Foundation: Shadow Scale                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  --shadow-xs: 2px 2px 0 0 var(--color-gray-1000);
+  --shadow-sm: 3px 3px 0 0 var(--color-gray-1000);
+  --shadow-md: 5px 5px 0 0 var(--color-gray-1000);
+  --shadow-lg: 8px 8px 0 0 var(--color-gray-1000);
+  --shadow-soft: 0 0 8px rgba(0, 0, 0, 0.4);
+
+  /* Alias Tokens */
   --token-radius-sm: var(--radius-sm);
   --token-radius-md: var(--radius-md);
   --token-radius-lg: var(--radius-lg);
+  --token-shadow-brutal: var(--shadow-md);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 @theme {
@@ -91,7 +198,7 @@
   --color-black: var(--color-gray-1000);
 
   /* Layout */
-  --box-shadow: 5px 5px var(--color-black);
+  --box-shadow: var(--token-shadow-brutal);
   --thick-border: 0.25rem solid var(--color-black);
   --radius-lg: var(--token-radius-lg);
   --radius-md: var(--token-radius-md);
@@ -285,4 +392,93 @@ a {
     99.87% 46.44%,
     91.6% 55.79%
   );
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

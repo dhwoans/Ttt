@@ -3,13 +3,15 @@ import { useMultiPlay } from "../features/game/hooks/multi/useMultiPlay";
 import { Navigate, useParams } from "react-router-dom";
 import { useGameSocketConnection } from "../features/game/hooks/multi/useGameSocketConnection";
 import { ROUTES } from "@/shared/constants/routes";
-import { MultiTicTacToe } from "./TicTacToe";
+import TicTacToe from "../features/game/components/TicTacToe";
+import { useMultiTicTacToe } from "@/features/game/hooks/multi/useMultiTicTacToe";
+import GameOver from "@/features/game/components/GameOver";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
 import { ToastContainer } from "react-toastify";
 import Marquee from "react-fast-marquee";
-import Ready from "./Ready";
+import Ready from "../features/game/components/Ready";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { ImageManager } from "@/shared/services/ImageManger";
 import LeftSideLayout from "@/layouts/LeftSideLayout";
@@ -28,6 +30,7 @@ export default function MultiGameRoomPage() {
   const playersInfos = useRoomStore((state) => state.playersInfos);
   const status = useGameStore((state) => state.gameState.status);
   const multiPlay = useMultiPlay();
+const { canSelectSquare, handleSquare } = useMultiTicTacToe();
 
   return (
     <>
@@ -68,7 +71,14 @@ export default function MultiGameRoomPage() {
           readyDisabled={playersInfos.length < 2}
         />
       )}
-      {status === "PLAYING" && <MultiTicTacToe onExit={multiPlay.handleExit} />}
+      {status === "PLAYING" && (
+        <TicTacToe
+          canSelectSquare={canSelectSquare}
+          handleSquare={handleSquare}
+          handleExit={multiPlay.handleExit}
+        />
+      )}
+      {status === "FINISHED" && <GameOver />}
     </>
   );
 }

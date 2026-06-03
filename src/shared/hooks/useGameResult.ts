@@ -25,7 +25,11 @@ export function useGameResult() {
   const result = useGameStore((state) => state.gameState.result);
 
   const resolved =
-    result === "draw" ? "무승부" : winner === nickname ? "승리" : "패배";
+    !result || result === "draw"
+      ? "무승부"
+      : winner === nickname
+        ? "승리"
+        : "패배";
 
   const imgSrc = resolved === "승리" ? WIN : resolved === "패배" ? LOOSE : DRAW;
 

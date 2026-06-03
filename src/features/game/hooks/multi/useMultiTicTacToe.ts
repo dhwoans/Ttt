@@ -9,11 +9,7 @@ import { useReceiveGameOver } from "./useReceiveGameOver";
 import { useReceiveNextTurn } from "./useReceiveNextTurn";
 import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
 
-interface UseMultiTicTacToeProps {
-  onExit?: () => void;
-}
-
-export function useMultiTicTacToe({ onExit }: UseMultiTicTacToeProps) {
+export function useMultiTicTacToe() {
   const gameStatus = useGameStore((state) => state.gameState.status);
   const winner = useGameStore((state) => state.gameState.winner);
   const result = useGameStore((state) => state.gameState.result);
@@ -22,18 +18,12 @@ export function useMultiTicTacToe({ onExit }: UseMultiTicTacToeProps) {
     (state) => state.gameState.turn.currentUserId,
   );
   const isWaitingForServer = useRoomStore((state) => state.isWaitingForServer);
-  const openModal = useModalStore((state) => state.openModal);
   const setOpenModal = useModalStore((state) => state.setOpenModal);
 
   const handleExitIntent = useCallback(() => {
     setOpenModal("exit");
   }, [setOpenModal]);
   useBackExitModal(handleExitIntent, true);
-
-  const handleExitCancel = () => setOpenModal(null);
-  const handleExit = () => {
-    onExit?.();
-  };
 
   useReceiveMoveMade();
   useReceiveGameOver();
@@ -67,8 +57,6 @@ export function useMultiTicTacToe({ onExit }: UseMultiTicTacToeProps) {
     isGameOver,
     isDraw,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    handleExitCancel,
-    handleExit,
     winner,
     countdownDurationMs: turnTimeoutMs ?? 10000,
     countdownStartTime: turnTimeoutStartedAt ?? Date.now(),

@@ -33,7 +33,9 @@ function Swatch({ label, value }: { label: string; value: string }) {
 
 function TokenCatalog() {
   const primaryColors = Object.entries(designTokens.colors.primary);
-  const grayColors = Object.entries(designTokens.colors.gray);
+  const neutralColors = Object.entries(designTokens.colors.neutral);
+  const secondaryColors = Object.entries(designTokens.colors.secondary);
+  const accentColors = Object.entries(designTokens.colors.accent);
   const semanticColors = Object.entries(designTokens.colors.semantic);
   const spacingTokens = Object.entries(designTokens.spacing);
   const radiusTokens = Object.entries(designTokens.radius);
@@ -41,7 +43,7 @@ function TokenCatalog() {
   return (
     <div className="w-[min(1100px,100%)] space-y-6 text-black">
       <TokenSection title="Color Tokens">
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div className="space-y-4">
             <h3 className="text-lg font-black">Primary</h3>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -50,14 +52,46 @@ function TokenCatalog() {
               ))}
             </div>
           </div>
+
           <div className="space-y-4">
-            <h3 className="text-lg font-black">Gray</h3>
+            <h3 className="text-lg font-black">Neutral</h3>
             <div className="grid gap-4 sm:grid-cols-2">
-              {grayColors.map(([token, value]) => (
-                <Swatch key={token} label={`gray.${token}`} value={value} />
+              {neutralColors.map(([token, value]) => (
+                <Swatch key={token} label={`neutral.${token}`} value={value} />
               ))}
             </div>
           </div>
+
+          <div className="space-y-4">
+            <h3 className="text-lg font-black">Secondary / Accent</h3>
+            <div className="space-y-4">
+              <div>
+                <div className="mb-2 text-sm font-black">Secondary</div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {secondaryColors.map(([token, value]) => (
+                    <Swatch
+                      key={token}
+                      label={`secondary.${token}`}
+                      value={value}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="mb-2 text-sm font-black">Accent</div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {accentColors.map(([token, value]) => (
+                    <Swatch
+                      key={token}
+                      label={`accent.${token}`}
+                      value={value}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-4">
             <h3 className="text-lg font-black">Semantic</h3>
             <div className="grid gap-4">

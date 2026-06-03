@@ -2,9 +2,12 @@ import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
 type InteractionState = "default" | "hover" | "active";
-import { Button } from "./Button";
+import { Button } from "@/components/ui/button";
 
-interface StoryButtonProps extends Omit<React.ComponentProps<typeof Button>, "children"> {
+interface StoryButtonProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "children"
+> {
   label: string;
   interactionState: InteractionState;
 }
@@ -37,8 +40,8 @@ const meta = {
   tags: ["autodocs"],
   args: {
     label: "Play",
-    variant: "primary",
-    size: "md",
+    variant: "default",
+    size: "default",
     disabled: false,
     interactionState: "default",
   },
@@ -46,11 +49,18 @@ const meta = {
     label: { control: "text" },
     variant: {
       control: { type: "inline-radio" },
-      options: ["primary", "secondary", "danger"],
+      options: [
+        "default",
+        "secondary",
+        "destructive",
+        "outline",
+        "ghost",
+        "link",
+      ],
     },
     size: {
       control: { type: "inline-radio" },
-      options: ["sm", "md", "lg"],
+      options: ["sm", "default", "lg"],
     },
     disabled: { control: "boolean" },
     interactionState: {
@@ -89,7 +99,7 @@ export const Disabled: Story = {
 
 export const Variation: Story = {
   args: {
-    variant: "danger",
+    variant: "destructive",
     label: "Delete",
   },
 };
