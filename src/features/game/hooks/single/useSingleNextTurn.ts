@@ -14,18 +14,17 @@ export function useSingleNextTurn({
   isPlayerTurn,
   moveHistory,
   board,
-  isGameOver,
 }: UseSingleNextTurnConfig) {
   const addMove = useGameStore((state) => state.addMove);
-  const playersInfos = useRoomStore((state) => state.playersInfos);
-  useAIMove(isGameOver, isPlayerTurn, board);
+  const playerInfos = useRoomStore.getState().playersInfos; // 매번 받아올 필요 없음
+  useAIMove( isPlayerTurn, board);
 
   const handleSquare = useCallback(
     (row: number, col: number) => {
       console.log("[Playing] handleSquare 호출:", { row, col });
       if (!isPlayerTurn) return;
 
-      const nextPlayer = playersInfos[moveHistory.length % 2];
+      const nextPlayer = playerInfos[moveHistory.length % 2];
       if (!nextPlayer) return;
       addMove({
         square: { row, col },
@@ -33,7 +32,7 @@ export function useSingleNextTurn({
         nickname: nextPlayer.nickname,
       });
     },
-    [isPlayerTurn, playersInfos, moveHistory, addMove],
+    [isPlayerTurn, playerInfos, moveHistory, addMove],
   );
 
   return { handleSquare };

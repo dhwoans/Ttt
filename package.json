@@ -5,7 +5,7 @@
   "description": "",
   "main": "vite.config.ts",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",

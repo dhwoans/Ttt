@@ -5,9 +5,11 @@ import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import { ImageManager } from "@/shared/services/ImageManger";
 import { InteractiveCard } from "@/shared/components/InteractiveCard";
+import { useModalStore } from "@/stores/useModalStore";
 
 const SettingsAndLogout = () => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const openModal = useModalStore((state) => state.openModal);
+  const setOpenModal = useModalStore((state) => state.setOpenModal);
   const { sfxMuted } = useAudioStore();
 
   const playBeep = () => {
@@ -19,7 +21,7 @@ const SettingsAndLogout = () => {
       <InteractiveCard
         as={motion.div}
         onMouseDown={playBeep}
-        onClick={() => setIsSettingsOpen(true)}
+        onClick={() => setOpenModal("setting")}
         backgroundClassName="bg-[#00995e]"
         overlayText="설정"
         layoutClassName="flex flex-row items-center justify-center gap-3"
@@ -33,10 +35,7 @@ const SettingsAndLogout = () => {
           설정
         </span>
       </InteractiveCard>
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-      />
+      {openModal && <SettingsModal />}
     </div>
   );
 };

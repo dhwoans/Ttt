@@ -13,10 +13,6 @@ export function useSingleTicTacToe() {
   const setResult = useGameStore((state) => state.setResult);
   const setWinner = useGameStore((state) => state.setWinner);
 
-  const handleExitIntent = useCallback(() => {
-    setOpenModal("exit");
-  }, [setOpenModal]);
-  useBackExitModal(handleExitIntent, true);
 
   const moveHistory = useGameStore((state) => state.moveHistory);
   const turnStart = useGameStore((state) => state.turnStart);

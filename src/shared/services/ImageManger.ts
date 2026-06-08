@@ -17,8 +17,8 @@ import verse from "@assets/icons/verse.webp";
 import thoughtBalloon from "@assets/icons/thoughtBalloon.webp";
 
 import single from "@assets/backgrounds/single.webp"
-import local from "@assets/backgrounds/local.webp"
-import multi from "@assets/backgrounds/multi.webp"
+import local from "@assets/backgrounds/local.jpg"
+import multi from "@assets/backgrounds/multi.jpg"
 import charater  from "@assets/backgrounds/charater.webp"
 import spotlight  from "@assets/backgrounds/spotlight.png"
 import toBeContinue from "@assets/backgrounds/toBeContinue.png";

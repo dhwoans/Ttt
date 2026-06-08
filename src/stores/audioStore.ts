@@ -9,7 +9,7 @@ interface AudioState {
   setBgmMuted: (muted: boolean) => void;
   setSfxMuted: (muted: boolean) => void;
   setVolume: (volume: number) => void;
-  setSfxVolume: (volume: number) => void;
+  setSfxVolume: (volume: number[]) => void;
 }
 
 export const useAudioStore = create<AudioState>()(
@@ -23,8 +23,8 @@ export const useAudioStore = create<AudioState>()(
       setSfxMuted: (muted: boolean) => set({ sfxMuted: muted }),
       setVolume: (volume: number) =>
         set({ volume: Math.max(0, Math.min(1, volume)) }),
-      setSfxVolume: (volume: number) =>
-        set({ sfxVolume: Math.max(0, Math.min(1, volume)) }),
+      setSfxVolume: (volume: number[]) =>
+        set({ sfxVolume: Math.max(0, Math.min(1, volume[0])) }),
     }),
     {
       name: "audio-storage",

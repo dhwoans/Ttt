@@ -1,42 +1,31 @@
 import { useState, useCallback, useEffect } from "react";
 import { VersusBanner } from "@/features/game/components/VersusBanner";
-import ExitModal from "@/shared/modals/ExitModal";
-import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
+import { useBackExitModal } from "@/shared/hooks/useBackExitModal"; // 참고
 import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
 import { Button } from "@/components/ui/button";
 import { useRoomStore } from "@/stores/useRoomStore";
-
+import { useModalStore } from "@/stores/useModalStore";
 interface SingleReadyProps {
   onReady: (isReady: boolean) => void;
-  onExit: () => void;
+  handleExit: () => void;
+  ExitModalSlot: React.ReactNode;
   readyDisabled?: boolean;
 }
 
 export default function Ready({
   onReady,
-  onExit,
+  handleExit,
+  ExitModalSlot,
   readyDisabled = false,
 }: SingleReadyProps) {
   const playersInfos = useRoomStore((state) => state.playersInfos);
   const [isReady, setIsReady] = useState(false);
-  const [showExitModal, setShowExitModal] = useState(false);
-
-  const handleExitIntent = useCallback(() => {
-    setShowExitModal(true);
-  }, []);
-
-  useBackExitModal(handleExitIntent, true);
-
-  const handleExitCancel = () => setShowExitModal(false);
-
-  const handleExit = () => {
-    onExit();
-  };
+  // 뒤로가기 감지, 모달창 띄움
+  const openModal = useBackExitModal();
 
   const handleReadyClick = () => {
     const newReadyState = !isReady;
     console.log("[Ready] 준비 상태 변경:", isReady, "→", newReadyState);
-
     // 항상 onReady 호출하여 서버에 상태 전송 (준비/취소 모두)
     onReady(newReadyState);
     setIsReady(newReadyState);
@@ -53,10 +42,10 @@ export default function Ready({
 
       <div className="flex flex-col gap-4">
         <Button
-          onClick={() => handleReadyClick()}
-          size="lg"
-          className={`px-10 py-4 text-2xl font-black text-dark-1 ${
-            isReady ? "bg-red-500" : ""
+          onClick={handleReadyClick}
+          size = "lg"
+          variant={`${
+            isReady ? "destructive" : "default"
           }`}
           disabled={readyDisabled}
         >
@@ -66,18 +55,12 @@ export default function Ready({
           onClick={handleExit}
           size="lg"
           variant="secondary"
-          className="px-10 py-4 text-2xl font-black text-dark-1"
         >
           나가기
         </Button>
       </div>
 
-      {showExitModal && (
-        <ExitModal
-          onClose={handleExitCancel}
-          sender={{ handleLeave: handleExit }}
-        />
-      )}
+      {openModal === "exit" && ExitModalSlot}
     </section>
   );
 }

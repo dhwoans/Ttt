@@ -12,43 +12,26 @@ import ExitModal from "@/shared/modals/ExitModal";
 import { ImageManager } from "@/shared/services/ImageManger";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
-
-export default function LobbyPage() {
+import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
+function LobbyExitModel() {
   const navigate = useNavigate();
-  const nickname = useUserStore((state) => state.currentUser?.nickname);
   const clearCurrentUser = useUserStore((state) => state.clearCurrentUser);
   const resetGame = useGameStore((state) => state.resetGame);
-  const [showExitModal, setShowExitModal] = useState(false);
-
-  useEffect(() => {
-    const currentUrl = window.location.href;
-    window.history.pushState({ lobbyBackTrap: true }, "", currentUrl);
-
-    const handlePopState = () => {
-      setShowExitModal(true);
-      window.history.pushState({ lobbyBackTrap: true }, "", currentUrl);
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, []);
-  // exitModal 관련 로직
-  const handleStay = useCallback(() => {
-    setShowExitModal(false);
-  }, []);
-
   const handleLeaveLobby = useCallback(() => {
     clearCurrentUser();
     resetGame();
-    localStorage.removeItem("gameState");
     navigate(ROUTES.login, { replace: true });
   }, [clearCurrentUser, navigate, resetGame]);
+  return <ExitModal handleExit={handleLeaveLobby} />;
+}
+export default function LobbyPage() {
+  const nickname = useUserStore((state) => state.currentUser?.nickname);
+
+  // 뒤로가기 감지, 모달창 띄움
+  const openModal = useBackExitModal();
 
   return (
-    <>
+    <div>
       <ToastContainer
         position="bottom-left"
         autoClose={2000}
@@ -90,13 +73,7 @@ export default function LobbyPage() {
         />
       </FooterLayout>
 
-      {showExitModal && (
-        <ExitModal
-          onClose={handleStay}
-          sender={{ handleLeave: handleLeaveLobby }}
-          navigateToLobbyOnLeave={false}
-        />
-      )}
-    </>
+      {openModal === "exit" && <LobbyExitModel />}
+    </div>
   );
 }

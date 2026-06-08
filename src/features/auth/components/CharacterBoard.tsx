@@ -7,6 +7,9 @@ import { useNickname } from "../hooks/useNickname";
 import { useCreateUserAndLobbyMove } from "../hooks/useCreateUserAndLobbyMove";
 import Bridge from "@/shared/components/Bridge";
 import { ImageManager } from "@/shared/services/ImageManger";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type ShakeAction = { type: "trigger" } | { type: "end" };
 
@@ -20,7 +23,7 @@ function shakeReducer(_: boolean, action: ShakeAction) {
       return false;
   }
 }
-const shakeClass = "animate__animated animate__shakeX";
+const shakeEffect = "animate__animated animate__shakeX";
 
 export default function CharacterBoard() {
   const { playBeep } = useAudio();
@@ -44,24 +47,22 @@ export default function CharacterBoard() {
   }
 
   return (
-    <div
-      className={`brutal-box relative mx-auto my-12 max-w-120 overflow-visible rounded-2xl bg-linear-to-b from-dark-1 to-dark-2 p-8 
-    ${isShaking ? shakeClass : ""}`}
+    <Card
+      className={`mx-auto my-12 max-w-120 overflow-visible p-8 
+    ${isShaking ? shakeEffect : ""}`}
       onAnimationEnd={handleShakeAnimationEnd}
     >
-      <img
-        src={ImageManager.charater}
-        className="-mt-15 bg-yellow-50 -rotate-6 mb-10 p-3"
-      />
-      <div className="mb-8 flex items-center justify-center gap-8">
+      <h1>CHARATER</h1>
+      <h1>SELECT</h1>
+      <div className="mb-8 flex items-center justify-center gap-3">
         {/* 이전 버튼 */}
         <button
           onClick={() => avatar.navigate("prev")}
-          className="brutal-btn h-20 w-20 rounded-full text-2xl border-none font-bold flex items-center justify-center"
+          className="h-20 w-20 text-2xl border-none flex items-center justify-center"
         >
           <ChevronLeft size={50} />
         </button>
-        <div className="flex flex-col items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-0">
           {/* 아바타  */}
           <button
             type="button"
@@ -82,7 +83,7 @@ export default function CharacterBoard() {
                   loop
                   muted
                   playsInline
-                  className="w-40 h-40 object-cover"
+                  className="w-full h-full object-cover bg-primary"
                 />
               </Avatar>
             </div>
@@ -100,12 +101,12 @@ export default function CharacterBoard() {
             />
           </button>
           {/* 닉네임 입력 */}
-          <input
+          <Input
             type="text"
             name="nickname"
             value={nickname.fullNickname}
             onChange={nickname.handleChange}
-            className={`rounded-2xl w-50 text-center text-lg text-black outline-none py-1 bg-white mt-10 z-10`}
+            className={`w-50 text-center py-1 bg-background mt-10 z-10`}
             spellCheck="false"
           />
         </div>
@@ -113,12 +114,13 @@ export default function CharacterBoard() {
         {/* 다음 버튼 */}
         <button
           onClick={() => avatar.navigate("next")}
-          className="brutal-btn h-20 w-20 rounded-full border-none flex items-center justify-center"
+          className="h-20 w-20 text-2xl flex items-center justify-center"
         >
           <ChevronRight size={50} />
         </button>
       </div>
-      <button
+      {/* 입장버튼 */}
+      <Button
         onMouseDown={playBeep}
         onClick={() =>
           handleCreateUser({
@@ -129,12 +131,12 @@ export default function CharacterBoard() {
           })
         }
         disabled={isCreating}
-        className={`brutal-btn w-full rounded-2xl py-4 font-black bg-accent text-xl text-dark-1 ${
+        className={`${
           isCreating ? "opacity-60 pointer-events-none" : ""
         }`}
       >
         입장
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }

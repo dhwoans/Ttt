@@ -1,70 +1,53 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { ModalShell } from "@/shared/components/ModalShell";
 import { useModalStore } from "@/stores/useModalStore";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 interface ExitModalProps {
-  sender: {
-    handleLeave: () => void;
-  };
-  onClose?: () => void;
-  navigateToLobbyOnLeave?: boolean;
+  handleExit: () => void;
 }
 
-export default function ExitModal({
-  sender,
-  onClose,
-  navigateToLobbyOnLeave = true,
-}: ExitModalProps) {
-  const navigator = useNavigate();
+export default function ExitModal({ handleExit }: ExitModalProps) {
   const setOpenModal = useModalStore((state) => state.setOpenModal);
-  useEffect(() => {
-    // 히스토리 트랩 설정 중복 방지
-    history.pushState(null, "", location.href);
-
-    const handlePopState = () => {
-      history.pushState(null, "", location.href);
-      // 모달이 이미 열려있으면 무시
-      if (document.querySelector("dialog.exit")) {
-        return;
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, []);
-
-  const handleLeave = () => {
-    sender.handleLeave();
-    if (navigateToLobbyOnLeave) {
-      navigator("/lobby", { replace: true });
-    }
+  const dialogClose = () => {
+    setOpenModal(null);
   };
-
+  const dialogExit = () => {
+    handleExit();
+    dialogClose();
+  };
   return (
-    <ModalShell dialogClassName="exit" className="max-w-md">
-      <h3 className="text-2xl font-black text-center mb-6 text-gray-800">
-        "나가시겠습니까?"
-      </h3>
+    <Dialog
+      open={true}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) dialogClose();
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>페이지 나가기</DialogTitle>
+          <DialogDescription>
+            이전 페이지로 이동합니다. 정말 나가시겠습니까?
+          </DialogDescription>
+        </DialogHeader>
 
-      <div className="flex gap-4 justify-center">
-        <Button
-          onClick={() => {
-            onClose?.();
-            setOpenModal(null);
-          }}
-          size="lg"
-          variant="secondary"
-        >
-          머무르기
-        </Button>
-        <Button onClick={handleLeave} size="lg" variant="destructive">
-          나가기
-        </Button>
-      </div>
-    </ModalShell>
+        {/* 나가기 / 머무르기 버튼 영역 */}
+        <DialogFooter className="flex gap-2 sm:justify-end">
+          <Button variant="outline" onClick={dialogClose}>
+            머무르기
+          </Button>
+          <Button variant="destructive" onClick={dialogExit}>
+            나가기
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

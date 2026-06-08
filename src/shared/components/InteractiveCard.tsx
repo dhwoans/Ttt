@@ -71,6 +71,7 @@ export function ModeCard({
     <div
       onClick={onClick}
       onMouseDown={onMouseDown}
+      
       className={`${BASE_CARD_CLASSNAME} ${backgroundClassName ?? ""} ${className ?? ""} flex min-h-60 flex-col overflow-hidden p-3 sm:min-h-70 sm:p-4 md:p-6`.trim()}
     >
       <div className="-mx-3 -mt-3 sm:-mx-4 sm:-mt-4 md:-mx-6 md:-mt-6 shrink-0 overflow-hidden rounded-t-xl">

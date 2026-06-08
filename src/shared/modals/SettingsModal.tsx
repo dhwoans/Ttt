@@ -5,13 +5,17 @@ import { Volume, Volume1, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModalShell } from "@/shared/components/ModalShell";
 import VolumeSlider from "@/shared/components/VolumeSlider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
+import { useModalStore } from "@/stores/useModalStore";
 
-interface SettingsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+export default function SettingsModal() {
   const {
     bgmMuted,
     sfxMuted,
@@ -25,32 +29,34 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [tempBgmMuted, setTempBgmMuted] = useState(bgmMuted);
   const [tempSfxMuted, setTempSfxMuted] = useState(sfxMuted);
   const [tempVolume, setTempVolume] = useState(volume);
-  const [tempSfxVolume, setTempSfxVolume] = useState(sfxVolume);
-
+  const [tempSfxVolume, setTempSfxVolume] = useState([sfxVolume]);
+  const openModal = useModalStore((state) => state.openModal);
+  const setOpenModal = useModalStore((state) => state.setOpenModal);
+  console.log(Math.round(tempSfxVolume[0]));
   const handleSave = () => {
     setBgmMuted(tempBgmMuted);
     setSfxMuted(tempSfxMuted);
     setVolume(tempVolume);
-    setSfxVolume(tempSfxVolume);
+    setSfxVolume([50]);
     // AudioManager의 volume도 업데이트
     audioManager.setVolume("bgm", tempVolume);
-    audioManager.setVolume("beep", tempSfxVolume);
-    audioManager.setVolume("tick", tempSfxVolume);
+    audioManager.setVolume("beep", Math.round(tempSfxVolume[0]));
+    audioManager.setVolume("tick", Math.round(tempSfxVolume[0]));
 
     if (tempBgmMuted) {
       audioManager.setOff("bgm");
     } else {
       audioManager.setOn("bgm");
     }
-    onClose();
+    setOpenModal(null);
   };
 
   const handleCancel = () => {
     setTempBgmMuted(bgmMuted);
     setTempSfxMuted(sfxMuted);
     setTempVolume(volume);
-    setTempSfxVolume(sfxVolume);
-    onClose();
+    setTempSfxVolume(sfxVolume[0]);
+    setOpenModal(null);
   };
 
   const getVolumeIcon = (volumePercent: number) => {
@@ -60,72 +66,80 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     return <Volume2 size={24} />;
   };
 
-  if (!isOpen) return null;
+  if (openModal !== "setting") return;
 
   return (
-    <ModalShell className="w-96 rounded-xl" dialogClassName="m-auto">
-      {/* 헤더 */}
-      <h2 className="text-3xl font-bold text-dark-2 mb-8">설정</h2>
+    <Dialog open={true}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>설정</DialogTitle>
+        </DialogHeader>
 
-      {/* BGM 볼륨 조절 섹션 */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <label className="text-lg font-bold text-dark-2 flex items-center gap-2">
-            {getVolumeIcon(Math.round(tempVolume * 100))}
-            BGM 볼륨
-            <input
-              type="checkbox"
-              checked={tempBgmMuted}
-              onChange={(e) => setTempBgmMuted(e.target.checked)}
-              className="w-4 h-4 cursor-pointer accent-accent"
-            />
-            <span className="text-sm font-normal text-dark-2/70">음소거</span>
-          </label>
-          <span className="text-2xl font-bold text-accent">
-            {Math.round(tempVolume * 100)}%
-          </span>
+        {/* BGM 볼륨 조절 섹션 */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <label className="text-lg font-bold text-dark-2 flex items-center gap-2">
+              {getVolumeIcon(Math.round(tempVolume * 100))}
+              BGM 볼륨
+              <input
+                type="checkbox"
+                checked={tempBgmMuted}
+                onChange={(e) => setTempBgmMuted(e.target.checked)}
+                className="w-4 h-4 cursor-pointer accent-accent"
+              />
+              <span className="text-sm font-normal text-dark-2/70">음소거</span>
+            </label>
+            <span className="text-2xl font-bold text-accent">
+              {Math.round(tempVolume * 100)}%
+            </span>
+          </div>
+
+          {/* 슬라이더 */}
+          <VolumeSlider value={tempVolume} onChange={setTempVolume} />
         </div>
 
-        {/* 슬라이더 */}
-        <VolumeSlider value={tempVolume} onChange={setTempVolume} />
-      </div>
+        {/* 효과음 볼륨 조절 섹션 */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <label className="text-lg font-bold text-dark-2 flex items-center gap-2">
+              {getVolumeIcon(Math.round(tempSfxVolume[0] * 100))}
+              효과음 볼륨
+              <input
+                type="checkbox"
+                checked={tempSfxMuted}
+                onChange={(e) => setTempSfxMuted(e.target.checked)}
+                className="w-4 h-4 cursor-pointer accent-accent"
+              />
+              <span className="text-sm font-normal text-dark-2/70">음소거</span>
+            </label>
+            <span className="text-2xl font-bold text-dark-2/70">
+              {Math.round(tempSfxVolume[0])}%
+            </span>
+          </div>
 
-      {/* 효과음 볼륨 조절 섹션 */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <label className="text-lg font-bold text-dark-2 flex items-center gap-2">
-            {getVolumeIcon(Math.round(tempSfxVolume * 100))}
-            효과음 볼륨
-            <input
-              type="checkbox"
-              checked={tempSfxMuted}
-              onChange={(e) => setTempSfxMuted(e.target.checked)}
-              className="w-4 h-4 cursor-pointer accent-accent"
-            />
-            <span className="text-sm font-normal text-dark-2/70">음소거</span>
-          </label>
-          <span className="text-2xl font-bold text-accent">
-            {Math.round(tempSfxVolume * 100)}%
-          </span>
+          {/* 슬라이더 */}
+          <Slider
+            value={tempSfxVolume}
+            onValueChange={setTempSfxVolume}
+            max={100}
+            step={1}
+          />
         </div>
 
-        {/* 슬라이더 */}
-        <VolumeSlider value={tempSfxVolume} onChange={setTempSfxVolume} />
-      </div>
-
-      {/* 버튼 그룹 */}
-      <div className="flex gap-4 justify-end">
-        <Button
-          onClick={handleCancel}
-          variant="secondary"
-          className="px-6 py-3"
-        >
-          취소
-        </Button>
-        <Button onClick={handleSave} className="px-6 py-3 text-white">
-          저장
-        </Button>
-      </div>
-    </ModalShell>
+        {/* 버튼 그룹 */}
+        <div className="flex gap-4 justify-end">
+          <Button
+            onClick={handleCancel}
+            variant="secondary"
+            className="px-6 py-3"
+          >
+            취소
+          </Button>
+          <Button onClick={handleSave} className="px-6 py-3 text-white">
+            저장
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

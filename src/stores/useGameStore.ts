@@ -9,7 +9,7 @@ export type MoveEntry = {
 };
 
 export type Turn = {
-  currentUserId: string;
+  currentUserId: string; // single mode 에서 안씀,  playersInfos[moveHistory.length % 2] 로 currentPlayer 찾음
   remainTime: number;
   turnCount: number;
 };

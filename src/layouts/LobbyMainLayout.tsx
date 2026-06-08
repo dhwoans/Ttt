@@ -1,40 +1,71 @@
 import { useEffect, useState } from "react";
-import PlayerInfo from "@/features/lobby/components/PlayerInfo";
 import SingleMode from "@/features/lobby/components/SingleMode";
 import MultiMode from "@/features/lobby/components/MultiMode";
 import LocalMode from "@/features/lobby/components/LocalMode";
-import SettingsAndLogout from "@/features/lobby/components/SettingsAndLogout";
+import { ImageManager } from "@/shared/services/ImageManger";
+import { CardImage } from "@/components/ui/cardImage";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { ROUTES } from "@/shared/constants/routes";
+import { useEnterMultiMode } from "@/features/lobby/hooks/useEnterMultiMode";
+import { useEnterSingleMode } from "@/features/lobby/hooks/useEnterSingleMode";
+
+const mainLayout =
+  "flex flex-row gap-6 h-[75vh] transform origin-center transition-transform duration-300 w-[1200px] max-w-full";
+interface CardBaseData {
+  id: string;
+  imageSrc: string;
+  title: string;
+  description: string;
+}
+const cardDataList: CardBaseData[] = [
+  {
+    id: "single",
+    imageSrc: ImageManager.single,
+    title: "SINGLE MODE",
+    description: "AI와 1:1 대전을 즐겨보세요.",
+  },
+  {
+    id: "multi",
+    imageSrc: ImageManager.multi,
+    title: "MULTI MODE",
+    description: "온라인에서 다른 플레이어들과 실력을 겨뤄보세요.",
+  },
+  {
+    id: "local",
+    imageSrc: ImageManager.local,
+    title: "LOCAL MODE ",
+    description: "",
+  },
+];
 
 export default function LobbyContentsLayout() {
-  const fixedWidth = "w-[1200px] max-w-full";
-  const mainLayout = `flex flex-row gap-6 ${fixedWidth} h-[75vh]`;
-  const mobileLayout = `flex flex-col gap-6 ${fixedWidth} h-[75vh]`;
-  const [isPortrait, setIsPortrait] = useState<boolean>(false);
+  const { handleMultiMode } = useEnterMultiMode();
+  const { handleSingleMode } = useEnterSingleMode();
 
-  useEffect(() => {
-    // 가로 세로 넓이 계산
-    const updateOrientation = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth);
-    };
-
-    updateOrientation();
-    // 창바뀔때마다
-    window.addEventListener("resize", updateOrientation);
-
-    return () => {
-      window.removeEventListener("resize", updateOrientation);
-    };
-  }, []);
-
+  const getOnClickHandler = (id: string) => {
+    switch (id) {
+      case "single":
+        return handleSingleMode;
+      case "multi":
+        return handleMultiMode;
+      case "local":
+        return () => {};
+      default:
+        return () => {};
+    }
+  };
   return (
-    <div className={isPortrait ? mobileLayout : mainLayout}>
-      <SingleMode />
-      <MultiMode />
-      <LocalMode />
-      <div className="flex flex-col gap-6 flex-1">
-        <PlayerInfo />
-        <SettingsAndLogout />
-      </div>
+    <div className={mainLayout}>
+      {cardDataList.map((card) => (
+        <CardImage
+          key={card.id}
+          onClick={getOnClickHandler(card.id)}
+          imageSrc={card.imageSrc}
+          title={card.title}
+          description={card.description}
+        />
+      ))}
     </div>
   );
 }

@@ -1,37 +1,40 @@
 import { useRoomState } from "../features/game/hooks/useRoomState";
-import { useSinglePlay } from "../features/game/hooks/single/useSinglePlay";
-import TicTacToe from "../features/game/components/TicTacToe";
-import { useSingleTicTacToe } from "@/features/game/hooks/single/useSingleTicTacToe";
 import GameOver from "@/features/game/components/GameOver";
 import { ToastContainer } from "react-toastify";
 import Marquee from "react-fast-marquee";
-import Ready from "../features/game/components/Ready";
+import Ready from "../layouts/Ready";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { ImageManager } from "@/shared/services/ImageManger";
 import LeftSideLayout from "@/layouts/LeftSideLayout";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
+import SingleTicTacToe from "@/features/game/components/SingleTicTacToe";
+import ExitModal from "@/shared/modals/ExitModal";
+import { useNavigate } from "react-router-dom";
+import { useSingleReady } from "@/features/game/hooks/single/useSingleReady";
 
-function SinglePlayingTicTacToe({ handleExit }: { handleExit: () => void }) {
-  const { canSelectSquare, handleSquare, countdownOnComplete } =
-    useSingleTicTacToe();
+function SingleReady() {
+  const { handleReady } = useSingleReady();
+  const navigate = useNavigate();
+  const resetGame = useGameStore((state) => state.resetGame);
 
+  const handleExit = () => {
+    resetGame();
+    navigate("/lobby", { replace: true });
+  };
+  const ExitModalComponent = <ExitModal handleExit={handleExit} />;
   return (
-    <TicTacToe
-      canSelectSquare={canSelectSquare}
-      handleSquare={handleSquare}
+    <Ready
+      onReady={handleReady}
       handleExit={handleExit}
-      countdownOnComplete={countdownOnComplete}
+      ExitModalSlot={ExitModalComponent}
     />
   );
 }
-
 export default function SingleGameRoomPage() {
   useRoomState();
-  const { handleReady, handleExit } = useSinglePlay(); // ready state set up
   const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
   const status = useGameStore((state) => state.gameState.status);
-
   return (
     <>
       <ToastContainer
@@ -64,10 +67,8 @@ export default function SingleGameRoomPage() {
           aria-hidden="true"
         />
       </LeftSideLayout>
-      {status === "IDLE" && <Ready onReady={handleReady} onExit={handleExit} />}
-      {status === "PLAYING" && (
-        <SinglePlayingTicTacToe handleExit={handleExit} />
-      )}
+      {status === "IDLE" && <SingleReady />}
+      {status === "PLAYING" && <SingleTicTacToe />}
       {status === "FINISHED" && <GameOver />}
     </>
   );
