@@ -1,20 +1,45 @@
 import { useRoomState } from "../features/game/hooks/useRoomState";
 import { useMultiPlay } from "../features/game/hooks/multi/useMultiPlay";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useGameSocketConnection } from "../features/game/hooks/multi/useGameSocketConnection";
 import { ROUTES } from "@/shared/constants/routes";
-import TicTacToe from "../features/game/components/TicTacToe";
-import { useMultiTicTacToe } from "@/features/game/hooks/multi/useMultiTicTacToe";
 import GameOver from "@/features/game/components/GameOver";
 import { useUserStore } from "@/stores/useUserStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
 import { ToastContainer } from "react-toastify";
 import Marquee from "react-fast-marquee";
-import Ready from "../features/game/components/Ready";
+import Ready from "../layouts/Ready";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { ImageManager } from "@/shared/services/ImageManger";
 import LeftSideLayout from "@/layouts/LeftSideLayout";
+import MultiTicTacToe from "@/features/game/components/MultiTicTacToe";
+import ExitModal from "@/shared/modals/ExitModal";
+import { useSendPlayerLeave } from "@/features/game/hooks/multi/useSendPlayerLeave";
+
+function MultiReady() {
+  const navigate = useNavigate();
+  const playersInfos = useRoomStore((state) => state.playersInfos);
+  const { handleReady } = useMultiPlay();
+  const resetGame = useGameStore((state) => state.resetGame);
+
+  const handleExit = () => {
+    //서버로 퇴장 알림
+    useSendPlayerLeave();
+    //페이지 이동
+    resetGame();
+    navigate("/lobby", { replace: true });
+  };
+  const ExitModalComponent = <ExitModal handleExit={handleExit} />;
+  return (
+    <Ready
+      onReady={handleReady}
+      handleExit={handleExit}
+      ExitModalSlot={ExitModalComponent}
+      readyDisabled={playersInfos.length < 2}
+    />
+  );
+}
 
 export default function MultiGameRoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -27,10 +52,7 @@ export default function MultiGameRoomPage() {
   useRoomState();
 
   const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
-  const playersInfos = useRoomStore((state) => state.playersInfos);
   const status = useGameStore((state) => state.gameState.status);
-  const multiPlay = useMultiPlay();
-const { canSelectSquare, handleSquare } = useMultiTicTacToe();
 
   return (
     <>
@@ -64,20 +86,8 @@ const { canSelectSquare, handleSquare } = useMultiTicTacToe();
           aria-hidden="true"
         />
       </LeftSideLayout>
-      {status === "IDLE" && (
-        <Ready
-          onReady={multiPlay.handleReady}
-          onExit={multiPlay.handleExit}
-          readyDisabled={playersInfos.length < 2}
-        />
-      )}
-      {status === "PLAYING" && (
-        <TicTacToe
-          canSelectSquare={canSelectSquare}
-          handleSquare={handleSquare}
-          handleExit={multiPlay.handleExit}
-        />
-      )}
+      {status === "IDLE" && <MultiReady />}
+      {status === "PLAYING" && <MultiTicTacToe />}
       {status === "FINISHED" && <GameOver />}
     </>
   );

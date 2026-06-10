@@ -1,36 +1,26 @@
 import "animate.css";
-import { Avatar } from "@/shared/components/Avatar";
+
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
+import { CharaterAvatar } from "@/components/ui/CharaterAvatar";
 
-interface PlayersProps {
-  currentTurnNickname?: string;
-}
+export default function Players() {
+  const playerInfos = useRoomStore.getState().playersInfos; // 매번 받아올 필요 없음
+  const moveHistory = useGameStore.getState().moveHistory;
+  const currentPlayer = playerInfos[moveHistory.length % 2].userId;
 
-//턴 알림
-export default function Players({ currentTurnNickname }: PlayersProps) {
-  const playerInfos = useRoomStore((state) => state.playersInfos);
-  const currentTurnUserId = useGameStore(
-    (state) => state.gameState.turn.currentUserId,
-  );
-
-  const currentTurnNicknameFromStore =
-    playerInfos.find((player) => player.userId === currentTurnUserId)
-      ?.nickname ?? "";
-  const activeTurnNickname =
-    currentTurnNickname ?? currentTurnNicknameFromStore;
-
+  console.log("currentTurnUserId : ", playerInfos);
   return (
     <ol className="flex flex-row md:flex-col gap-10 md:gap-6">
       {playerInfos.map((player, index) => {
         const animClass =
-          player.nickname === activeTurnNickname
+          player.userId === currentPlayer
             ? "animate__animated animate__bounce animate__infinite"
             : "";
         return (
           <li key={index} className={`flex flex-col items-center gap-1 `}>
             <div className={animClass}>
-              <Avatar size="small">{player.avatar}</Avatar>
+              <CharaterAvatar size="small">{player.avatar}</CharaterAvatar>
             </div>
             <p className="text-sm font-semibold text-white">
               {player.nickname}

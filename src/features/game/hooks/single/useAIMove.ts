@@ -7,10 +7,11 @@ import { useRoomStore } from "@/stores/useRoomStore";
  * AI의 자동 이동을 처리하는 훅
  */
 export function useAIMove(
-  isGameOver: boolean,
   isPlayerTurn: boolean,
   board: string[][],
 ) {
+  const gameState = useGameStore((state) => state.gameState.status);
+  const isGameOver = gameState === "FINISHED";
   const addMove = useGameStore((state) => state.addMove);
   const playersInfos = useRoomStore((state) => state.playersInfos);
 

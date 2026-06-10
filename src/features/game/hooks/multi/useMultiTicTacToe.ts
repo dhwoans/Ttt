@@ -20,10 +20,10 @@ export function useMultiTicTacToe() {
   const isWaitingForServer = useRoomStore((state) => state.isWaitingForServer);
   const setOpenModal = useModalStore((state) => state.setOpenModal);
 
-  const handleExitIntent = useCallback(() => {
-    setOpenModal("exit");
-  }, [setOpenModal]);
-  useBackExitModal(handleExitIntent, true);
+  // const handleExitIntent = useCallback(() => {
+  //   setOpenModal("exit");
+  // }, [setOpenModal]);
+  // useBackExitModal(handleExitIntent, true);
 
   useReceiveMoveMade();
   useReceiveGameOver();

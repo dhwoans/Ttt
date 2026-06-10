@@ -1,21 +1,18 @@
+import { useModalStore } from "@/stores/useModalStore";
 import { useEffect } from "react";
 
 // 감지된 뒤로가기에 반응하여 종료 모달을 띄우는 공용 훅
-export function useBackExitModal(
-  onExitRequest: () => void,
-  isActive: boolean = true,
-) {
-  useEffect(() => {
-    if (!isActive) return;
+export function useBackExitModal() {
+  const openModal = useModalStore((state) => state.openModal);
+  const setOpenModal = useModalStore((state) => state.setOpenModal);
 
+  useEffect(() => {
     const currentUrl = window.location.href;
-    // 히스토리에 더미 state를 쌓아 뒤로가기를 가로챔
-    window.history.pushState(null, "", currentUrl);
+    window.history.pushState({ lobbyBackTrap: true }, "", currentUrl);
 
     const handlePopState = () => {
-      onExitRequest();
-      // 모달을 띄운 뒤에도 추가 뒤로가기를 막기 위해 다시 푸시
-      window.history.pushState(null, "", currentUrl);
+      setOpenModal("exit");
+      window.history.pushState({ lobbyBackTrap: true }, "", currentUrl);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -23,5 +20,6 @@ export function useBackExitModal(
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-  }, [onExitRequest, isActive]);
+  }, []);
+  return openModal;
 }

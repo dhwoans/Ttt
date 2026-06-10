@@ -1,8 +1,9 @@
 import { create } from "zustand";
 
+type ModalType = "exit" | "setting" | "gameOver" | null;
 interface ModalState {
-  openModal: "exit" | "gameOver" | null;
-  setOpenModal: (modal: "exit" | "gameOver" | null) => void;
+  openModal: ModalType;
+  setOpenModal: (modal: ModalType) => void;
 }
 
 export const useModalStore = create<ModalState>()((set) => ({
