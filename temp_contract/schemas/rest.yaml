@@ -1,0 +1,73 @@
+IssueTicketRequest:
+  type: object
+  required:
+    - userId
+    - nickname
+  properties:
+    userId:
+      type: string
+      maxLength: 255
+      description: 사용자 고유 ID
+      example: user-123
+    nickname:
+      type: string
+      maxLength: 50
+      description: 게임 내 표시될 닉네임
+      example: 홍길동
+    avatar:
+      type: string
+      description: "플레이어 아바타 키 (예: cat, dog, bear)"
+      example: cat
+    skilled:
+      type: boolean
+      description: 숙련자 여부
+      example: false
+
+IssueTicketResponse:
+  type: object
+  required:
+    - success
+    - gameServerUrl
+    - ticket
+    - ttl
+  properties:
+    success:
+      type: boolean
+      enum: [true]
+    gameServerUrl:
+      type: string
+      description: "게임 서버 Socket.IO 주소 (예: ws://localhost:8080)"
+      example: ws://localhost:8080
+    ticket:
+      type: string
+      description: Socket.IO 연결 시 auth.ticket 으로 사용할 일회용 키
+      example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+    ttl:
+      type: integer
+      description: 티켓 만료 시간 (초)
+      example: 30
+
+ApiErrorResponse:
+  type: object
+  required:
+    - success
+    - message
+  properties:
+    success:
+      type: boolean
+      enum: [false]
+    message:
+      type: string
+      description: 에러 메시지
+      example: 필수 필드가 누락되었습니다.
+    code:
+      type: string
+      description: 에러 코드
+      example: MISSING_FIELDS
+    missingFields:
+      type: array
+      items:
+        type: string
+      description: 누락된 필드 목록
+      example:
+        - userId

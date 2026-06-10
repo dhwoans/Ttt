@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "generate": "openapi-typescript ./openapi.yaml -o ../client/src/contracts/rest-api.types.ts && openapi-typescript ./socket-client-events.yaml -o ../client/src/contracts/socket-client-events.types.ts && openapi-typescript ./socket-server-events.yaml -o ../client/src/contracts/socket-server-events.types.ts && openapi-typescript ./openapi.yaml -o ../backend/src/share/rest-api.types.ts && openapi-typescript ./socket-client-events.yaml -o ../backend/src/share/socket-client-events.types.ts && openapi-typescript ./socket-server-events.yaml -o ../backend/src/share/socket-server-events.types.ts"
+  }
+}
