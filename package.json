@@ -1,0 +1,15 @@
+{
+  "name": "ttt-monorepo",
+  "private": true,
+  "scripts": {
+    "dev:client": "pnpm --filter client dev",
+    "dev:backend": "pnpm --filter backend dev",
+    "build:client": "pnpm --filter client build",
+    "build:backend": "pnpm --filter backend build",
+    "generate:contract": "pnpm --filter contract generate",
+    "install:all": "pnpm install"
+  },
+  "devDependencies": {
+    "turbo": "latest"
+  }
+}
