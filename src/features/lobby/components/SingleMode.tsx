@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import { ROUTES } from "@/shared/constants/routes";
-import { ModeCard } from "@/shared/components/InteractiveCard";
 import { ImageManager } from "@/shared/services/ImageManger";
 import { Badge } from "@/components/ui/badge";
 import {
