@@ -1,7 +1,4 @@
 import { motion } from "motion/react";
-import { Avatar } from "@/components/ui/Avatar";
-import { animalList } from "@/shared/constants/avatarCandidates";
-import Subtitle from "./Subtitle";
 import { ImageManager } from "@/shared/services/ImageManger";
 import { useUserStore } from "@/stores/useUserStore";
 

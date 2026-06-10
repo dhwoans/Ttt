@@ -1,4 +1,4 @@
-import { Avatar } from "@/components/ui/Avatar";
+import { CharaterAvatar } from "@/components/ui/CharaterAvatar";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useReducer, useState } from "react";
 import { useAudio } from "@/shared/hooks/useAudioEffect";
@@ -76,7 +76,7 @@ export default function CharacterBoard() {
                 isAvatarHovered ? "blur-[2px]" : ""
               }`}
             >
-              <Avatar>
+              <CharaterAvatar>
                 <video
                   src={avatar.currentAvatar.videoSrc}
                   autoPlay
@@ -85,7 +85,7 @@ export default function CharacterBoard() {
                   playsInline
                   className="w-full h-full object-cover bg-primary"
                 />
-              </Avatar>
+              </CharaterAvatar>
             </div>
             <div
               className={`pointer-events-none absolute inset-0 grid place-items-center text-8xl transition-opacity ${isAvatarHovered ? "opacity-100" : "opacity-0"}`}
