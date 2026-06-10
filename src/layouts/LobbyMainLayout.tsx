@@ -4,9 +4,6 @@ import MultiMode from "@/features/lobby/components/MultiMode";
 import LocalMode from "@/features/lobby/components/LocalMode";
 import { ImageManager } from "@/shared/services/ImageManger";
 import { CardImage } from "@/components/ui/cardImage";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { ROUTES } from "@/shared/constants/routes";
 import { useEnterMultiMode } from "@/features/lobby/hooks/useEnterMultiMode";
 import { useEnterSingleMode } from "@/features/lobby/hooks/useEnterSingleMode";
 
@@ -23,20 +20,20 @@ const cardDataList: CardBaseData[] = [
     id: "single",
     imageSrc: ImageManager.single,
     title: "SINGLE MODE",
-    description: "AI와 1:1 대전을 즐겨보세요.",
+    description: "AI와 1:1 대전을 즐겨보세요",
   },
   {
     id: "multi",
     imageSrc: ImageManager.multi,
     title: "MULTI MODE",
-    description: "온라인에서 다른 플레이어들과 실력을 겨뤄보세요.",
+    description: "다른 플레이어들과 실력을 겨뤄보세요",
   },
   {
     id: "local",
     imageSrc: ImageManager.local,
     title: "LOCAL MODE ",
-    description: "",
-  },
+    description: "준비 중",
+  }, 
 ];
 
 export default function LobbyContentsLayout() {
@@ -56,7 +53,7 @@ export default function LobbyContentsLayout() {
     }
   };
   return (
-    <div className={mainLayout}>
+    <div className={`${mainLayout}`}>
       {cardDataList.map((card) => (
         <CardImage
           key={card.id}

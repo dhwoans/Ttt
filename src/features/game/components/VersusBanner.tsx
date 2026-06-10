@@ -1,4 +1,4 @@
-import { Avatar } from "../../../shared/components/Avatar";
+import { Avatar } from "../../../components/ui/Avatar";
 import useAvatarRandomize from "../../../shared/hooks/useAvatarRandomize";
 import { avatarCandidates } from "../../../shared/constants/avatarCandidates";
 import { ImageManager } from "@/shared/services/ImageManger";

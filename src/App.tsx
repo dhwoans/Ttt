@@ -5,8 +5,8 @@ import SingleGameRoomPage from "./pages/SingleGameRoomPage";
 import MultiGameRoomPage from "./pages/MultiGameRoomPage";
 import LocalHostPage from "./pages/LocalHostPage";
 import LocalGuestPage from "./pages/LocalGuestPage";
-import AuthGuard from "./shared/components/AuthGuard";
-import GuestGuard from "./shared/components/GuestGuard";
+import AuthGuard from "./pages/AuthGuard";
+import GuestGuard from "./pages/GuestGuard";
 import NotFoundPage from "./pages/NotFoundPage";
 import { ROUTES, isAuthenticated } from "./shared/constants/routes";
 

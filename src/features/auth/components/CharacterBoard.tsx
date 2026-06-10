@@ -1,11 +1,11 @@
-import { Avatar } from "@/shared/components/Avatar";
+import { Avatar } from "@/components/ui/Avatar";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useReducer, useState } from "react";
 import { useAudio } from "@/shared/hooks/useAudioEffect";
 import { useAvatarSelection } from "../hooks/useAvatarSelection";
 import { useNickname } from "../hooks/useNickname";
 import { useCreateUserAndLobbyMove } from "../hooks/useCreateUserAndLobbyMove";
-import Bridge from "@/shared/components/Bridge";
+import Bridge from "@/components/ui/Bridge";
 import { ImageManager } from "@/shared/services/ImageManger";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -131,9 +131,7 @@ export default function CharacterBoard() {
           })
         }
         disabled={isCreating}
-        className={`${
-          isCreating ? "opacity-60 pointer-events-none" : ""
-        }`}
+        className={`${isCreating ? "opacity-60 pointer-events-none" : ""}`}
       >
         입장
       </Button>

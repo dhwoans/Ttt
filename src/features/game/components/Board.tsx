@@ -1,6 +1,6 @@
 import { useGameStore } from "@/stores/useGameStore";
 import { calcBoard } from "@/shared/utils/ticTacToeUtils";
-import Square from "@/shared/components/Square";
+import Square from "@/components/ui/Square";
 
 export default function Board({
   selectSquare,

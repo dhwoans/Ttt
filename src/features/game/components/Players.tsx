@@ -1,5 +1,5 @@
 import "animate.css";
-import { Avatar } from "@/shared/components/Avatar";
+import { Avatar } from "@/components/ui/Avatar";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
 

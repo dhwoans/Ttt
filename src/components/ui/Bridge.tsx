@@ -1,4 +1,4 @@
-import { ImageManager } from "../services/ImageManger";
+import { ImageManager } from "../../shared/services/ImageManger";
 
 interface BridgeProps {
   imageSrc?: string;

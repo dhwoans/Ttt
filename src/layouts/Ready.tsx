@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { VersusBanner } from "@/features/game/components/VersusBanner";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal"; // 참고
-import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
+import { TimeoutProgressBar } from "@/components/ui/TimeoutProgressBar";
 import { Button } from "@/components/ui/button";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useModalStore } from "@/stores/useModalStore";
@@ -43,19 +43,13 @@ export default function Ready({
       <div className="flex flex-col gap-4">
         <Button
           onClick={handleReadyClick}
-          size = "lg"
-          variant={`${
-            isReady ? "destructive" : "default"
-          }`}
+          size="lg"
+          variant={`${isReady ? "destructive" : "default"}`}
           disabled={readyDisabled}
         >
           {isReady ? "취소" : "준비"}
         </Button>
-        <Button
-          onClick={handleExit}
-          size="lg"
-          variant="secondary"
-        >
+        <Button onClick={handleExit} size="lg" variant="secondary">
           나가기
         </Button>
       </div>

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 
 interface CardImageProps {
+  className?: string;
   onClick: () => void;
   imageSrc: string;
   title: string;
@@ -17,6 +18,7 @@ interface CardImageProps {
 }
 
 export function CardImage({
+  className,
   onClick,
   imageSrc,
   title,
@@ -24,7 +26,7 @@ export function CardImage({
 }: CardImageProps) {
   return (
     <Card
-      className="relative mx-auto w-full max-w-sm pt-0 cursor-pointer gap-0 brutal-btn"
+      className={`relative mx-auto w-full max-w-sm pt-0 cursor-pointer gap-0 brutal-btn ${className}`}
       onClick={onClick}
     >
       <div className="relative w-full h-full aspect-video">
@@ -34,11 +36,15 @@ export function CardImage({
           className="w-full h-full object-cover"
         />
         <CardHeader className="absolute inset-0 flex items-center justify-center bg-black/10 z-10">
-          <CardTitle><h1>{title}</h1></CardTitle>
+          <CardTitle>
+            <h1>{title}</h1>
+          </CardTitle>
         </CardHeader>
       </div>
       <CardFooter className="flex items-center justify-between p-4 bg-background">
-        <CardDescription className="bg-background">{description}</CardDescription>
+        <CardDescription className="bg-background">
+          {description}
+        </CardDescription>
       </CardFooter>
     </Card>
   );
