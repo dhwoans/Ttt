@@ -1,0 +1,13 @@
+openapi: 3.1.0
+
+info:
+  title: TicTacToe Socket Client Events
+  version: 1.0.0
+  description: Socket.IO Client → Server 이벤트 페이로드 타입 정의
+
+components:
+  schemas:
+    ReadyEventPayload:
+      $ref: "./schemas/socket-client.yaml#/ReadyEventPayload"
+    MoveEventPayload:
+      $ref: "./schemas/socket-client.yaml#/MoveEventPayload"

@@ -1,0 +1,19 @@
+import{j as e}from"./iframe-xmOcUHRk.js";import"./preload-helper-PPVm8Dsz.js";const g="flex-1 relative rounded-2xl border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1.5 hover:translate-y-1.5 transition-all cursor-pointer p-6 h-full group hover-diagonal-stripes";function p({as:i,children:c,overlayText:a,backgroundClassName:l,layoutClassName:d="flex flex-col items-center justify-center gap-2",className:u,onClick:m,onMouseDown:x}){const f=i??"div";return e.jsxs(f,{onClick:m,onMouseDown:x,className:`${g} ${l??""} ${d} ${u??""}`.trim(),children:[c,a?e.jsx("div",{className:"pointer-events-none select-none absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200",children:e.jsx("span",{className:"text-3xl font-extrabold text-black drop-shadow-lg",children:a})}):null]})}p.__docgenInfo={description:"",methods:[],displayName:"InteractiveCard",props:{as:{required:!1,tsType:{name:"ElementType"},description:""},children:{required:!0,tsType:{name:"ReactNode"},description:""},overlayText:{required:!1,tsType:{name:"string"},description:""},backgroundClassName:{required:!1,tsType:{name:"string"},description:""},layoutClassName:{required:!1,tsType:{name:"string"},description:"",defaultValue:{value:'"flex flex-col items-center justify-center gap-2"',computed:!1}},className:{required:!1,tsType:{name:"string"},description:""},onClick:{required:!1,tsType:{name:"ReactMouseEventHandler",raw:"React.MouseEventHandler"},description:""},onMouseDown:{required:!1,tsType:{name:"ReactMouseEventHandler",raw:"React.MouseEventHandler"},description:""}}};function v({overlayText:i,backgroundClassName:c,interactionState:a,horizontalLayout:l}){const d={default:"",hover:"translate-x-1.5 translate-y-1.5 shadow-none",active:"translate-x-1.5 translate-y-1.5 shadow-none scale-[0.98]",disabled:"opacity-45 pointer-events-none cursor-not-allowed"};return e.jsx("div",{className:"w-[320px] h-55",children:e.jsxs(p,{overlayText:i,backgroundClassName:c,layoutClassName:l?"flex flex-row items-center justify-center gap-3":"flex flex-col items-center justify-center gap-2",className:d[a],children:[e.jsx("div",{className:"h-16 w-16 rounded-full border-4 border-black bg-white"}),e.jsx("span",{className:"font-bold text-black",children:"Atomic Card"})]})})}const b={title:"Core/InteractiveCard",component:v,tags:["autodocs"],args:{overlayText:"멀티플레이",backgroundClassName:"bg-[#552cb7]",interactionState:"default",horizontalLayout:!1},argTypes:{overlayText:{control:"text"},backgroundClassName:{control:"text"},interactionState:{control:{type:"inline-radio"},options:["default","hover","active","disabled"]},horizontalLayout:{control:"boolean"}}},t={},r={args:{interactionState:"hover"}},s={args:{interactionState:"active"}},o={args:{interactionState:"disabled"}},n={args:{overlayText:"설정",backgroundClassName:"bg-[#00995e]",horizontalLayout:!0}};t.parameters={...t.parameters,docs:{...t.parameters?.docs,source:{originalSource:"{}",...t.parameters?.docs?.source}}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  args: {
+    interactionState: "hover"
+  }
+}`,...r.parameters?.docs?.source}}};s.parameters={...s.parameters,docs:{...s.parameters?.docs,source:{originalSource:`{
+  args: {
+    interactionState: "active"
+  }
+}`,...s.parameters?.docs?.source}}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    interactionState: "disabled"
+  }
+}`,...o.parameters?.docs?.source}}};n.parameters={...n.parameters,docs:{...n.parameters?.docs,source:{originalSource:`{
+  args: {
+    overlayText: "설정",
+    backgroundClassName: "bg-[#00995e]",
+    horizontalLayout: true
+  }
+}`,...n.parameters?.docs?.source}}};const C=["Default","Hover","Active","Disabled","Variation"];export{s as Active,t as Default,o as Disabled,r as Hover,n as Variation,C as __namedExportsOrder,b as default};
