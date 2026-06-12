@@ -2,10 +2,11 @@
   "name": "ttt-monorepo",
   "private": true,
   "scripts": {
+    "test": "turbo run test",
     "dev:client": "pnpm --filter client dev",
-    "dev:backend": "pnpm --filter backend dev",
+    "dev:websocket": "pnpm --filter websocket dev",
     "build:client": "pnpm --filter client build",
-    "build:backend": "pnpm --filter backend build",
+    "build:websocket": "pnpm --filter websocket build",
     "generate:contract": "pnpm --filter contract generate",
     "install:all": "pnpm install"
   },
