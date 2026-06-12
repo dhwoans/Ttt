@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { eventManager } from "@/shared/services/EventManager";
 import { animalList } from "@/shared/constants/avatarCandidates";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@contract";
+import type { PlayerJoinedEvent, ExistingPlayersEvent } from "@ttt/contract";
 
 /**
  * 멀티플레이 플레이어 목록 관리
@@ -28,7 +28,7 @@ export function useMultiplayerPlayers() {
           nickname: player.nickname,
           avatar: player.avatar ?? "",
           imageSrc: found ? found[2] : "",
-          userId: player.connId,
+          userId: player.userId,
           isReady: player.isReady,
         };
       });
@@ -54,11 +54,11 @@ export function useMultiplayerPlayers() {
         nickname: data.player.nickname,
         avatar: data.player.avatar ?? "",
         imageSrc: found ? found[2] : "",
-        userId: data.player.connId,
+        userId: data.player.userId,
         isReady: data.player.isReady,
       });
 
-      updatePlayerReadyStatus(data.player.connId, data.player.isReady);
+      updatePlayerReadyStatus(data.player.userId, data.player.isReady);
     };
 
     eventManager.on("PLAYER_JOINED", handlePlayerJoined);

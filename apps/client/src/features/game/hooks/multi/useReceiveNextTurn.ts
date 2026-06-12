@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
-import type { NextTurnEvent } from "@contract";
+import type { NextTurnEvent } from "@ttt/contract";
 
 /**
  * NEXT_TURN 이벤트 수신 훅

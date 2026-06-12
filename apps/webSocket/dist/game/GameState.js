@@ -3,7 +3,7 @@ import IdleState from "../gameState/IdleState.js";
  * Tic-Tac-Toe game context class (FSM Context pattern)
  * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
-class GameState {
+class Ttt {
     board; // 9-element array for 3x3 board
     winner; // -2: draw, -1: no winner, 0/1: player index
     status; // IDLE, PLAYING, GAME_OVER
@@ -52,5 +52,5 @@ class GameState {
         };
     }
 }
-export default GameState;
+export default Ttt;
 //# sourceMappingURL=GameState.js.map

@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "pnpm run generate && tsc",
-    "generate": "if not exist dist mkdir dist && openapi-typescript ./openapi.yaml -o ./dist/rest-api.types.ts && openapi-typescript ./socket-client-events.yaml -o ./dist/socket-client-events.types.ts && openapi-typescript ./socket-server-events.yaml -o ./dist/socket-server-events.types.ts && node -e \"const fs = require('fs'); fs.writeFileSync('./dist/index.ts', 'import * as RestApi from \\\"./rest-api.types\\\";\\nimport * as SocketClient from \\\"./socket-client-events.types\\\";\\nimport * as SocketServer from \\\"./socket-server-events.types\\\";\\nexport { RestApi, SocketClient, SocketServer };')\""
+    "generate": "openapi-typescript ./openapi.yaml -o ./src/generated/rest-api.types.ts && openapi-typescript ./socket-client-events.yaml -o ./src/generated/socket-client-events.types.ts && openapi-typescript ./socket-server-events.yaml -o ./src/generated/socket-server-events.types.ts"
   },
   "devDependencies": {
     "openapi-typescript": "^7.0.0",

@@ -4,7 +4,7 @@ import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useUserStore } from "@/stores/useUserStore";
 import {useRoomStore} from "@/stores/useRoomStore";
-import type { ReadyTimeoutExpiredEvent } from "@contract";
+import type { ReadyTimeoutExpiredEvent } from "@ttt/contract";
 
 /**
  * READY 타임아웃 이벤트 처리
@@ -27,7 +27,7 @@ export function useReadyTimeoutHandler() {
       console.log("[room] READY_TIMEOUT_EXPIRED 수신:", data);
 
       // 현재 사용자가 타임아웃된 플레이어인 경우
-      if (data.connId === currentUserId) {
+      if (data.userId === currentUserId) {
         console.log("[room] 현재 사용자가 준비 타임아웃으로 제거됨");
 
         // 로비로 이동
@@ -42,7 +42,7 @@ export function useReadyTimeoutHandler() {
         // 다른 플레이어가 제거된 경우
         console.log(
           "[room] 다른 플레이어가 준비 타임아웃으로 제거됨:",
-          data.connId,
+          data.userId,
         );
       }
     };

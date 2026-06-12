@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
-import type { TurnTimeoutStartedEvent } from "@contract";
+import type { TurnTimeoutStartedEvent } from "@ttt/contract";
 
 /**
  * TURN_TIMEOUT_STARTED 이벤트 수신 훅

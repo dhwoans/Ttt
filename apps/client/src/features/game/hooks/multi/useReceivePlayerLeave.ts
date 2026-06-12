@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { PlayerLeftEvent, LeaveSuccessEvent } from "@contract";
+import type { PlayerLeftEvent, LeaveSuccessEvent } from "@ttt/contract";
 
 /**
  * 플레이어 퇴장 이벤트 수신 처리

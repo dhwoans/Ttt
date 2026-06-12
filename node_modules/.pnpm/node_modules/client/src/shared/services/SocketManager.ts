@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 import type { Socket } from "socket.io-client";
-import type { ServerEvents, ClientEvents } from "@contract";
+import type { ServerEvents, ClientEvents } from "@ttt/contract";
 
 import { eventManager } from "@/shared/services/EventManager";
 import { GAME_EVENTS } from "@/shared/constants/eventList";

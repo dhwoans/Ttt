@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { MoveMadeEvent } from "@contract";
+import type { MoveMadeEvent } from "@ttt/contract";
 
 /**
  * MOVE_MADE 이벤트 수신 훅
@@ -19,7 +19,7 @@ export function useReceiveMoveMade() {
   useEffect(() => {
     const handleMoveMade = (data: MoveMadeEvent) => {
       console.log("[Playing] MOVE_MADE 수신:", data);
-      const { connId, move, isAuto } = data;
+      const { userId, move, isAuto } = data;
 
       if (isAuto) {
         console.log("[Playing] 서버 자동 착수(MOVE_MADE.isAuto=true)");
@@ -28,10 +28,10 @@ export function useReceiveMoveMade() {
       // 대기 상태 해제
       setIsWaitingForServer(false);
 
-      // connId로 플레이어 찾기
-      const player = playersInfos.find((p) => p.userId === connId);
+      // userId로 플레이어 찾기
+      const player = playersInfos.find((p) => p.userId === userId);
       if (!player) {
-        console.warn("[Playing] MOVE_MADE: 플레이어를 찾을 수 없음", connId);
+        console.warn("[Playing] MOVE_MADE: 플레이어를 찾을 수 없음", userId);
         return;
       }
 

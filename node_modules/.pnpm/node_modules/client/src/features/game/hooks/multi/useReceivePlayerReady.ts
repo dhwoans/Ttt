@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { PlayerReadyEvent } from "@contract";
+import type { PlayerReadyEvent } from "@ttt/contract";
 
 export function useReceivePlayerReady() {
   const updatePlayerReadyStatus = useRoomStore(
@@ -14,7 +14,7 @@ export function useReceivePlayerReady() {
       console.log(
         `[room] ${data.nickname}님이 ${data.isReady ? "준비완료" : "준비취소"}`,
       );
-      updatePlayerReadyStatus(data.connId, data.isReady);
+      updatePlayerReadyStatus(data.userId, data.isReady);
     };
 
     eventManager.on("PLAYER_READY", handlePlayerReady);

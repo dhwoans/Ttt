@@ -1,6 +1,6 @@
 import { animalList } from "../constants/avatarCandidates";
 import { useUserStore } from "@/stores/useUserStore";
-import type { IssueTicketRequest, IssueTicketResponse } from "@contract";
+import type { IssueTicketRequest, IssueTicketResponse } from "@ttt/contract";
 
 interface CreateUserResponse {
   success: boolean;

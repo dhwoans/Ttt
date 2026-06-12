@@ -7,7 +7,7 @@ import type { UserId } from "../type/socket.js";
  * Tic-Tac-Toe game context class (FSM Context pattern)
  * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
-declare class GameState {
+declare class Ttt {
     board: Array<string>;
     winner: number;
     status: string;
@@ -38,5 +38,5 @@ declare class GameState {
         currentTurn: number;
     };
 }
-export default GameState;
+export default Ttt;
 //# sourceMappingURL=GameState.d.ts.map

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
-import type { PlayingEvent } from "@/contract";
+import type { PlayingEvent } from "@ttt/contract";
 
 /**
  * 게임 페이즈 관련 이벤트 처리

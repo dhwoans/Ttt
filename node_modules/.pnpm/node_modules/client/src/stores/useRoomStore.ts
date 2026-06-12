@@ -25,7 +25,7 @@ interface RoomState {
   setPlayersInfos: (infos: GamePlayerInfo[]) => void;
   addPlayerInfo: (info: GamePlayerInfo) => void;
   removePlayerInfo: (nickname: string) => void;
-  updatePlayerReadyStatus: (connId: string, isReady: boolean) => void;
+  updatePlayerReadyStatus: (userId: string, isReady: boolean) => void;
   setSocketId: (socketId: string | null) => void;
   setGameServerConnection: (params: {
     gameServerUrl: string;
@@ -57,10 +57,10 @@ export const useRoomStore = create<RoomState>()(
         set((s) => ({
           playersInfos: s.playersInfos.filter((p) => p.nickname !== nickname),
         })),
-      updatePlayerReadyStatus: (connId, isReady) =>
+      updatePlayerReadyStatus: (userId, isReady) =>
         set((s) => ({
           playersInfos: s.playersInfos.map((player) =>
-            player.userId === connId ? { ...player, isReady } : player,
+            player.userId === userId ? { ...player, isReady } : player,
           ),
         })),
       setSocketId: (socketId) => set({ socketId }),

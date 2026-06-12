@@ -1,8 +1,15 @@
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import { useEnterMultiMode } from "../hooks/useEnterMultiMode";
-import { ModeCard } from "@/shared/components/InteractiveCard";
 import { ImageManager } from "@/shared/services/ImageManger";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const MultiMode = () => {
   const { sfxMuted } = useAudioStore();
@@ -15,16 +22,27 @@ const MultiMode = () => {
   };
 
   return (
-    <ModeCard
-      onMouseDown={playBeep}
+    <Card
+      className="relative mx-auto w-full max-w-sm pt-0 cursor-pointer brutal-box"
       onClick={handleMultiMode}
-      imageSrc={ImageManager.multi}
-      imageAlt="멀티플레이"
-      subtitle="멀티플레이"
-      subtitleClassName="text-[#058cd7]"
-      label="온라인"
-      backgroundClassName="bg-[#552cb7]"
-    />
+      onMouseDown={playBeep}
+    >
+      <div className="absolute inset-0 z-30 h-[80%] aspect-video bg-black/35" />
+      <img
+        src={ImageManager.multi}
+        alt="멀티플레이"
+        className="relative z-20 aspect-video w-full h-[80%] object-cover brightness-60 grayscale dark:brightness-40"
+      />
+      <CardHeader>
+        <CardAction>
+          <Badge variant="secondary">multiplayer</Badge>
+        </CardAction>
+        <CardTitle>멀티플레이</CardTitle>
+        <CardDescription>
+          온라인 유저들과 실시간으로 대전합니다.
+        </CardDescription>
+      </CardHeader>
+    </Card>
   );
 };
 

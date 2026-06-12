@@ -1,5 +1,5 @@
 import { gameSocketManager } from "@/shared/services/SocketManager";
-import type { ReadyEventPayload } from "@contract";
+import type { ReadyEventPayload } from "@ttt/contract";
 import { useCallback } from "react";
 import { useUserStore } from "@/stores/useUserStore";
 

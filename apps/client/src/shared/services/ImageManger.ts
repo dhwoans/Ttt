@@ -19,7 +19,6 @@ import thoughtBalloon from "@assets/icons/thoughtBalloon.webp";
 import single from "@assets/backgrounds/single.webp"
 import local from "@assets/backgrounds/local.jpg"
 import multi from "@assets/backgrounds/multi.jpg"
-import charater  from "@assets/backgrounds/charater.webp"
 import spotlight  from "@assets/backgrounds/spotlight.png"
 import toBeContinue from "@assets/backgrounds/toBeContinue.png";
 import jojoEffect from "@assets/backgrounds/jojoEffect.png";
@@ -43,7 +42,6 @@ export const ImageManager = {
   single,
   local,
   multi,
-  charater,
   spotlight,
   toBeContinue,
   jojoEffect,

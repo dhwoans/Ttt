@@ -1,5 +1,5 @@
 import { gameSocketManager } from "@/shared/services/SocketManager";
-import type { MoveEventPayload } from "@contract";
+import type { MoveEventPayload } from "@ttt/contract";
 
 /**
  * 플레이어의 이동(좌표) 정보를 서버에 전송하는 훅
