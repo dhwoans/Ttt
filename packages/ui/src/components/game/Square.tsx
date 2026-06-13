@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "../../lib/utils"
+import { cn } from "../../lib/utils.js"
 
 interface SquareProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
   value: string | null;

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Square } from "./Square"
+import { Square } from "./Square.js"
 
 interface BoardProps {
   list: (string | null)[][];
