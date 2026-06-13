@@ -7,9 +7,7 @@ import { useNickname } from "../hooks/useNickname";
 import { useCreateUserAndLobbyMove } from "../hooks/useCreateUserAndLobbyMove";
 import Bridge from "@/components/ui/Bridge";
 import { ImageManager } from "@/shared/services/ImageManger";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, Button, Input } from "@ttt/ui";
 
 type ShakeAction = { type: "trigger" } | { type: "end" };
 

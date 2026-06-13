@@ -8,8 +8,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+  Button,
+} from "@ttt/ui";
+
 interface ExitModalProps {
   handleExit: () => void;
 }
