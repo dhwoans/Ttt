@@ -1,0 +1,1 @@
+{"version":3,"file":"SocketMessage.dto.d.ts","sourceRoot":"","sources":["../../src/dtos/SocketMessage.dto.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,WAAW,aAAa;IACpC,IAAI,EAAE,MAAM,CAAC;IACb,OAAO,EAAE,MAAM,EAAE,CAAC;IAClB,MAAM,EAAE,MAAM,CAAC;CAChB"}

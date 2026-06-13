@@ -1,0 +1,46 @@
+services:
+  # 레디스
+  redis:
+    image: redis:latest
+    container_name: tictactoe_redis
+    command: redis-server --appendonly yes # 데이터 지속성(AOF) 활성화
+    ports:
+      - "6379:6379"
+    networks:
+      - app-net
+    volumes:
+      - redis-data:/data
+  # 프론트엔드 서비스 (클라이언트)
+  frontend:
+    container_name: tictactoe_client
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    ports:
+      - "3000:80"
+    networks:
+      - app-net
+
+  # 백엔드 서비스 (API)
+  backend:
+    container_name: tictactoe_backend
+    build:
+      context: .
+      dockerfile: apps/websocket/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - app-net
+    depends_on:
+      - redis
+
+# 네트워크 정의
+networks:
+  app-net:
+    driver: bridge
+
+volumes:
+  redis-data:
