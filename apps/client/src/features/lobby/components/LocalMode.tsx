@@ -1,14 +1,14 @@
 import { useAudioStore } from "@/stores/audioStore";
 import { audioManager } from "@/shared/services/AudioManager";
 import { ImageManager } from "@/shared/services/ImageManger";
-import { Badge } from "@/components/ui/badge";
 import {
+  Badge,
   Card,
   CardAction,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@ttt/ui";
 
 const LocalMode = () => {
   const { sfxMuted } = useAudioStore();

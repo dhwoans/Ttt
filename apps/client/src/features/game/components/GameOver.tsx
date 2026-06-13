@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useGameResult } from "@/shared/hooks/useGameResult";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ttt/ui";
 import { useGameStore } from "@/stores/useGameStore";
 
 export default function GameOver() {

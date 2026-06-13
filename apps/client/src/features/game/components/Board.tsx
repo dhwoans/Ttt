@@ -1,6 +1,6 @@
 import { useGameStore } from "@/stores/useGameStore";
 import { calcBoard } from "@/shared/utils/ticTacToeUtils";
-import Square from "@/components/ui/Square";
+import { Board as UIBoard } from "@ttt/ui";
 
 export default function Board({
   selectSquare,
@@ -9,25 +9,6 @@ export default function Board({
 }) {
   const moveHistory = useGameStore((state) => state.moveHistory);
   const list = calcBoard(moveHistory);
-  return (
-    <ol className="flex flex-col gap-2 p-4">
-      {list.map((innerArray: (string | null)[], rowIndex: number) => (
-        <li key={rowIndex}>
-          <ol className="flex flex-row gap-2">
-            {innerArray.map((cell: string | null, colIndex: number) => (
-              <li key={colIndex}>
-                <Square
-                  value={cell}
-                  disabled={list[rowIndex][colIndex] != null || !selectSquare}
-                  onClick={() =>
-                    selectSquare && selectSquare(rowIndex, colIndex)
-                  }
-                />
-              </li>
-            ))}
-          </ol>
-        </li>
-      ))}
-    </ol>
-  );
+  
+  return <UIBoard list={list} selectSquare={selectSquare} />;
 }

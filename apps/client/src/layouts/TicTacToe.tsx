@@ -1,5 +1,5 @@
 import Players from "../features/game/components/Players";
-import Countdown from "@/components/ui/Countdown";
+import Countdown from "@/shared/components/Countdown";
 import { useGameStore } from "@/stores/useGameStore";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 
