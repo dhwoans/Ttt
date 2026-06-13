@@ -2,7 +2,7 @@ import "animate.css";
 
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
-import { CharaterAvatar } from "@ttt/ui";
+import { CharacterAvatar } from "@ttt/ui";
 
 export default function Players() {
   const playerInfos = useRoomStore.getState().playersInfos; // 매번 받아올 필요 없음
@@ -20,7 +20,7 @@ export default function Players() {
         return (
           <li key={index} className={`flex flex-col items-center gap-1 `}>
             <div className={animClass}>
-              <CharaterAvatar size="small">{player.avatar}</CharaterAvatar>
+              <CharacterAvatar size="small">{player.avatar}</CharacterAvatar>
             </div>
             <p className="text-sm font-semibold text-white">
               {player.nickname}

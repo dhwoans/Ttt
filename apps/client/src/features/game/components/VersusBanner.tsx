@@ -1,4 +1,4 @@
-import { CharaterAvatar } from "../../../components/ui/CharaterAvatar";
+import { CharacterAvatar } from "@ttt/ui";
 import useAvatarRandomize from "../../../shared/hooks/useAvatarRandomize";
 import { avatarCandidates } from "../../../shared/constants/avatarCandidates";
 import { ImageManager } from "@/shared/services/ImageManger";
@@ -74,13 +74,13 @@ function VersusSide({
 
   return (
     <div className="flex flex-col items-center gap-2">
-      <CharaterAvatar size="large">
+      <CharacterAvatar size="large">
         <AvatarRandomPreview
           imageSrc={displaySrc}
           shouldPlayIntro={shouldPlayIntro}
           className={`w-30 h-30 transition-opacity duration-300 ${opacity}`}
         />
-      </CharaterAvatar>
+      </CharacterAvatar>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { useNickname } from "../hooks/useNickname";
 import { useCreateUserAndLobbyMove } from "../hooks/useCreateUserAndLobbyMove";
 import Bridge from "@/shared/components/Bridge";
 import { ImageManager } from "@/shared/services/ImageManger";
-import { Card, Button, Input, CharaterAvatar } from "@ttt/ui";
+import { Card, Button, Input, CharacterAvatar } from "@ttt/ui";
 
 type ShakeAction = { type: "trigger" } | { type: "end" };
 
@@ -49,7 +49,7 @@ export default function CharacterBoard() {
     ${isShaking ? shakeEffect : ""}`}
       onAnimationEnd={handleShakeAnimationEnd}
     >
-      <h1>CHARATER</h1>
+      <h1>CHARACTER</h1>
       <h1>SELECT</h1>
       <div className="mb-8 flex items-center justify-center gap-3">
         {/* 이전 버튼 */}
@@ -73,7 +73,7 @@ export default function CharacterBoard() {
                 isAvatarHovered ? "blur-[2px]" : ""
               }`}
             >
-              <CharaterAvatar>
+              <CharacterAvatar>
                 <video
                   src={avatar.currentAvatar.videoSrc}
                   autoPlay
@@ -82,7 +82,7 @@ export default function CharacterBoard() {
                   playsInline
                   className="w-full h-full object-cover bg-primary"
                 />
-              </CharaterAvatar>
+              </CharacterAvatar>
             </div>
             <div
               className={`pointer-events-none absolute inset-0 grid place-items-center text-8xl transition-opacity ${isAvatarHovered ? "opacity-100" : "opacity-0"}`}

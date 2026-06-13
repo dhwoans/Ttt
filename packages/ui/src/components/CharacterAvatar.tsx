@@ -16,7 +16,7 @@ interface AvatarProps {
   children?: ReactNode;
 }
 
-export function CharaterAvatar({ size, children }: AvatarProps) {
+export function CharacterAvatar({ size, children }: AvatarProps) {
   const avatarSize = size === "small" ? "small" : "large";
   const { container } = SIZE_STYLES[avatarSize];
 

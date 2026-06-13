@@ -1,5 +1,5 @@
-import { Badge } from "./badge.js";
-import { Button } from "./button.js";
+import { Badge } from "./Badge.js";
+import { Button } from "./Button.js";
 import {
   Card,
   CardAction,
@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./card.js";
+} from "./Card.js";
 
 interface CardImageProps {
   className?: string;
