@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { VersusBanner } from "@/features/game/components/VersusBanner";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal"; // 참고
-import { TimeoutProgressBar } from "@/components/ui/TimeoutProgressBar";
+import { TimeoutProgressBar } from "@/shared/components/TimeoutProgressBar";
 import { Button } from "@ttt/ui";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useModalStore } from "@/stores/useModalStore";

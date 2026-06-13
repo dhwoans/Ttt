@@ -1,13 +1,13 @@
+import { Badge } from "./badge.js";
+import { Button } from "./button.js";
 import {
-  Badge,
-  Button,
   Card,
   CardAction,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@ttt/ui";
+} from "./card.js";
 
 interface CardImageProps {
   className?: string;

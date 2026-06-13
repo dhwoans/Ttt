@@ -3,7 +3,7 @@ import SingleMode from "@/features/lobby/components/SingleMode";
 import MultiMode from "@/features/lobby/components/MultiMode";
 import LocalMode from "@/features/lobby/components/LocalMode";
 import { ImageManager } from "@/shared/services/ImageManger";
-import { CardImage } from "@/components/ui/cardImage";
+import { CardImage } from "@ttt/ui";
 import { useEnterMultiMode } from "@/features/lobby/hooks/useEnterMultiMode";
 import { useEnterSingleMode } from "@/features/lobby/hooks/useEnterSingleMode";
 

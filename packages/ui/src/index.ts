@@ -14,3 +14,6 @@ export * from "./components/tooltip.js";
 export * from "./components/empty.js";
 export * from "./components/game/Square.js";
 export * from "./components/game/Board.js";
+export * from "./components/CardImage.js";
+export * from "./components/CharacterAvatar.js";
+export * from "./components/VolumeSlider.js";

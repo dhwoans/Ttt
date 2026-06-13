@@ -2,7 +2,7 @@ import "animate.css";
 
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useGameStore } from "@/stores/useGameStore";
-import { CharaterAvatar } from "@/components/ui/CharaterAvatar";
+import { CharaterAvatar } from "@ttt/ui";
 
 export default function Players() {
   const playerInfos = useRoomStore.getState().playersInfos; // 매번 받아올 필요 없음

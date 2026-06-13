@@ -1,13 +1,12 @@
-import { CharaterAvatar } from "@/components/ui/CharaterAvatar";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useReducer, useState } from "react";
 import { useAudio } from "@/shared/hooks/useAudioEffect";
 import { useAvatarSelection } from "../hooks/useAvatarSelection";
 import { useNickname } from "../hooks/useNickname";
 import { useCreateUserAndLobbyMove } from "../hooks/useCreateUserAndLobbyMove";
-import Bridge from "@/components/ui/Bridge";
+import Bridge from "@/shared/components/Bridge";
 import { ImageManager } from "@/shared/services/ImageManger";
-import { Card, Button, Input } from "@ttt/ui";
+import { Card, Button, Input, CharaterAvatar } from "@ttt/ui";
 
 type ShakeAction = { type: "trigger" } | { type: "end" };
 
