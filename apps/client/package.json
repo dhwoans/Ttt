@@ -9,9 +9,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "build": "tsc && vite build",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build": "tsc && vite build"
   },
   "keywords": [],
   "author": "",
