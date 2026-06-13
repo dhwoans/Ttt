@@ -14,11 +14,11 @@ jobs:
           - app_name: client
             context: ./apps/client
             dockerfile: ./apps/client/Dockerfile
-            image_name: tictactoe-client
+            image_name: tictactoe_client
           - app_name: websocket
             context: ./apps/websocket
             dockerfile: ./apps/websocket/Dockerfile
-            image_name: tictactoe-websocket
+            image_name: tictactoe_backend
 
     steps:
       - name: Checkout code

@@ -1,7 +1,7 @@
 {
   "name": "client",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.3.0",
   "description": "",
   "main": "vite.config.ts",
   "scripts": {
@@ -78,10 +78,5 @@
     "workerDirectory": [
       "public"
     ]
-  },
-  "pnpm": {
-    "overrides": {
-      "fdir": "^6.4.3"
-    }
   }
 }

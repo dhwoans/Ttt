@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+**/.turbo
+**/.git
+**/.changeset
+**/.husky
+**/.storybook
+**/public/mockServiceWorker.js
+docker-compose.yaml
+README.md
+RELEASING.md

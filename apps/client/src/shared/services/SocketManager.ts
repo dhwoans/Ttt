@@ -49,8 +49,14 @@ class GameSocketManager {
     // 현재 ticket 저장
     this.currentTicket = ticket || null;
 
+    // URL 프로토콜 보정 (http/https -> ws/wss)
+    let finalUrl = serverUrl;
+    if (finalUrl.startsWith("http")) {
+      finalUrl = finalUrl.replace(/^http/, "ws");
+    }
+
     console.log("[socket] connect request", {
-      serverUrl,
+      finalUrl,
       path: "/socket.io",
       auth: {
         roomId,
@@ -59,12 +65,13 @@ class GameSocketManager {
       },
     });
 
-    this.socket = io(serverUrl, {
+    this.socket = io(finalUrl, {
       path: "/socket.io",
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
       reconnectionAttempts: 5,
+      transports: ["websocket"], // WebSocket 우선 사용
       auth: {
         roomId: roomId,
         userId: userId,
