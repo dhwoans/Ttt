@@ -2,16 +2,17 @@ import { useEffect } from "react";
 import { ticTacToeAI } from "@/shared/utils/AIPlayer";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
+import { to2D } from "@ttt/core";
 
 /**
  * AI의 자동 이동을 처리하는 훅
  */
 export function useAIMove(
   isPlayerTurn: boolean,
-  board: string[][],
+  board1D: string[],
 ) {
-  const gameState = useGameStore((state) => state.gameState.status);
-  const isGameOver = gameState === "FINISHED";
+  const tree = useGameStore((state) => state.tree);
+  const isGameOver = tree.game.status === "GAME_OVER";
   const addMove = useGameStore((state) => state.addMove);
   const playersInfos = useRoomStore((state) => state.playersInfos);
 
@@ -24,17 +25,19 @@ export function useAIMove(
       if (!playersInfos[0] || !playersInfos[1]) return;
       const playerSymbol = playersInfos[0].avatar;
       const botSymbol = playersInfos[1].avatar;
-      const aiMove = ticTacToeAI.getBestMove(board, botSymbol, playerSymbol);
+      
+      const board2D = to2D(board1D).map(row => row.map(cell => cell === "" ? null : cell));
+      const aiMove = ticTacToeAI.getBestMove(board2D, botSymbol, playerSymbol);
 
       if (aiMove) {
         addMove({
-          square: { row: aiMove.row, col: aiMove.col },
-          symbol: botSymbol,
+          index: aiMove.row * 3 + aiMove.col,
+          symbol: botSymbol as any,
           nickname: playersInfos[1].nickname,
         });
       }
     }, 1000);
 
     return () => clearTimeout(aiTimer);
-  }, [isPlayerTurn, isGameOver, board, playersInfos, addMove]);
+  }, [isPlayerTurn, isGameOver, board1D, playersInfos, addMove]);
 }

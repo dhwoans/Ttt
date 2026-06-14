@@ -8,9 +8,7 @@ import type { TurnTimeoutStartedEvent } from "@ttt/contract";
  * - 멀티플레이 착수 제한 시간 시작 시각/지속시간을 서버 이벤트 기준으로 동기화
  */
 export function useReceiveTurnTimeoutStarted() {
-  const setCurrentTurnUserId = useGameStore(
-    (state) => state.setCurrentTurnUserId,
-  );
+  const setTree = useGameStore((state) => state.setTree);
   const turnTimeoutSnapshot = useGameStore(
     (state) => state.turnTimeoutSnapshot,
   );
@@ -29,7 +27,16 @@ export function useReceiveTurnTimeoutStarted() {
       setTurnTimeoutSnapshot(nextSnapshot);
 
       if (data.currentTurnPlayerId) {
-        setCurrentTurnUserId(data.currentTurnPlayerId);
+        const tree = useGameStore.getState().tree;
+        const index = tree.players.findIndex(p => p.id === data.currentTurnPlayerId);
+        if (index !== -1) {
+          setTree({
+            game: {
+              ...tree.game,
+              currentTurn: index
+            }
+          });
+        }
       }
     };
 
@@ -37,7 +44,7 @@ export function useReceiveTurnTimeoutStarted() {
     return () => {
       eventManager.off("TURN_TIMEOUT_STARTED", handleTurnTimeoutStarted);
     };
-  }, [setCurrentTurnUserId, setTurnTimeoutSnapshot]);
+  }, [setTree, setTurnTimeoutSnapshot]);
 
   return {
     turnTimeoutMs: turnTimeoutSnapshot?.timeoutMs,

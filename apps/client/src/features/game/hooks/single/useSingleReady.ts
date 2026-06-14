@@ -7,7 +7,7 @@ export function useSingleReady() {
   const navigate = useNavigate();
   const bridgeTimerRef = useRef<number | null>(null);
   const resetGame = useGameStore((state) => state.resetGame);
-  const setStatus = useGameStore((state) => state.setStatus);
+  const setGameStatus = useGameStore((state) => state.setGameStatus);
   //AI봇 초기화 세팅
   useSingleInitialBotSetup();
 
@@ -19,7 +19,7 @@ export function useSingleReady() {
 
   const handleReady = (isReady: boolean) => {
     if (!isReady) return;
-    setStatus("PLAYING");
+    setGameStatus("PLAYING");
   };
 
   useEffect(() => {

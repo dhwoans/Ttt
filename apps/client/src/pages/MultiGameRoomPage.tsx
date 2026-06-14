@@ -52,7 +52,7 @@ export default function MultiGameRoomPage() {
   useRoomState();
 
   const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
-  const status = useGameStore((state) => state.gameState.status);
+  const status = useGameStore((state) => state.tree.game.status);
 
   return (
     <>
@@ -88,7 +88,7 @@ export default function MultiGameRoomPage() {
       </LeftSideLayout>
       {status === "IDLE" && <MultiReady />}
       {status === "PLAYING" && <MultiTicTacToe />}
-      {status === "FINISHED" && <GameOver />}
+      {status === "GAME_OVER" && <GameOver />}
     </>
   );
 }

@@ -21,7 +21,7 @@ export function useReceivePlayerLeave() {
   const setReadyTimeoutSnapshot = useRoomStore(
     (state) => state.setReadyTimeoutSnapshot,
   );
-  const status = useGameStore((state) => state.gameState.status);
+  const status = useGameStore((state) => state.tree.game.status);
 
   // PLAYER_LEFT 이벤트 처리 (상대 플레이어 퇴장)
   useEffect(() => {

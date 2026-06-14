@@ -9,7 +9,7 @@ import type { Action, Response } from "../types/index.js";
  */
 export default class GameOverState extends State {
   onEnter(game: Context): void {
-    game.status = "GAME_OVER";
+    game.tree.game.status = "GAME_OVER";
   }
 
   handleAction(
@@ -19,9 +19,10 @@ export default class GameOverState extends State {
     // Only RESET action is valid in game over state
     if (action.type === "RESET") {
       // Reset game board and transition to IDLE state
-      game.board = Array(9).fill("");
-      game.winner = -1;
-      game.currentTurn = 0;
+      game.tree.game.board = Array(9).fill("");
+      game.tree.game.winner = -1;
+      game.tree.game.currentTurn = 0;
+      game.tree.game.history = [];
       game.changeState(new IdleState());
       return { success: true, message: "Game reset complete" };
     }

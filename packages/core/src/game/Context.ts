@@ -1,12 +1,8 @@
 import type State from "../state/State.js";
-import type { UserId, GameStateSnapshot, Action, Response } from "../types/index.js";
+import type { GameStateTree, Action, Response } from "../types/index.js";
 
 export default abstract class Context {
-  abstract board: Array<string>;
-  abstract winner: number;
-  abstract status: string;
-  abstract players: Array<UserId>;
-  abstract currentTurn: number;
+  abstract tree: GameStateTree;
   abstract currentState: State;
 
   /**
@@ -22,5 +18,5 @@ export default abstract class Context {
   /**
    * Get current game state snapshot
    */
-  abstract getState(): GameStateSnapshot;
+  abstract getState(): GameStateTree;
 }

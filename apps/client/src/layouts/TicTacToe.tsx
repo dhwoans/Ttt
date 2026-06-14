@@ -16,8 +16,8 @@ export default function TicTacToe({
   countdownOnComplete,
 }: TicTacToeProps) {
   const openModal = useBackExitModal();
-  const status = useGameStore.getState().gameState.status;
-  const isGameOver = status === "FINISHED";
+  const tree = useGameStore((state) => state.tree);
+  const isGameOver = tree.game.status === "GAME_OVER";
   const turnStart = useGameStore((state) => state.turnStart);
   const turnTimeoutSnapshot = useGameStore(
     (state) => state.turnTimeoutSnapshot,

@@ -10,20 +10,19 @@ import { useReceiveNextTurn } from "./useReceiveNextTurn";
 import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
 
 export function useMultiTicTacToe() {
-  const gameStatus = useGameStore((state) => state.gameState.status);
-  const winner = useGameStore((state) => state.gameState.winner);
-  const result = useGameStore((state) => state.gameState.result);
+  const tree = useGameStore((state) => state.tree);
   const playersInfos = useRoomStore((state) => state.playersInfos);
-  const currentTurnUserId = useGameStore(
-    (state) => state.gameState.turn.currentUserId,
-  );
   const isWaitingForServer = useRoomStore((state) => state.isWaitingForServer);
   const setOpenModal = useModalStore((state) => state.setOpenModal);
 
-  // const handleExitIntent = useCallback(() => {
-  //   setOpenModal("exit");
-  // }, [setOpenModal]);
-  // useBackExitModal(handleExitIntent, true);
+  const gameStatus = tree.game.status;
+  const winnerIndex = tree.game.winner;
+  const isGameOver = gameStatus === "GAME_OVER";
+  const isDraw = winnerIndex === -2;
+  
+  const currentTurnUserId = tree.players.length > 0 
+    ? tree.players[tree.game.currentTurn % tree.players.length]?.id 
+    : "";
 
   useReceiveMoveMade();
   useReceiveGameOver();
@@ -31,8 +30,6 @@ export function useMultiTicTacToe() {
   const { turnTimeoutMs, turnTimeoutStartedAt } =
     useReceiveTurnTimeoutStarted();
 
-  const isGameOver = gameStatus === "FINISHED";
-  const isDraw = result === "draw";
   const currentPlayer = currentTurnUserId
     ? (playersInfos.find((p) => p.userId === currentTurnUserId) ??
       playersInfos[0])
@@ -57,7 +54,7 @@ export function useMultiTicTacToe() {
     isGameOver,
     isDraw,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    winner,
+    winner: winnerIndex >= 0 ? playersInfos[winnerIndex]?.nickname : null,
     countdownDurationMs: turnTimeoutMs ?? 10000,
     countdownStartTime: turnTimeoutStartedAt ?? Date.now(),
   };

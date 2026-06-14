@@ -9,20 +9,28 @@ import type { PlayingEvent } from "@ttt/contract";
  * - ROOM_ASSIGNED: 방 배정
  */
 export function useGamePhaseEvents() {
-  const setStatus = useGameStore((state) => state.setStatus);
-  const setCurrentTurnUserId = useGameStore(
-    (state) => state.setCurrentTurnUserId,
-  );
+  const setGameStatus = useGameStore((state) => state.setGameStatus);
+  const setTree = useGameStore((state) => state.setTree);
 
   // PLAYING 신호 수신 시 phase 변경 및 전처리
   useEffect(() => {
     const handlePlaying = (data: PlayingEvent) => {
       console.log("[room] PLAYING 이벤트 수신, 게임 시작:", data);
-      //게임 상태 변경
-      setStatus("PLAYING");
+
+      const players = data.players.map((id) => ({ id }));
+      const currentTurn = data.players.indexOf(data.currentTurnPlayerId);
+
+      // 게임 상태 및 플레이어 정보 업데이트
+      setTree({
+        players,
+        game: {
+          ...useGameStore.getState().tree.game,
+          status: "PLAYING",
+          currentTurn: currentTurn !== -1 ? currentTurn : 0,
+        },
+      });
 
       if (data.currentTurnPlayerId) {
-        setCurrentTurnUserId(data.currentTurnPlayerId);
         console.log(
           "[room] PLAYING 이벤트에서 currentTurnPlayerId 저장:",
           data.currentTurnPlayerId,
@@ -43,7 +51,7 @@ export function useGamePhaseEvents() {
       console.log("[room] PLAYING 리스너 제거");
       eventManager.off("PLAYING", handlePlaying);
     };
-  }, [setCurrentTurnUserId, setStatus]);
+  }, [setTree]);
 
   // 멀티플레이 시작: ROOM_ASSIGNED 수신
   useEffect(() => {

@@ -1,27 +1,28 @@
 import Context from "./Context.js";
 import IdleState from "../state/IdleState.js";
 import type State from "../state/State.js";
-import type { UserId, GameStateSnapshot, Action, Response } from "../types/index.js";
+import type { UserId, GameStateTree, Action, Response } from "../types/index.js";
 
 /**
  * Tic-Tac-Toe game context class (FSM Context pattern)
  * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
 export default class Ttt extends Context {
-  board: Array<string>; // 9-element array for 3x3 board
-  winner: number; // -2: draw, -1: no winner, 0/1: player index
-  status: string; // IDLE, PLAYING, GAME_OVER
-  players: Array<UserId>; // [player1Id, player2Id]
-  currentTurn: number; // Turn counter
+  tree: GameStateTree;
   currentState: State;
 
   constructor() {
     super();
-    this.board = Array(9).fill("");
-    this.winner = -1;
-    this.status = "IDLE";
-    this.currentTurn = 0;
-    this.players = [];
+    this.tree = {
+      game: {
+        board: Array(9).fill(""),
+        winner: -1,
+        status: "IDLE",
+        currentTurn: 0,
+        history: [],
+      },
+      players: [],
+    };
     this.currentState = new IdleState();
     this.currentState.onEnter(this);
   }
@@ -49,20 +50,14 @@ export default class Ttt extends Context {
   /**
    * Get current game state snapshot
    */
-  getState(): GameStateSnapshot {
-    return {
-      board: this.board,
-      winner: this.winner,
-      status: this.status,
-      players: this.players,
-      currentTurn: this.currentTurn,
-    };
+  getState(): GameStateTree {
+    return this.tree;
   }
 
   /**
    * Set players for the game
    */
   setPlayers(playerIds: UserId[]): void {
-    this.players = playerIds;
+    this.tree.players = playerIds.map(id => ({ id }));
   }
 }

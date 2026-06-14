@@ -5,16 +5,18 @@ import { useGameStore } from "@/stores/useGameStore";
 import { CharacterAvatar } from "@ttt/ui";
 
 export default function Players() {
-  const playerInfos = useRoomStore.getState().playersInfos; // 매번 받아올 필요 없음
-  const moveHistory = useGameStore.getState().moveHistory;
-  const currentPlayer = playerInfos[moveHistory.length % 2].userId;
+  const playerInfos = useRoomStore((state) => state.playersInfos);
+  const tree = useGameStore((state) => state.tree);
+  
+  const currentPlayerId = tree.players.length > 0 
+    ? tree.players[tree.game.currentTurn % tree.players.length]?.id 
+    : null;
 
-  console.log("currentTurnUserId : ", playerInfos);
   return (
     <ol className="flex flex-row md:flex-col gap-10 md:gap-6">
       {playerInfos.map((player, index) => {
         const animClass =
-          player.userId === currentPlayer
+          player.userId === currentPlayerId
             ? "animate__animated animate__bounce animate__infinite"
             : "";
         return (

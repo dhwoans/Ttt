@@ -34,7 +34,7 @@ function SingleReady() {
 export default function SingleGameRoomPage() {
   useRoomState();
   const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
-  const status = useGameStore((state) => state.gameState.status);
+  const status = useGameStore((state) => state.tree.game.status);
   return (
     <>
       <ToastContainer
@@ -69,7 +69,7 @@ export default function SingleGameRoomPage() {
       </LeftSideLayout>
       {status === "IDLE" && <SingleReady />}
       {status === "PLAYING" && <SingleTicTacToe />}
-      {status === "FINISHED" && <GameOver />}
+      {status === "GAME_OVER" && <GameOver />}
     </>
   );
 }

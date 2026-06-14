@@ -1,63 +1,43 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useRoomStore } from "./useRoomStore";
-
-export type MoveEntry = {
-  square: { row: number; col: number };
-  symbol: string;
-  nickname: string;
-};
-
-export type Turn = {
-  currentUserId: string; // single mode 에서 안씀,  playersInfos[moveHistory.length % 2] 로 currentPlayer 찾음
-  remainTime: number;
-  turnCount: number;
-};
+import type { GameStateTree, MoveNode, PlayerSymbol, GameStatus } from "@ttt/core";
 
 export type TimeoutSnapshot = {
   timeoutMs: number;
   startedAt: number;
 };
 
-export type GameState = {
-  roomId: string;
-  status: "IDLE" | "PLAYING" | "FINISHED";
-  result: "win" | "draw" | null;
-  turn: Turn;
-  winner: string | null;
-};
-
 interface GameStoreState {
-  gameState: GameState;
-  moveHistory: MoveEntry[];
+  tree: GameStateTree;
   timeoutBy: string | null;
   turnStart: number;
   turnTimeoutSnapshot: TimeoutSnapshot | null;
-  setGameState: (state: Partial<GameState>) => void;
-  setStatus: (status: "IDLE" | "PLAYING" | "FINISHED") => void;
-  setResult: (result: "win" | "draw" | null) => void;
-  setWinner: (winner: string | null) => void;
+  
+  // Actions
+  setTree: (tree: Partial<GameStateTree>) => void;
+  setGameStatus: (status: GameStatus) => void;
+  setWinner: (winner: number) => void;
   setTimeoutBy: (nickname: string | null) => void;
-  setCurrentTurnUserId: (userId: string) => void;
-  addMove: (entry: MoveEntry) => void;
-  nextTurn: (newUserId: string) => void;
-  setRoomId: (roomId: string) => void;
+  addMove: (move: MoveNode) => void;
   setTurnTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
   resetGame: () => void;
   resetGameBoard: () => void;
 }
 
-const initialGameState: GameState = {
-  roomId: "",
-  status: "IDLE",
-  result: null,
-  turn: { currentUserId: "", remainTime: 10, turnCount: 0 },
-  winner: null,
+const initialTree: GameStateTree = {
+  game: {
+    board: Array(9).fill(""),
+    status: "IDLE",
+    winner: -1,
+    currentTurn: 0,
+    history: [],
+  },
+  players: [],
 };
 
 const initialGameStoreState = () => ({
-  gameState: initialGameState,
-  moveHistory: [] as MoveEntry[],
+  tree: initialTree,
   timeoutBy: null as string | null,
   turnStart: Date.now(),
   turnTimeoutSnapshot: null as TimeoutSnapshot | null,
@@ -67,41 +47,30 @@ export const useGameStore = create<GameStoreState>()(
   persist(
     (set) => ({
       ...initialGameStoreState(),
-      setGameState: (state) =>
-        set((s) => ({ gameState: { ...s.gameState, ...state } })),
-      setStatus: (status) =>
-        set((s) => ({ gameState: { ...s.gameState, status } })),
-      setResult: (result) =>
-        set((s) => ({ gameState: { ...s.gameState, result } })),
+      setTree: (tree) =>
+        set((s) => ({ tree: { ...s.tree, ...tree } })),
+      setGameStatus: (status) =>
+        set((s) => ({ tree: { ...s.tree, game: { ...s.tree.game, status } } })),
       setWinner: (winner) =>
-        set((s) => ({ gameState: { ...s.gameState, winner } })),
+        set((s) => ({ tree: { ...s.tree, game: { ...s.tree.game, winner } } })),
       setTimeoutBy: (timeoutBy) => set({ timeoutBy }),
-      setCurrentTurnUserId: (userId) =>
-        set((s) => ({
-          gameState: {
-            ...s.gameState,
-            turn: { ...s.gameState.turn, currentUserId: userId },
-          },
-        })),
-      addMove: (entry) =>
-        set((s) => ({
-          moveHistory: [...s.moveHistory, entry],
-          turnStart: Date.now(),
-        })),
-      nextTurn: (newUserId) =>
-        set((s) => ({
-          gameState: {
-            ...s.gameState,
-            turn: {
-              ...s.gameState.turn,
-              currentUserId: newUserId,
-              turnCount: s.gameState.turn.turnCount + 1,
-              remainTime: 10,
+      addMove: (move) =>
+        set((s) => {
+          const newBoard = [...s.tree.game.board];
+          newBoard[move.index] = move.symbol;
+          return {
+            tree: {
+              ...s.tree,
+              game: {
+                ...s.tree.game,
+                board: newBoard,
+                history: [...s.tree.game.history, move],
+                currentTurn: s.tree.game.currentTurn + 1,
+              },
             },
-          },
-        })),
-      setRoomId: (roomId) =>
-        set((s) => ({ gameState: { ...s.gameState, roomId } })),
+            turnStart: Date.now(),
+          };
+        }),
       setTurnTimeoutSnapshot: (turnTimeoutSnapshot) =>
         set({ turnTimeoutSnapshot }),
       resetGame: () => {
@@ -111,21 +80,14 @@ export const useGameStore = create<GameStoreState>()(
         set(initialGameStoreState());
       },
       resetGameBoard: () => {
-        set({
-          gameState: initialGameState,
-          moveHistory: [],
-          timeoutBy: null,
-          turnStart: Date.now(),
-          turnTimeoutSnapshot: null,
-        });
+        set(initialGameStoreState());
       },
     }),
     {
       name: "ttt-game-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        gameState: state.gameState,
-        moveHistory: state.moveHistory,
+        tree: state.tree,
         timeoutBy: state.timeoutBy,
         turnStart: state.turnStart,
         turnTimeoutSnapshot: state.turnTimeoutSnapshot,

@@ -141,10 +141,11 @@ class GameFlowService {
     }
 
     const state = gameStateResult.message.getState();
+    const playerIds = state.players.map((p) => p.id);
     this.publisher.emitPlaying(roomId, {
-      status: state.status as "PLAYING",
-      currentTurnPlayerId: state.players[state.currentTurn]!,
-      players: state.players,
+      status: state.game.status as "PLAYING",
+      currentTurnPlayerId: playerIds[state.game.currentTurn]!,
+      players: playerIds,
     });
 
     this.startTurnTimeout(roomId);
@@ -187,15 +188,15 @@ class GameFlowService {
     const game = moveResult.message;
     const stateBeforeMove = game.getState();
 
-    if (stateBeforeMove.status !== "PLAYING") {
+    if (stateBeforeMove.game.status !== "PLAYING") {
       this.errors.emit(socket, "Game is not in PLAYING state");
       return;
     }
 
     const currentTurnPlayerId =
       stateBeforeMove.players[
-        stateBeforeMove.currentTurn % stateBeforeMove.players.length
-      ];
+        stateBeforeMove.game.currentTurn % stateBeforeMove.players.length
+      ]!.id;
     if (currentTurnPlayerId !== userId) {
       this.errors.emit(socket, "Not your turn");
       return;
@@ -216,29 +217,29 @@ class GameFlowService {
       isAuto: false,
     });
 
-    if (state.status === "GAME_OVER") {
+    if (state.game.status === "GAME_OVER") {
       this.clearTurnTimeout(roomId);
       let winnerUserId: string | null = null;
       let result: "win" | "draw" = "draw";
 
-      if (state.winner >= 0 && state.winner < state.players.length) {
-        winnerUserId = state.players[state.winner] || null;
+      if (state.game.winner >= 0 && state.game.winner < state.players.length) {
+        winnerUserId = state.players[state.game.winner]!.id || null;
         result = "win";
       }
 
       this.publisher.emitGameOver(roomId, {
         result,
         winner: winnerUserId,
-        winnerIndex: state.winner,
-        board: state.board,
+        winnerIndex: state.game.winner,
+        board: state.game.board,
       });
       return;
     }
 
     const nextPlayerId =
-      state.players[state.currentTurn % state.players.length]!;
+      state.players[state.game.currentTurn % state.players.length]!.id;
     this.publisher.emitNextTurn(roomId, {
-      currentTurn: state.currentTurn,
+      currentTurn: state.game.currentTurn,
       nextPlayerId,
     });
 
@@ -253,13 +254,13 @@ class GameFlowService {
     }
 
     const state = gameStateResult.message.getState();
-    if (state.status !== "PLAYING" || state.players.length === 0) {
+    if (state.game.status !== "PLAYING" || state.players.length === 0) {
       this.clearTurnTimeout(roomId);
       return;
     }
 
     const currentTurnPlayerId =
-      state.players[state.currentTurn % state.players.length]!;
+      state.players[state.game.currentTurn % state.players.length]!.id;
 
     const existing = this.turnTimeouts.get(roomId);
     if (existing) {
@@ -316,14 +317,14 @@ class GameFlowService {
     const game = moveResult.message;
     const state = game.getState();
 
-    if (state.status !== "PLAYING" || state.players.length === 0) {
+    if (state.game.status !== "PLAYING" || state.players.length === 0) {
       this.clearTurnTimeout(roomId);
       return;
     }
 
     const currentPlayerId =
-      state.players[state.currentTurn % state.players.length]!;
-    const availableMoves = state.board
+      state.players[state.game.currentTurn % state.players.length]!.id;
+    const availableMoves = state.game.board
       .map((cell: string, index: number) => ({ cell, index }))
       .filter(({ cell }: { cell: string }) => cell === "")
       .map(({ index }: { index: number }) => index);
@@ -364,23 +365,23 @@ class GameFlowService {
       isAuto: true,
     });
 
-    if (updatedState.status === "GAME_OVER") {
+    if (updatedState.game.status === "GAME_OVER") {
       let winnerUserId: string | null = null;
       let result: "win" | "draw" = "draw";
 
       if (
-        updatedState.winner >= 0 &&
-        updatedState.winner < updatedState.players.length
+        updatedState.game.winner >= 0 &&
+        updatedState.game.winner < updatedState.players.length
       ) {
-        winnerUserId = updatedState.players[updatedState.winner] || null;
+        winnerUserId = updatedState.players[updatedState.game.winner]!.id || null;
         result = "win";
       }
 
       this.publisher.emitGameOver(roomId, {
         result,
         winner: winnerUserId,
-        winnerIndex: updatedState.winner,
-        board: updatedState.board,
+        winnerIndex: updatedState.game.winner,
+        board: updatedState.game.board,
       });
       this.clearTurnTimeout(roomId);
       return;
@@ -388,10 +389,10 @@ class GameFlowService {
 
     const nextPlayerId =
       updatedState.players[
-        updatedState.currentTurn % updatedState.players.length
-      ]!;
+        updatedState.game.currentTurn % updatedState.players.length
+      ]!.id;
     this.publisher.emitNextTurn(roomId, {
-      currentTurn: updatedState.currentTurn,
+      currentTurn: updatedState.game.currentTurn,
       nextPlayerId,
     });
 

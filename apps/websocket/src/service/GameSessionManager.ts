@@ -28,10 +28,10 @@ class GameSessionManager {
     game.changeState(new PlayingState());
     const state = game.getState();
 
-    if (state.status !== "PLAYING") {
+    if (state.game.status !== "PLAYING") {
       return {
         success: false,
-        message: `Failed to start game: invalid state ${state.status}`,
+        message: `Failed to start game: invalid state ${state.game.status}`,
       };
     }
 
@@ -64,7 +64,7 @@ class GameSessionManager {
     }
 
     const state = game.getState();
-    if (state.status !== "PLAYING") {
+    if (state.game.status !== "PLAYING") {
       return {
         success: false,
         message: "Game is not in PLAYING state",

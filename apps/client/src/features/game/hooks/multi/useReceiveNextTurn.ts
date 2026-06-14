@@ -8,20 +8,21 @@ import type { NextTurnEvent } from "@ttt/contract";
  * - store의 currentTurnUserId 업데이트
  */
 export function useReceiveNextTurn() {
-  const setCurrentTurnUserId = useGameStore(
-    (state) => state.setCurrentTurnUserId,
-  );
+  const setTree = useGameStore((state) => state.setTree);
 
   useEffect(() => {
     const handleNextTurn = (data: NextTurnEvent) => {
-      if (data.nextPlayerId) {
-        setCurrentTurnUserId(data.nextPlayerId);
-      }
+      setTree({
+        game: {
+          ...useGameStore.getState().tree.game,
+          currentTurn: data.currentTurn,
+        },
+      });
     };
 
     eventManager.on("NEXT_TURN", handleNextTurn);
     return () => {
       eventManager.off("NEXT_TURN", handleNextTurn);
     };
-  }, [setCurrentTurnUserId]);
+  }, [setTree]);
 }

@@ -10,8 +10,7 @@ import type { GameOverEvent } from "@ttt/contract";
  * - gameStore의 status, result, winner 업데이트
  */
 export function useReceiveGameOver() {
-  const setStatus = useGameStore((state) => state.setStatus);
-  const setResult = useGameStore((state) => state.setResult);
+  const setGameStatus = useGameStore((state) => state.setGameStatus);
   const setWinner = useGameStore((state) => state.setWinner);
   const playersInfos = useRoomStore((state) => state.playersInfos);
 
@@ -19,21 +18,24 @@ export function useReceiveGameOver() {
     const handleGameOver = (data: GameOverEvent) => {
       console.log("[Playing] GAME_OVER 수신:", data);
 
-      // 게임 상태를 FINISHED로 변경
-      setStatus("FINISHED");
-      // 게임 결과 저장
-      setResult(data.result);
-      // 멀티 winner는 userId이므로 UI 표시에 맞게 nickname으로 정규화한다.
-      const normalizedWinner = data.winner
-        ? (playersInfos.find((player) => player.userId === data.winner)
-            ?.nickname ?? data.winner)
-        : null;
-      setWinner(normalizedWinner);
+      // 게임 상태를 GAME_OVER로 변경
+      setGameStatus("GAME_OVER");
+      
+      // 승자 인덱스 설정 (-2는 무승부)
+      if (data.result === "draw") {
+        setWinner(-2);
+      } else if (data.winnerIndex !== undefined) {
+        setWinner(data.winnerIndex);
+      } else if (data.winner) {
+         // Fallback if winnerIndex missing but winner ID present
+         const index = playersInfos.findIndex(p => p.userId === data.winner);
+         setWinner(index);
+      }
     };
 
     eventManager.on("GAME_OVER", handleGameOver);
     return () => {
       eventManager.off("GAME_OVER", handleGameOver);
     };
-  }, [playersInfos, setStatus, setResult, setWinner]);
+  }, [playersInfos, setGameStatus, setWinner]);
 }

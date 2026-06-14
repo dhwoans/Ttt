@@ -1,5 +1,5 @@
 import { useGameStore } from "@/stores/useGameStore";
-import { calcBoard } from "@/shared/utils/ticTacToeUtils";
+import { to2D } from "@ttt/core";
 import { Board as UIBoard } from "@ttt/ui";
 
 export default function Board({
@@ -7,8 +7,10 @@ export default function Board({
 }: {
   selectSquare: ((row: number, col: number) => void) | false;
 }) {
-  const moveHistory = useGameStore((state) => state.moveHistory);
-  const list = calcBoard(moveHistory);
+  const board1D = useGameStore((state) => state.tree.game.board);
+  const list = to2D(board1D).map((row) =>
+    row.map((cell) => (cell === "" ? null : cell)),
+  );
   
   return <UIBoard list={list} selectSquare={selectSquare} />;
 }

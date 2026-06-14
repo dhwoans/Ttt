@@ -70,30 +70,24 @@ class LegacyWsGameService {
 
   private broadcastNextGameState(
     roomId: RoomId,
-    state: {
-      board: Array<string>;
-      winner: number;
-      status: string;
-      players: Array<string>;
-      currentTurn: number;
-    },
+    state: any // Using any briefly to avoid complex type mapping here, but correctly accessing tree properties
   ): void {
     let nextMessage: SocketMessage;
-    if (state.status === "GAME_OVER") {
+    if (state.game.status === "GAME_OVER") {
       const winner: string =
-        state.winner === -2 ? "DRAW" : state.players[state.winner]!;
-      nextMessage = { type: state.status, message: [winner], sender: "system" };
+        state.game.winner === -2 ? "DRAW" : state.players[state.game.winner].id;
+      nextMessage = { type: state.game.status, message: [winner], sender: "system" };
       this.gameSessionManager.deleteGame(roomId);
       this.resetReady(roomId);
     } else {
       nextMessage = {
-        type: state.status,
-        message: [state.players[state.currentTurn % 2]!.toString()],
+        type: state.game.status,
+        message: [state.players[state.game.currentTurn % 2].id],
         sender: "system",
       };
     }
 
-    eventshandler.emit(state.status, {
+    eventshandler.emit(state.game.status, {
       mode: EMIT_MODES.BROADCAST,
       roomId,
       payload: nextMessage,

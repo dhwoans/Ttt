@@ -9,7 +9,7 @@ import type { Action, Response } from "../types/index.js";
  */
 export default class IdleState extends State {
   onEnter(game: Context): void {
-    game.status = "IDLE";
+    game.tree.game.status = "IDLE";
   }
 
   handleAction(

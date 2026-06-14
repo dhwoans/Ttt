@@ -35,23 +35,18 @@ export function useReceiveMoveMade() {
         return;
       }
 
-      // 보드 인덱스를 행/열로 변환
-      const row = Math.floor(move / 3);
-      const col = move % 3;
-
       // 보드에는 플레이어 아바타(이모지)를 그대로 표시
       const symbol = player.avatar;
 
       // store에 move 추가 (보드 상태 업데이트)
       addMove({
-        square: { row, col },
-        symbol,
+        index: move,
+        symbol: symbol as any,
         nickname: player.nickname,
       });
 
       console.log("[Playing] turn 추가됨:", {
-        row,
-        col,
+        index: move,
         symbol,
         nickname: player.nickname,
       });

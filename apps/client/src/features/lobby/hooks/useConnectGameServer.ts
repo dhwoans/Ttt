@@ -14,7 +14,7 @@ import { eventManager } from "@/shared/services/EventManager";
 export function useConnectGameServer() {
   const navigate = useNavigate();
   const currentUser = useUserStore((state) => state.currentUser);
-  const setRoomId = useGameStore((state) => state.setRoomId);
+  const setTree = useGameStore((state) => state.setTree);
 
   const connectGameServer = useCallback(
     (gameServerUrl: string, ticket: string) => {
@@ -37,7 +37,14 @@ export function useConnectGameServer() {
       const handleRoomAssigned = (data: any) => {
         console.log("[multi] ROOM_ASSIGNED received:", data);
         const assignedRoomId = data.roomId;
-        setRoomId(assignedRoomId);
+        
+        const tree = useGameStore.getState().tree;
+        setTree({
+          game: {
+            ...tree.game,
+            roomId: assignedRoomId
+          }
+        });
 
         // 게임방으로 이동
         toast("🎟️ 입장권 내는 중...");
@@ -54,7 +61,7 @@ export function useConnectGameServer() {
         ticket,
       });
     },
-    [currentUser, navigate, setRoomId],
+    [currentUser, navigate, setTree],
   );
 
   return { connectGameServer };
