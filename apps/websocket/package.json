@@ -4,6 +4,7 @@
   "type": "module",
   "dependencies": {
     "@ttt/contract": "workspace:*",
+    "@ttt/core": "workspace:*",
     "@types/node": "^24.10.1",
     "@types/ws": "^8.18.1",
     "connect-redis": "^9.0.0",

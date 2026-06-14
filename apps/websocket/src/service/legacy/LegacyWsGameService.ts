@@ -1,9 +1,7 @@
 import type RoomService from "../RoomService.js";
 import type GameSessionManager from "../GameSessionManager.js";
 import type SocketMessage from "../../dtos/SocketMessage.dto.js";
-import type Action from "../../dtos/Action.dto.js";
-import type { SuccessResponse } from "../../dtos/SuccessResponse.dto.js";
-import type { FailureResponse } from "../../dtos/FailureResponse.dto.js";
+import type { Action, SuccessResponse, FailureResponse } from "@ttt/core";
 import {
   eventshandler,
   EVENT_LIST,
@@ -115,3 +113,5 @@ class LegacyWsGameService {
 }
 
 export default LegacyWsGameService;
+
+

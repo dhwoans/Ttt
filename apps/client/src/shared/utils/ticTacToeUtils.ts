@@ -1,4 +1,4 @@
-import { WINNING_COMBINATIONS } from "@/shared/constants/winning-combinations";
+import { checkWinner2D } from "@ttt/core";
 
 type CellSymbol = string | null;
 
@@ -36,21 +36,11 @@ export function whoIsWin(
   board: CellSymbol[][],
   moveHistory: TurnInfo[],
 ): string | null {
-  for (const square of WINNING_COMBINATIONS) {
-    const firstSquare = board[square[0].row][square[0].column];
-    const secondSquare = board[square[1].row][square[1].column];
-    const thirdSquare = board[square[2].row][square[2].column];
-
-    if (
-      firstSquare !== null &&
-      firstSquare === secondSquare &&
-      secondSquare === thirdSquare &&
-      thirdSquare === firstSquare
-    ) {
-      // 승리한 symbol에 해당하는 nickname 반환
-      const winnerTurn = moveHistory.find((t) => t.symbol === firstSquare);
-      return winnerTurn ? winnerTurn.nickname : null;
-    }
+  const winnerSymbol = checkWinner2D(board);
+  if (winnerSymbol) {
+    // 승리한 symbol에 해당하는 nickname 반환
+    const winnerTurn = moveHistory.find((t) => t.symbol === winnerSymbol);
+    return winnerTurn ? winnerTurn.nickname : null;
   }
   return null;
 }

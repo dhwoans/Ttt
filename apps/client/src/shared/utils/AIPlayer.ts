@@ -1,4 +1,4 @@
-import { WINNING_COMBINATIONS } from "../constants/winning-combinations";
+import { WINNING_COMBINATIONS_2D as WINNING_COMBINATIONS } from "@ttt/core";
 
 type CellSymbol = string | null;
 type Board = CellSymbol[][];

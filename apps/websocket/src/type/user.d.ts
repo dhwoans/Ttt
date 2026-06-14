@@ -4,3 +4,5 @@ export interface UserState {
   avator: string;
   lastActive: number; // 타임스탬프 (Date.now())
 }
+
+

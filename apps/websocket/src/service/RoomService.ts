@@ -2,9 +2,9 @@ import { randomUUID } from "node:crypto";
 import type RoomRegistry from "./RoomRegistry.js";
 import type GameSessionManager from "./GameSessionManager.js";
 import type Room from "../models/Room.js";
-import type Ttt from "../game/GameState.js";
-import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
-import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
+import type { Ttt } from "@ttt/core";
+import type { SuccessResponse } from "@ttt/core";
+import type { FailureResponse } from "@ttt/core";
 import type { Nickname, RoomId, UserId } from "../type/socket.js";
 
 class RoomService {
@@ -94,3 +94,5 @@ class RoomService {
 }
 
 export default RoomService;
+
+

@@ -1,7 +1,7 @@
 import Room from "../models/Room.js";
 import { EVENT_LIST } from "../utils/eventhandler.js";
-import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
-import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
+import type { SuccessResponse } from "@ttt/core";
+import type { FailureResponse } from "@ttt/core";
 import type { Nickname, RoomId } from "../type/socket.js";
 import { randomUUID } from "node:crypto";
 
@@ -136,3 +136,5 @@ class RoomRegistry {
 }
 
 export default RoomRegistry;
+
+
