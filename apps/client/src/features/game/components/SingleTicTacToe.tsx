@@ -7,7 +7,7 @@ import { useGameStore } from "@/stores/useGameStore";
 import ExitModal from "@/shared/modals/ExitModal";
 
 export default function SingleTicTacToe() {
-  const { canSelectSquare, handleSquare, countdownOnComplete } =
+  const { canSelectSquare, handleSquare } =
     useSingleTicTacToe();
   const navigate = useNavigate();
   const resetGameBoard = useGameStore((state) => state.resetGameBoard);
@@ -24,7 +24,6 @@ export default function SingleTicTacToe() {
     <TicTacToe
       BoardSlot={BoardComponent}
       ExitModalSlot={ExitModalComponent}
-      countdownOnComplete={countdownOnComplete}
     />
   );
 }

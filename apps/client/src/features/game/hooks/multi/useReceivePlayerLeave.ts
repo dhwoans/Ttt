@@ -1,20 +1,15 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { eventManager } from "@/shared/services/EventManager";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
-import type { PlayerLeftEvent, LeaveSuccessEvent } from "@ttt/contract";
 
 /**
- * 플레이어 퇴장 이벤트 수신 처리
- * - PLAYER_LEFT: 다른 플레이어 퇴장
- * - LEAVE_SUCCESS: 본인 퇴장 성공
+ * 플레이어 퇴장 시 발생하는 사이드 이펙트(네비게이션 등) 처리
+ * 이제는 Store의 lastServerEvent를 구독하여 처리함
  */
 export function useReceivePlayerLeave() {
   const navigate = useNavigate();
   const resetGame = useGameStore((state) => state.resetGame);
-  const removePlayerInfo = useRoomStore((state) => state.removePlayerInfo);
   const clearGameServerConnection = useRoomStore(
     (state) => state.clearGameServerConnection,
   );
@@ -22,15 +17,15 @@ export function useReceivePlayerLeave() {
     (state) => state.setReadyTimeoutSnapshot,
   );
   const status = useGameStore((state) => state.tree.game.status);
+  const lastServerEvent = useRoomStore((state) => state.lastServerEvent);
 
-  // PLAYER_LEFT 이벤트 처리 (상대 플레이어 퇴장)
   useEffect(() => {
-    const handlePlayerLeft = (data: PlayerLeftEvent) => {
-      console.log(`[room] ${data.nickname}님이 나갔습니다`);
-      toast.warning(`${data.nickname}님이 게임을 나갔습니다.`);
+    if (!lastServerEvent) return;
 
-      removePlayerInfo(data.nickname);
+    const { name, data } = lastServerEvent;
 
+    // PLAYER_LEFT: 상대 플레이어 퇴장 시
+    if (name === "PLAYER_LEFT") {
       if (status === "PLAYING") {
         setTimeout(() => {
           clearGameServerConnection();
@@ -39,29 +34,14 @@ export function useReceivePlayerLeave() {
           navigate("/lobby", { replace: true });
         }, 1500);
       }
-    };
+    }
 
-    eventManager.on("PLAYER_LEFT", handlePlayerLeft);
-    return () => {
-      console.log("[room] PLAYER_LEFT 리스너 제거");
-      eventManager.off("PLAYER_LEFT", handlePlayerLeft);
-    };
-  }, [status, removePlayerInfo, navigate, resetGame]);
-
-  // LEAVE_SUCCESS 이벤트 처리 (본인 퇴장 성공)
-  useEffect(() => {
-    const handleLeaveSuccess = (data: LeaveSuccessEvent) => {
-      if (data.success) {
-        clearGameServerConnection();
-        setReadyTimeoutSnapshot(null);
-        resetGame();
-        navigate("/lobby", { replace: true });
-      }
-    };
-
-    eventManager.once("LEAVE_SUCCESS", handleLeaveSuccess);
-    return () => {
-      // cleanup
-    };
-  }, [clearGameServerConnection, navigate, resetGame, setReadyTimeoutSnapshot]);
+    // LEAVE_SUCCESS: 본인 퇴장 성공 시
+    if (name === "LEAVE_SUCCESS" && data.success) {
+      clearGameServerConnection();
+      setReadyTimeoutSnapshot(null);
+      resetGame();
+      navigate("/lobby", { replace: true });
+    }
+  }, [lastServerEvent, status, clearGameServerConnection, navigate, resetGame, setReadyTimeoutSnapshot]);
 }

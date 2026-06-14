@@ -1,6 +1,6 @@
 export interface Action {
-  type: string;
-  move: number;
+  type: "MOVE" | "MANAGER_START" | "RESET" | "TIMEOUT";
+  move?: number;
   nickname: string;
 }
 

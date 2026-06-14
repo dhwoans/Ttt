@@ -174,7 +174,7 @@ class GameFlowService {
 
     const move = data.move;
     const action = {
-      type: "MOVE",
+      type: "MOVE" as const,
       move,
       nickname,
     };
@@ -324,18 +324,6 @@ class GameFlowService {
 
     const currentPlayerId =
       state.players[state.game.currentTurn % state.players.length]!.id;
-    const availableMoves = state.game.board
-      .map((cell: string, index: number) => ({ cell, index }))
-      .filter(({ cell }: { cell: string }) => cell === "")
-      .map(({ index }: { index: number }) => index);
-
-    if (availableMoves.length === 0) {
-      this.clearTurnTimeout(roomId);
-      return;
-    }
-
-    const randomMove =
-      availableMoves[Math.floor(Math.random() * availableMoves.length)]!;
 
     const roomResult = this.roomService.getRoomData(roomId);
     const nickname =
@@ -347,8 +335,7 @@ class GameFlowService {
         : "system";
 
     const actionResult = game.processAction({
-      type: "MOVE",
-      move: randomMove,
+      type: "TIMEOUT",
       nickname,
     });
 
@@ -358,10 +345,12 @@ class GameFlowService {
     }
 
     const updatedState = game.getState();
+    const lastMove = updatedState.game.history[updatedState.game.history.length - 1];
+    const moveIndex = lastMove?.index ?? 0;
 
     this.publisher.emitMoveMade(roomId, {
       userId: currentPlayerId,
-      move: randomMove,
+      move: moveIndex,
       isAuto: true,
     });
 

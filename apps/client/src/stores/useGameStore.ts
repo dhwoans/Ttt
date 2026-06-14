@@ -3,24 +3,27 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { useRoomStore } from "./useRoomStore";
 import type { GameStateTree, MoveNode, PlayerSymbol, GameStatus } from "@ttt/core";
 
-export type TimeoutSnapshot = {
+/**
+ * 서버에서 동기화된 턴 타이머 정보
+ */
+export type ServerTurnTimer = {
   timeoutMs: number;
   startedAt: number;
 };
 
 interface GameStoreState {
   tree: GameStateTree;
-  timeoutBy: string | null;
-  turnStart: number;
-  turnTimeoutSnapshot: TimeoutSnapshot | null;
+  
+  // UI/동기화 전용 상태
+  turnStartTime: number; // 로컬 턴 시작 시각 (싱글 모드 및 UI 갱신용)
+  serverTurnTimer: ServerTurnTimer | null; // 서버에서 받은 타이머 스냅샷 (멀티 모드용)
   
   // Actions
   setTree: (tree: Partial<GameStateTree>) => void;
   setGameStatus: (status: GameStatus) => void;
   setWinner: (winner: number) => void;
-  setTimeoutBy: (nickname: string | null) => void;
   addMove: (move: MoveNode) => void;
-  setTurnTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
+  setServerTurnTimer: (timer: ServerTurnTimer | null) => void;
   resetGame: () => void;
   resetGameBoard: () => void;
 }
@@ -38,9 +41,8 @@ const initialTree: GameStateTree = {
 
 const initialGameStoreState = () => ({
   tree: initialTree,
-  timeoutBy: null as string | null,
-  turnStart: Date.now(),
-  turnTimeoutSnapshot: null as TimeoutSnapshot | null,
+  turnStartTime: Date.now(),
+  serverTurnTimer: null as ServerTurnTimer | null,
 });
 
 export const useGameStore = create<GameStoreState>()(
@@ -53,7 +55,8 @@ export const useGameStore = create<GameStoreState>()(
         set((s) => ({ tree: { ...s.tree, game: { ...s.tree.game, status } } })),
       setWinner: (winner) =>
         set((s) => ({ tree: { ...s.tree, game: { ...s.tree.game, winner } } })),
-      setTimeoutBy: (timeoutBy) => set({ timeoutBy }),
+      setServerTurnTimer: (serverTurnTimer) =>
+        set({ serverTurnTimer }),
       addMove: (move) =>
         set((s) => {
           const newBoard = [...s.tree.game.board];
@@ -68,11 +71,9 @@ export const useGameStore = create<GameStoreState>()(
                 currentTurn: s.tree.game.currentTurn + 1,
               },
             },
-            turnStart: Date.now(),
+            turnStartTime: Date.now(),
           };
         }),
-      setTurnTimeoutSnapshot: (turnTimeoutSnapshot) =>
-        set({ turnTimeoutSnapshot }),
       resetGame: () => {
         useRoomStore.setState({
           playersInfos: [],
@@ -88,9 +89,8 @@ export const useGameStore = create<GameStoreState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         tree: state.tree,
-        timeoutBy: state.timeoutBy,
-        turnStart: state.turnStart,
-        turnTimeoutSnapshot: state.turnTimeoutSnapshot,
+        turnStartTime: state.turnStartTime,
+        serverTurnTimer: state.serverTurnTimer,
       }),
     },
   ),

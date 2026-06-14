@@ -22,7 +22,11 @@ class LegacyWsGameService {
     const { type, message, sender } = rawMessage;
     const [roomId, index] = message;
 
-    const action: Action = { type, move: parseInt(index!), nickname: sender };
+    const action: Action = {
+      type: type as any,
+      move: parseInt(index!),
+      nickname: sender,
+    };
     const applyResult = this.gameSessionManager.applyMove(roomId!, action);
     if (!applyResult.success) {
       const errorPayload: SocketMessage = {

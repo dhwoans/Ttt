@@ -19,7 +19,27 @@ export default class PlayingState extends State {
     game: Context,
     action: Action,
   ): Response<string> {
-    const index = action.move;
+    let index: number;
+
+    if (action.type === "TIMEOUT") {
+      // Find all empty positions
+      const availableMoves = game.tree.game.board
+        .map((cell, i) => (cell === "" ? i : -1))
+        .filter((i) => i !== -1);
+
+      if (availableMoves.length === 0) {
+        return { success: false, message: "No available moves" };
+      }
+
+      // Select a random move
+      index = availableMoves[Math.floor(Math.random() * availableMoves.length)]!;
+      console.log(`[FSM] Timeout handled for ${action.nickname}. Random move: ${index}`);
+    } else {
+      if (action.move === undefined) {
+        return { success: false, message: "Move index is required" };
+      }
+      index = action.move;
+    }
     
     // Validate position hasn't been taken
     if (game.tree.game.board[index] !== "") {

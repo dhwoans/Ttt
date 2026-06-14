@@ -3,8 +3,9 @@ import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useModalStore } from "@/stores/useModalStore";
-import { useGameTimeout } from "./useGameTimeout";
 import { useSingleNextTurn } from "./useSingleNextTurn";
+
+import { gameTimerService } from "@/shared/services/GameTimerService";
 
 export function useSingleTicTacToe() {
   const setOpenModal = useModalStore((state) => state.setOpenModal);
@@ -12,8 +13,7 @@ export function useSingleTicTacToe() {
   const setWinner = useGameStore((state) => state.setWinner);
 
   const tree = useGameStore((state) => state.tree);
-  const turnStart = useGameStore((state) => state.turnStart);
-  const timeoutBy = useGameStore((state) => state.timeoutBy);
+  const turnStartTime = useGameStore((state) => state.turnStartTime);
   const playersInfos = useRoomStore((state) => state.playersInfos);
 
   const { board, status, winner: winnerIndex, history: moveHistory } = tree.game;
@@ -24,7 +24,16 @@ export function useSingleTicTacToe() {
   const currentPlayer = playersInfos[tree.game.currentTurn % 2] ?? playersInfos[0];
   const isPlayerTurn = currentPlayer?.nickname === playersInfos[0]?.nickname;
 
-  const { handleTimeout } = useGameTimeout(currentPlayer?.nickname ?? "");
+  // 턴 시작 시 타임아웃 타이머 가동 (React 외부 서비스)
+  useEffect(() => {
+    if (!isGameOver && currentPlayer) {
+      gameTimerService.start(10000, () => {
+        gameTimerService.handleSinglePlayerTimeout(currentPlayer.nickname);
+      });
+    }
+
+    return () => gameTimerService.stop();
+  }, [tree.game.currentTurn, isGameOver, currentPlayer]);
 
   useEffect(() => {
     if (isGameOver) {
@@ -49,7 +58,6 @@ export function useSingleTicTacToe() {
     isDraw,
     winner,
     countdownDurationMs: 10000,
-    countdownStartTime: turnStart,
-    countdownOnComplete: handleTimeout,
+    countdownStartTime: turnStartTime,
   };
 }
