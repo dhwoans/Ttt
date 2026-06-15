@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ticTacToeAI } from "@/shared/utils/AIPlayer";
+import { ticTacToeAI } from "@ttt/core";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 
