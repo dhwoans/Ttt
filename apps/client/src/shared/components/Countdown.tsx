@@ -2,24 +2,21 @@ import { useCountdown } from "@/shared/hooks/useCountdown";
 
 interface CountdownProps {
   durationMs: number;
+  initialStartTime: number; // 타이머 시작 시각 (ms, Date.now())
   onComplete?: () => void;
-  autoStart?: boolean;
   className?: string;
-  initialStartTime?: number; // 타이머 시작 시각 (ms, Date.now())
 }
 
 export const Countdown = ({
   durationMs,
-  onComplete,
-  autoStart = true,
-  className,
   initialStartTime,
+  onComplete,
+  className,
 }: CountdownProps) => {
   const remaining = useCountdown(
     durationMs,
-    onComplete,
-    autoStart,
     initialStartTime,
+    onComplete,
   );
 
   const displayText = Math.ceil(remaining / 1000);

@@ -4,56 +4,57 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Board from "../Board";
 import { useGameStore } from "@/stores/useGameStore";
+import type { PlayerSymbol } from "@ttt/core";
 
-const emptyMoveHistory: never[] = [];
-
-// filledBoard: X at (0,0), O at (0,1), X at (1,1), O at (2,2)
-const filledMoveHistory = [
-  { square: { row: 0, col: 0 }, symbol: "X", nickname: "p1" },
-  { square: { row: 0, col: 1 }, symbol: "O", nickname: "p2" },
-  { square: { row: 1, col: 1 }, symbol: "X", nickname: "p1" },
-  { square: { row: 2, col: 2 }, symbol: "O", nickname: "p2" },
-];
+const emptyBoard = Array(9).fill("") as PlayerSymbol[];
+const filledBoard = ["X", "O", "", "", "X", "", "", "", "O"] as PlayerSymbol[];
 
 describe("Board", () => {
   it("보드에 9개 버튼 렌더링", () => {
-    useGameStore.setState({ moveHistory: emptyMoveHistory });
+    useGameStore.setState((s) => ({
+      tree: { ...s.tree, game: { ...s.tree.game, board: emptyBoard } },
+    }));
     render(
-      <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
+      <Board selectSquare={vi.fn() as (index: number) => void} />,
     );
     expect(screen.getAllByRole("button")).toHaveLength(9);
   });
 
   it("채워진 셀의 값이 화면에 표시", () => {
-    useGameStore.setState({ moveHistory: filledMoveHistory });
+    useGameStore.setState((s) => ({
+      tree: { ...s.tree, game: { ...s.tree.game, board: filledBoard } },
+    }));
     render(
-      <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
+      <Board selectSquare={vi.fn() as (index: number) => void} />,
     );
     expect(screen.getAllByText("X")).toHaveLength(2);
     expect(screen.getAllByText("O")).toHaveLength(2);
   });
 
   it("채워진 셀 버튼은 비활성화", () => {
-    useGameStore.setState({ moveHistory: filledMoveHistory });
+    useGameStore.setState((s) => ({
+      tree: { ...s.tree, game: { ...s.tree.game, board: filledBoard } },
+    }));
     render(
-      <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
+      <Board selectSquare={vi.fn() as (index: number) => void} />,
     );
     const buttons = screen.getAllByRole("button");
     const disabledButtons = buttons.filter((btn) =>
       btn.hasAttribute("disabled"),
     );
-    expect(disabledButtons).toHaveLength(4);
+    expect(disabledButtons).toHaveLength(3);
   });
 
-  it("빈 셀 클릭 시 selectSquare가 올바른 좌표와 함께 호출된다", async () => {
-    useGameStore.setState({ moveHistory: emptyMoveHistory });
+  it("빈 셀 클릭 시 selectSquare가 올바른 인덱스와 함께 호출된다", async () => {
+    useGameStore.setState((s) => ({
+      tree: { ...s.tree, game: { ...s.tree.game, board: emptyBoard } },
+    }));
     const selectSquare = vi.fn() as unknown as (
-      row: number,
-      col: number,
+      index: number,
     ) => void;
     render(<Board selectSquare={selectSquare} />);
     const buttons = screen.getAllByRole("button");
     await userEvent.click(buttons[4]);
-    expect(selectSquare).toHaveBeenCalledWith(1, 1);
+    expect(selectSquare).toHaveBeenCalledWith(4);
   });
 });

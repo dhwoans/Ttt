@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import LobbyMainLayout from "@/layouts/LobbyMainLayout";
 import Marquee from "react-fast-marquee";
@@ -13,6 +13,8 @@ import { ImageManager } from "@/shared/services/ImageManger";
 import { useUserStore } from "@/stores/useUserStore";
 import { useGameStore } from "@/stores/useGameStore";
 import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
+import { useRoomNavigation } from "@/shared/hooks/useRoomNavigation";
+
 function LobbyExitModel() {
   const navigate = useNavigate();
   const clearCurrentUser = useUserStore((state) => state.clearCurrentUser);
@@ -24,8 +26,10 @@ function LobbyExitModel() {
   }, [clearCurrentUser, navigate, resetGame]);
   return <ExitModal handleExit={handleLeaveLobby} />;
 }
+
 export default function LobbyPage() {
   const nickname = useUserStore((state) => state.currentUser?.nickname);
+  useRoomNavigation();
 
   // 뒤로가기 감지, 모달창 띄움
   const openModal = useBackExitModal();

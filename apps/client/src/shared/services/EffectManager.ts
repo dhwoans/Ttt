@@ -1,5 +1,3 @@
-import { eventManager } from "@/shared/services/EventManager";
-
 type CancelFunction = () => void;
 
 class EffectManager {
@@ -7,31 +5,16 @@ class EffectManager {
 
   constructor() {
     this.manager = new Map();
-    this.setupEventListeners();
   }
 
-  private setupEventListeners(): void {
-    eventManager.on(
-      "effectOnece",
-      (data: { $element: HTMLElement; effectName: string }) =>
-        this.effectOnce(data.$element, data.effectName),
-    );
-    eventManager.on(
-      "effectRepeat",
-      (data: { $element: HTMLElement; effectName: string }) => {
-        console.log("실행");
-        this.effectRepeat(data.$element, data.effectName);
-      },
-    );
-  }
-
-  effectOnce($element: HTMLElement, effectName: string): void {
-    //남아있는 다른 효과지움
+  /**
+   * 일회성 애니메이션 효과 적용
+   */
+  public effectOnce($element: HTMLElement, effectName: string): void {
     this.initEffect($element);
     const effect = `animate__${effectName}`;
     $element.classList.add("animate__animated", effect);
 
-    //다른 효과 빨리 누르면 안지워짐
     $element.addEventListener(
       "animationend",
       (event: AnimationEvent) => {
@@ -42,10 +25,23 @@ class EffectManager {
     );
   }
 
-  effectRepeat($element: HTMLElement, effectName: string): void {
-    //남아있는 다른 효과지움
+  /**
+   * 반복 애니메이션 효과 적용
+   */
+  public effectRepeat($element: HTMLElement, effectName: string): void {
     this.initEffect($element);
     this.manager.set($element, this.addRepeatEffect($element, effectName));
+  }
+
+  /**
+   * 진행 중인 애니메이션 중지
+   */
+  public stopEffect($element: HTMLElement): void {
+    const cancel = this.manager.get($element);
+    if (cancel) {
+      cancel();
+      this.manager.delete($element);
+    }
   }
 
   private addRepeatEffect(
@@ -60,9 +56,7 @@ class EffectManager {
       "animate__infinite",
     );
 
-    //취소 함수 반환
     return () => {
-      console.log(this.constructor.name, ": 취소 실행");
       $element.classList.remove(
         "animate__animated",
         effectClass,

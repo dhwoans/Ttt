@@ -1,8 +1,5 @@
-import Ttt from "../game/GameState.js";
-import PlayingState from "../gameState/PlayingState.js";
-import type Action from "../dtos/Action.dto.js";
-import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
-import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
+import { Ttt, PlayingState } from "@ttt/core";
+import type { Action, SuccessResponse, FailureResponse } from "@ttt/core";
 import type { RoomId, UserId } from "../type/socket.js";
 
 class GameSessionManager {
@@ -24,27 +21,17 @@ class GameSessionManager {
     roomId: RoomId,
     playerIds: UserId[],
   ): SuccessResponse | FailureResponse {
-    this.games.set(roomId, new Ttt());
-    const game = this.games.get(roomId);
+    const game = new Ttt();
+    this.games.set(roomId, game);
 
-    if (!game) {
-      return {
-        success: false,
-        message: "Failed to create game session",
-      };
-    }
-
-    for (const playerId of playerIds) {
-      game.setPlayersId(playerId);
-    }
-
-    game.changeState(new PlayingState());
+    game.setPlayers(playerIds);
+    game.processAction({ type: "START", nickname: "system" });
     const state = game.getState();
 
-    if (state.status !== "PLAYING") {
+    if (state.game.status !== "PLAYING") {
       return {
         success: false,
-        message: `Failed to start game: invalid state ${state.status}`,
+        message: `Failed to start game: invalid state ${state.game.status}`,
       };
     }
 
@@ -77,7 +64,7 @@ class GameSessionManager {
     }
 
     const state = game.getState();
-    if (state.status !== "PLAYING") {
+    if (state.game.status !== "PLAYING") {
       return {
         success: false,
         message: "Game is not in PLAYING state",
@@ -91,3 +78,5 @@ class GameSessionManager {
 }
 
 export default GameSessionManager;
+
+

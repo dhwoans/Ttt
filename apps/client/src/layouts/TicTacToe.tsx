@@ -16,14 +16,14 @@ export default function TicTacToe({
   countdownOnComplete,
 }: TicTacToeProps) {
   const openModal = useBackExitModal();
-  const status = useGameStore.getState().gameState.status;
-  const isGameOver = status === "FINISHED";
-  const turnStart = useGameStore((state) => state.turnStart);
-  const turnTimeoutSnapshot = useGameStore(
-    (state) => state.turnTimeoutSnapshot,
+  const tree = useGameStore((state) => state.tree);
+  const isGameOver = tree.game.status === "GAME_OVER";
+  const turnStartTime = useGameStore((state) => state.turnStartTime);
+  const serverTurnTimer = useGameStore(
+    (state) => state.serverTurnTimer,
   );
-  const countdownDurationMs = turnTimeoutSnapshot?.timeoutMs ?? 10000;
-  const countdownStartTime = turnTimeoutSnapshot?.startedAt ?? turnStart;
+  const countdownDurationMs = serverTurnTimer?.timeoutMs ?? 10000;
+  const countdownStartTime = serverTurnTimer?.startedAt ?? turnStartTime;
 
   return (
     <main className="relative flex flex-col min-h-screen p-4 md:p-8 items-center justify-center">

@@ -1,38 +1,25 @@
-import { useCallback, useEffect } from "react";
-import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
+import { useEffect } from "react";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useModalStore } from "@/stores/useModalStore";
 import { useMultiNextTurn } from "./useMultiNextTurn";
-import { useReceiveMoveMade } from "./useReceiveMoveMade";
-import { useReceiveGameOver } from "./useReceiveGameOver";
-import { useReceiveNextTurn } from "./useReceiveNextTurn";
-import { useReceiveTurnTimeoutStarted } from "./useReceiveTurnTimeoutStarted";
 
 export function useMultiTicTacToe() {
-  const gameStatus = useGameStore((state) => state.gameState.status);
-  const winner = useGameStore((state) => state.gameState.winner);
-  const result = useGameStore((state) => state.gameState.result);
+  const tree = useGameStore((state) => state.tree);
+  const serverTurnTimer = useGameStore((state) => state.serverTurnTimer);
   const playersInfos = useRoomStore((state) => state.playersInfos);
-  const currentTurnUserId = useGameStore(
-    (state) => state.gameState.turn.currentUserId,
-  );
   const isWaitingForServer = useRoomStore((state) => state.isWaitingForServer);
   const setOpenModal = useModalStore((state) => state.setOpenModal);
 
-  // const handleExitIntent = useCallback(() => {
-  //   setOpenModal("exit");
-  // }, [setOpenModal]);
-  // useBackExitModal(handleExitIntent, true);
+  const gameStatus = tree.game.status;
+  const winnerIndex = tree.game.winner;
+  const isGameOver = gameStatus === "GAME_OVER";
+  const isDraw = winnerIndex === -2;
+  
+  const currentTurnUserId = tree.players.length > 0 
+    ? tree.players[tree.game.currentTurn % tree.players.length]?.id 
+    : "";
 
-  useReceiveMoveMade();
-  useReceiveGameOver();
-  useReceiveNextTurn();
-  const { turnTimeoutMs, turnTimeoutStartedAt } =
-    useReceiveTurnTimeoutStarted();
-
-  const isGameOver = gameStatus === "FINISHED";
-  const isDraw = result === "draw";
   const currentPlayer = currentTurnUserId
     ? (playersInfos.find((p) => p.userId === currentTurnUserId) ??
       playersInfos[0])
@@ -57,8 +44,8 @@ export function useMultiTicTacToe() {
     isGameOver,
     isDraw,
     currentTurnNickname: !isGameOver ? (currentPlayer?.nickname ?? "") : "",
-    winner,
-    countdownDurationMs: turnTimeoutMs ?? 10000,
-    countdownStartTime: turnTimeoutStartedAt ?? Date.now(),
+    winner: winnerIndex >= 0 ? playersInfos[winnerIndex]?.nickname : null,
+    countdownDurationMs: serverTurnTimer?.timeoutMs ?? 10000,
+    countdownStartTime: serverTurnTimer?.startedAt ?? Date.now(),
   };
 }

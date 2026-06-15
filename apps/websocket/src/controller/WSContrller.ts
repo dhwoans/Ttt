@@ -166,8 +166,8 @@ class WSController {
       if (resultGameState.success && resultGameState.message) {
         const state = resultGameState.message.getState();
         const startMessage: SocketMessage = {
-          type: state.status,
-          message: [state.players[state.currentTurn]!.toString()],
+          type: state.game.status,
+          message: [state.players[state.game.currentTurn]!.id],
           sender: "system",
         };
         const checkRoomResult = this.roomService.checkRoom(roomId!);
@@ -192,3 +192,5 @@ class WSController {
 }
 
 export default WSController;
+
+

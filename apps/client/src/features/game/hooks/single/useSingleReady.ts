@@ -1,15 +1,14 @@
 import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGameStore } from "@/stores/useGameStore";
-import { useSingleInitialBotSetup } from "./useSingleInitialBotSetup";
+import { useRoomStore } from "@/stores/useRoomStore";
 
 export function useSingleReady() {
   const navigate = useNavigate();
   const bridgeTimerRef = useRef<number | null>(null);
   const resetGame = useGameStore((state) => state.resetGame);
-  const setStatus = useGameStore((state) => state.setStatus);
-  //AI봇 초기화 세팅
-  useSingleInitialBotSetup();
+  const dispatch = useGameStore((state) => state.dispatch);
+  const setTree = useGameStore((state) => state.setTree);
 
   const handleExit = () => {
     if (bridgeTimerRef.current) clearTimeout(bridgeTimerRef.current);
@@ -19,7 +18,12 @@ export function useSingleReady() {
 
   const handleReady = (isReady: boolean) => {
     if (!isReady) return;
-    setStatus("PLAYING");
+    
+    // 게임 시작 (스토어의 dispatch가 내부적으로 플레이어 목록을 동기화하고 첫 턴을 랜덤으로 결정합니다)
+    dispatch({ 
+      type: "START", 
+      nickname: "system" 
+    });
   };
 
   useEffect(() => {

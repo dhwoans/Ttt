@@ -1,9 +1,7 @@
 import type RoomService from "../RoomService.js";
 import type GameSessionManager from "../GameSessionManager.js";
 import type SocketMessage from "../../dtos/SocketMessage.dto.js";
-import type Action from "../../dtos/Action.dto.js";
-import type { SuccessResponse } from "../../dtos/SuccessResponse.dto.js";
-import type { FailureResponse } from "../../dtos/FailureResponse.dto.js";
+import type { Action, SuccessResponse, FailureResponse } from "@ttt/core";
 import {
   eventshandler,
   EVENT_LIST,
@@ -24,7 +22,11 @@ class LegacyWsGameService {
     const { type, message, sender } = rawMessage;
     const [roomId, index] = message;
 
-    const action: Action = { type, move: parseInt(index!), nickname: sender };
+    const action: Action = {
+      type: type as any,
+      move: parseInt(index!),
+      nickname: sender,
+    };
     const applyResult = this.gameSessionManager.applyMove(roomId!, action);
     if (!applyResult.success) {
       const errorPayload: SocketMessage = {
@@ -72,30 +74,24 @@ class LegacyWsGameService {
 
   private broadcastNextGameState(
     roomId: RoomId,
-    state: {
-      board: Array<string>;
-      winner: number;
-      status: string;
-      players: Array<string>;
-      currentTurn: number;
-    },
+    state: any // Using any briefly to avoid complex type mapping here, but correctly accessing tree properties
   ): void {
     let nextMessage: SocketMessage;
-    if (state.status === "GAME_OVER") {
+    if (state.game.status === "GAME_OVER") {
       const winner: string =
-        state.winner === -2 ? "DRAW" : state.players[state.winner]!;
-      nextMessage = { type: state.status, message: [winner], sender: "system" };
+        state.game.winner === -2 ? "DRAW" : state.players[state.game.winner].id;
+      nextMessage = { type: state.game.status, message: [winner], sender: "system" };
       this.gameSessionManager.deleteGame(roomId);
       this.resetReady(roomId);
     } else {
       nextMessage = {
-        type: state.status,
-        message: [state.players[state.currentTurn % 2]!.toString()],
+        type: state.game.status,
+        message: [state.players[state.game.currentTurn % 2].id],
         sender: "system",
       };
     }
 
-    eventshandler.emit(state.status, {
+    eventshandler.emit(state.game.status, {
       mode: EMIT_MODES.BROADCAST,
       roomId,
       payload: nextMessage,
@@ -115,3 +111,5 @@ class LegacyWsGameService {
 }
 
 export default LegacyWsGameService;
+
+

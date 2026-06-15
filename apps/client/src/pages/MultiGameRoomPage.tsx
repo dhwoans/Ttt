@@ -1,4 +1,4 @@
-import { useRoomState } from "../features/game/hooks/useRoomState";
+import { useInitializeMe } from "../features/game/hooks/useInitializeMe";
 import { useMultiPlay } from "../features/game/hooks/multi/useMultiPlay";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useGameSocketConnection } from "../features/game/hooks/multi/useGameSocketConnection";
@@ -13,11 +13,14 @@ import Ready from "../layouts/Ready";
 import HeaderLayout from "@/layouts/HeaderLayout";
 import { ImageManager } from "@/shared/services/ImageManger";
 import LeftSideLayout from "@/layouts/LeftSideLayout";
-import MultiTicTacToe from "@/features/game/components/MultiTicTacToe";
 import ExitModal from "@/shared/modals/ExitModal";
 import { useSendPlayerLeave } from "@/features/game/hooks/multi/useSendPlayerLeave";
+import TicTacToe from "@/layouts/TicTacToe";
+import { useMultiTicTacToe } from "@/features/game/hooks/multi/useMultiTicTacToe";
+import Board from "@/features/game/components/Board";
 
 function MultiReady() {
+  useInitializeMe();
   const navigate = useNavigate();
   const playersInfos = useRoomStore((state) => state.playersInfos);
   const { handleReady } = useMultiPlay();
@@ -41,6 +44,34 @@ function MultiReady() {
   );
 }
 
+function MultiTicTacToe() {
+  const { canSelectSquare, handleSquare } = useMultiTicTacToe();
+  const navigate = useNavigate();
+  const { sendLeave } = useSendPlayerLeave();
+  const resetGame = useGameStore((state) => state.resetGame);
+  const clearGameServerConnection = useRoomStore(
+    (state) => state.clearGameServerConnection,
+  );
+  const setReadyTimeoutSnapshot = useRoomStore(
+    (state) => state.setReadyTimeoutSnapshot,
+  );
+  const handleExit = () => {
+    sendLeave();
+    clearGameServerConnection();
+    setReadyTimeoutSnapshot(null);
+    resetGame();
+    navigate("/lobby", { replace: true });
+  };
+
+  const BoardComponent = (
+    <Board selectSquare={canSelectSquare ? handleSquare : false} />
+  );
+  const ExitModalComponent = <ExitModal handleExit={handleExit} />;
+  return (
+    <TicTacToe BoardSlot={BoardComponent} ExitModalSlot={ExitModalComponent} />
+  );
+}
+
 export default function MultiGameRoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
 
@@ -49,10 +80,9 @@ export default function MultiGameRoomPage() {
   }
 
   useGameSocketConnection(roomId);
-  useRoomState();
 
   const nickname = useUserStore((state) => state.currentUser?.nickname ?? "");
-  const status = useGameStore((state) => state.gameState.status);
+  const status = useGameStore((state) => state.tree.game.status);
 
   return (
     <>
@@ -88,7 +118,7 @@ export default function MultiGameRoomPage() {
       </LeftSideLayout>
       {status === "IDLE" && <MultiReady />}
       {status === "PLAYING" && <MultiTicTacToe />}
-      {status === "FINISHED" && <GameOver />}
+      {status === "GAME_OVER" && <GameOver />}
     </>
   );
 }

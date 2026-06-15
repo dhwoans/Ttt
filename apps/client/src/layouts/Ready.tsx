@@ -36,7 +36,6 @@ export default function Ready({
       <VersusBanner playersInfos={playersInfos} />
 
       <TimeoutProgressBar
-        eventName="READY_TIMEOUT_STARTED"
         label="준비 제한 시간"
       />
 

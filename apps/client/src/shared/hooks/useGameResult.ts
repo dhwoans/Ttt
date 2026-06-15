@@ -19,29 +19,36 @@ const triggerConfetti = (result: string) => {
   });
 };
 
+import { useRoomStore } from "@/stores/useRoomStore";
+
 export function useGameResult() {
   const nickname = useUserStore((state) => state.currentUser?.nickname);
-  const winner = useGameStore((state) => state.gameState.winner);
-  const result = useGameStore((state) => state.gameState.result);
+  const tree = useGameStore((state) => state.tree);
+  const playersInfos = useRoomStore((state) => state.playersInfos);
+
+  const { status, winner: winnerIndex } = tree.game;
+  const isGameOver = status === "GAME_OVER";
+
+  const winnerNickname = winnerIndex >= 0 ? playersInfos[winnerIndex]?.nickname : null;
 
   const resolved =
-    !result || result === "draw"
+    !isGameOver || winnerIndex === -2
       ? "무승부"
-      : winner === nickname
+      : winnerNickname === nickname
         ? "승리"
         : "패배";
 
   const imgSrc = resolved === "승리" ? WIN : resolved === "패배" ? LOOSE : DRAW;
 
   useEffect(() => {
-    if (!result) return;
+    if (!isGameOver) return;
 
     if (resolved === "승리") {
       audioManager.play("win");
     }
 
     triggerConfetti(resolved);
-  }, [result, resolved]);
+  }, [isGameOver, resolved]);
 
   return { result: resolved, imgSrc };
 }

@@ -12,7 +12,7 @@ export function useGameSocketConnection(roomId: string) {
   const currentUser = useUserStore((state) => state.currentUser);
   const gameServerUrl = useRoomStore((state) => state.gameServerUrl);
   const gameTicket = useRoomStore((state) => state.gameTicket);
-  const setRoomId = useGameStore((state) => state.setRoomId);
+  const setTree = useGameStore((state) => state.setTree);
 
   useEffect(() => {
     const userId = currentUser?.userId;
@@ -20,7 +20,12 @@ export function useGameSocketConnection(roomId: string) {
     const socket = gameSocketManager.getSocket();
 
     // URL 파라미터를 room 진입의 단일 소스로 사용한다.
-    setRoomId(roomId);
+    setTree({
+      game: {
+        ...useGameStore.getState().tree.game,
+        roomId,
+      },
+    });
 
     if (socket?.connected) {
       return () => {
@@ -39,7 +44,7 @@ export function useGameSocketConnection(roomId: string) {
     return () => {
       gameSocketManager.disconnect();
     };
-  }, [gameServerUrl, gameTicket, currentUser, roomId, setRoomId]);
+  }, [gameServerUrl, gameTicket, currentUser, roomId, setTree]);
 
   const disconnect = () => {
     gameSocketManager.disconnect();

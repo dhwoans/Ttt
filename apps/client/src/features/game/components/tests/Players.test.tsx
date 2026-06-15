@@ -14,11 +14,12 @@ describe("Players", () => {
 
     useRoomStore.setState({ playersInfos: mockPlayers });
     useGameStore.setState((s) => ({
-      gameState: {
-        ...s.gameState,
-        turn: {
-          ...s.gameState.turn,
-          currentUserId: "u1",
+      tree: {
+        ...s.tree,
+        players: [{ id: "u1" }, { id: "u2" }],
+        game: {
+          ...s.tree.game,
+          currentTurn: 0,
         },
       },
     }));

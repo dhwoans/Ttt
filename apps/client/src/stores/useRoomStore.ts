@@ -21,6 +21,8 @@ interface RoomState {
   gameTicket: string | null;
   readyTimeoutSnapshot: TimeoutSnapshot | null;
   playersInfos: GamePlayerInfo[];
+  lastServerEvent: { name: string; data: any; timestamp: number } | null;
+  
   setIsWaitingForServer: (waiting: boolean) => void;
   setPlayersInfos: (infos: GamePlayerInfo[]) => void;
   addPlayerInfo: (info: GamePlayerInfo) => void;
@@ -33,6 +35,7 @@ interface RoomState {
   }) => void;
   clearGameServerConnection: () => void;
   setReadyTimeoutSnapshot: (snapshot: TimeoutSnapshot | null) => void;
+  setLastServerEvent: (name: string, data: any) => void;
 }
 
 export const useRoomStore = create<RoomState>()(
@@ -44,6 +47,8 @@ export const useRoomStore = create<RoomState>()(
       gameTicket: null,
       readyTimeoutSnapshot: null,
       playersInfos: [],
+      lastServerEvent: null,
+      
       setIsWaitingForServer: (isWaitingForServer) =>
         set({ isWaitingForServer }),
       setPlayersInfos: (playersInfos) => set({ playersInfos }),
@@ -70,10 +75,12 @@ export const useRoomStore = create<RoomState>()(
         set({ gameServerUrl: null, gameTicket: null }),
       setReadyTimeoutSnapshot: (readyTimeoutSnapshot) =>
         set({ readyTimeoutSnapshot }),
+      setLastServerEvent: (name, data) => 
+        set({ lastServerEvent: { name, data, timestamp: Date.now() } }),
     }),
     {
       name: "ttt-room-store",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         gameServerUrl: state.gameServerUrl,
         gameTicket: state.gameTicket,

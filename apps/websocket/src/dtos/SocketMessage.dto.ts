@@ -3,3 +3,5 @@ export default interface SocketMessage {
   message: string[];
   sender: string;
 }
+
+

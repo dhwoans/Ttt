@@ -1,7 +1,7 @@
 import type UserModel from "../models/UserModel.js";
 import crypto from "crypto";
-import type { SuccessResponse } from "../dtos/SuccessResponse.dto.js";
-import type { FailureResponse } from "../dtos/FailureResponse.dto.js";
+import type { SuccessResponse } from "@ttt/core";
+import type { FailureResponse } from "@ttt/core";
 
 class UserService {
   userModel: UserModel;
@@ -37,3 +37,5 @@ class UserService {
 }
 
 export default UserService;
+
+

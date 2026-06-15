@@ -1,18 +1,12 @@
 import { useSendPlayerReady } from "./useSendPlayerReady";
 import { useMultiplayerPlayers } from "./useMultiplayerPlayers";
-import { useReceivePlayerReady } from "./useReceivePlayerReady";
 import { useReceivePlayerLeave } from "./useReceivePlayerLeave";
 import { useReadyTimeoutHandler } from "./useReadyTimeoutHandler";
-import { useGamePhaseEvents } from "./useGamePhaseEvents";
-
 
 export function useMultiPlay() {
   const { sendReady } = useSendPlayerReady();
-  
 
-  useGamePhaseEvents();
   useMultiplayerPlayers();
-  useReceivePlayerReady();
   useReceivePlayerLeave();
   useReadyTimeoutHandler();
 
