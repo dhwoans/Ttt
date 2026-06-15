@@ -1,10 +1,11 @@
 import { WINNING_COMBINATIONS_1D, WINNING_COMBINATIONS_2D } from "../constants/index.js";
+import type { PlayerSymbol, MoveNode } from "../types/index.js";
 
 /**
  * Check for a winner in a 1D board (Array of 9 strings)
  * Returns the symbol ('X' or 'O') or null if no winner
  */
-export function checkWinner1D(board: string[]): string | null {
+export function checkWinner1D(board: PlayerSymbol[]): PlayerSymbol | null {
   for (const [a, b, c] of WINNING_COMBINATIONS_1D) {
     if (board[a] !== "" && board[a] === board[b] && board[a] === board[c]) {
       return board[a];
@@ -33,7 +34,7 @@ export function checkWinner2D(board: (string | null)[][]): string | null {
 /**
  * Check if the 1D board is full (draw)
  */
-export function isDraw1D(board: string[]): boolean {
+export function isDraw1D(board: PlayerSymbol[]): boolean {
   return board.every((cell) => cell !== "");
 }
 
@@ -42,6 +43,47 @@ export function isDraw1D(board: string[]): boolean {
  */
 export function isDraw2D(board: (string | null)[][]): boolean {
   return board.every((row) => row.every((cell) => cell !== null));
+}
+
+/**
+ * Validates if a move can be made at the given index
+ */
+export function isValidMove(board: PlayerSymbol[], index: number): boolean {
+  return index >= 0 && index < 9 && board[index] === "";
+}
+
+/**
+ * Evaluates the game state and returns the outcome
+ * @returns outcome -2: draw, -1: none (playing), 0,1: winner index
+ */
+export function evaluateGameState(board: PlayerSymbol[]): number {
+  const winnerSymbol = checkWinner1D(board);
+  if (winnerSymbol) {
+    return winnerSymbol === "X" ? 0 : 1;
+  }
+  if (isDraw1D(board)) {
+    return -2;
+  }
+  return -1;
+}
+
+/**
+ * Calculates the next turn player index
+ */
+export function calculateNextTurn(currentTurn: number, playersCount: number): number {
+  if (playersCount === 0) return 0;
+  return (currentTurn) % playersCount;
+}
+
+/**
+ * Reconstructs a 1D board from move history
+ */
+export function reconstructBoard(history: MoveNode[]): PlayerSymbol[] {
+  const board: PlayerSymbol[] = Array(9).fill("");
+  history.forEach((move) => {
+    board[move.index] = move.symbol;
+  });
+  return board;
 }
 
 /**

@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from "react";
-import { useBackExitModal } from "@/shared/hooks/useBackExitModal";
 import { useGameStore } from "@/stores/useGameStore";
 import { useRoomStore } from "@/stores/useRoomStore";
 import { useModalStore } from "@/stores/useModalStore";
@@ -9,8 +8,6 @@ import { gameTimerService } from "@/shared/services/GameTimerService";
 
 export function useSingleTicTacToe() {
   const setOpenModal = useModalStore((state) => state.setOpenModal);
-  const setGameStatus = useGameStore((state) => state.setGameStatus);
-  const setWinner = useGameStore((state) => state.setWinner);
 
   const tree = useGameStore((state) => state.tree);
   const turnStartTime = useGameStore((state) => state.turnStartTime);

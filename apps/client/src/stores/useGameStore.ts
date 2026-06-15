@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useRoomStore } from "./useRoomStore";
-import type { GameStateTree, MoveNode, PlayerSymbol, GameStatus } from "@ttt/core";
+import { Ttt } from "@ttt/core";
+import type { GameStateTree, Action } from "@ttt/core";
 
 /**
  * 서버에서 동기화된 턴 타이머 정보
@@ -20,10 +21,8 @@ interface GameStoreState {
   
   // Actions
   setTree: (tree: Partial<GameStateTree>) => void;
-  setGameStatus: (status: GameStatus) => void;
-  setWinner: (winner: number) => void;
-  addMove: (move: MoveNode) => void;
   setServerTurnTimer: (timer: ServerTurnTimer | null) => void;
+  dispatch: (action: Action) => void; // 핵심: 코어 엔진으로 액션 전달
   resetGame: () => void;
   resetGameBoard: () => void;
 }
@@ -51,28 +50,22 @@ export const useGameStore = create<GameStoreState>()(
       ...initialGameStoreState(),
       setTree: (tree) =>
         set((s) => ({ tree: { ...s.tree, ...tree } })),
-      setGameStatus: (status) =>
-        set((s) => ({ tree: { ...s.tree, game: { ...s.tree.game, status } } })),
-      setWinner: (winner) =>
-        set((s) => ({ tree: { ...s.tree, game: { ...s.tree.game, winner } } })),
       setServerTurnTimer: (serverTurnTimer) =>
         set({ serverTurnTimer }),
-      addMove: (move) =>
-        set((s) => {
-          const newBoard = [...s.tree.game.board];
-          newBoard[move.index] = move.symbol;
-          return {
-            tree: {
-              ...s.tree,
-              game: {
-                ...s.tree.game,
-                board: newBoard,
-                history: [...s.tree.game.history, move],
-                currentTurn: s.tree.game.currentTurn + 1,
-              },
-            },
-            turnStartTime: Date.now(),
-          };
+      dispatch: (action) => 
+        set((state) => {
+          const game = new Ttt();
+          // 깊은 복사로 불변성 보장 및 현재 상태 주입
+          game.tree = JSON.parse(JSON.stringify(state.tree));
+          
+          const result = game.processAction(action);
+          if (result.success) {
+            return {
+              tree: game.getState(),
+              turnStartTime: Date.now(),
+            };
+          }
+          return state; // 액션 실패 시 상태 변경 없음
         }),
       resetGame: () => {
         useRoomStore.setState({

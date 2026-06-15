@@ -16,8 +16,8 @@ export default class IdleState extends State {
     game: Context,
     action: Action,
   ): Response<string> {
-    // Only manager can initiate game start from idle state
-    if (action.type === "MANAGER_START") {
+    // Both user start and system start are handled by "START" action
+    if (action.type === "START") {
       game.changeState(new PlayingState());
       return { success: true, message: "Transition to Playing" };
     }

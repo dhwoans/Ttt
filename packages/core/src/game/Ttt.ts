@@ -5,7 +5,6 @@ import type { UserId, GameStateTree, Action, Response } from "../types/index.js"
 
 /**
  * Tic-Tac-Toe game context class (FSM Context pattern)
- * Manages game state, board, and players. Delegates all state-specific logic to current state.
  */
 export default class Ttt extends Context {
   tree: GameStateTree;
@@ -18,6 +17,7 @@ export default class Ttt extends Context {
         board: Array(9).fill(""),
         winner: -1,
         status: "IDLE",
+        maxPlayer: 2,
         currentTurn: 0,
         history: [],
       },
@@ -27,37 +27,27 @@ export default class Ttt extends Context {
     this.currentState.onEnter(this);
   }
 
-  /**
-   * Transition to new state and invoke its entry logic
-   */
+  
   changeState(newState: State): void {
     console.log(
-      `[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`
+      `[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`,
     );
     this.currentState = newState;
     newState.onEnter(this);
   }
 
-  /**
-   * Delegate action processing to current state
-   */
-  processAction(
-    action: Action
-  ): Response<string | void> {
+  // 이 메서드를 통해서만 handleAction 접근
+  processAction(action: Action): Response<string | void> {
     return this.currentState.handleAction(this, action);
   }
 
-  /**
-   * Get current game state snapshot
-   */
   getState(): GameStateTree {
     return this.tree;
   }
 
-  /**
-   * Set players for the game
-   */
+  // player 식별번호 저장
   setPlayers(playerIds: UserId[]): void {
-    this.tree.players = playerIds.map(id => ({ id }));
+    this.tree.players = playerIds.map((id) => ({ id }));
   }
 }
+

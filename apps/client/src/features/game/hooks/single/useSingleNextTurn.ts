@@ -24,9 +24,10 @@ export function useSingleNextTurn({
       console.log("[Playing] handleSquare 호출:", { row, col });
       if (!isPlayerTurn) return;
 
-      const nextPlayer = playerInfos[tree.game.currentTurn % 2];
+      const nextPlayer =
+        playerInfos[tree.game.currentTurn % tree.game.maxPlayer];
       if (!nextPlayer) return;
-      
+
       addMove({
         index: row * 3 + col,
         symbol: nextPlayer.avatar as any,

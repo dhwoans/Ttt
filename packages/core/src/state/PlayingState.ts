@@ -2,7 +2,7 @@ import State from "./State.js";
 import GameOverState from "./GameOverState.js";
 import type Context from "../game/Context.js";
 import type { Action, Response } from "../types/index.js";
-import { checkWinner1D } from "../utils/tttUtils.js";
+import { isValidMove, evaluateGameState, calculateNextTurn } from "../utils/tttUtils.js";
 
 /**
  * Represents the PLAYING state in the game FSM.
@@ -31,7 +31,6 @@ export default class PlayingState extends State {
         return { success: false, message: "No available moves" };
       }
 
-      // Select a random move
       index = availableMoves[Math.floor(Math.random() * availableMoves.length)]!;
       console.log(`[FSM] Timeout handled for ${action.nickname}. Random move: ${index}`);
     } else {
@@ -41,9 +40,9 @@ export default class PlayingState extends State {
       index = action.move;
     }
     
-    // Validate position hasn't been taken
-    if (game.tree.game.board[index] !== "") {
-      return { success: false, message: "Position already occupied" };
+    // Validate move using utility
+    if (!isValidMove(game.tree.game.board, index)) {
+      return { success: false, message: "Invalid or occupied position" };
     }
 
     // Update board with current player's symbol
@@ -57,22 +56,21 @@ export default class PlayingState extends State {
       nickname: action.nickname,
     });
 
-    // Check for win or draw
-    const winnerSymbol = checkWinner1D(game.tree.game.board);
-    const isFull = game.tree.game.board.every(cell => cell !== "");
+    // Evaluate game state using utility
+    const outcome = evaluateGameState(game.tree.game.board);
 
-    if (winnerSymbol || isFull) {
-      if (!winnerSymbol) {
-        game.tree.game.winner = -2; // Draw condition
-      } else {
-        game.tree.game.winner = winnerSymbol === "X" ? 0 : 1;
-      }
+    if (outcome !== -1) {
+      game.tree.game.winner = outcome;
       game.changeState(new GameOverState());
       return { success: true, message: "Game_Over" };
     }
 
-    // Advance turn
-    game.tree.game.currentTurn += 1;
+    // Advance turn using utility
+    game.tree.game.currentTurn = calculateNextTurn(
+      game.tree.game.currentTurn,
+      game.tree.players.length
+    );
+    
     return { success: true };
   }
 }

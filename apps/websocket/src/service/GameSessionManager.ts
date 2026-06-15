@@ -25,7 +25,7 @@ class GameSessionManager {
     this.games.set(roomId, game);
 
     game.setPlayers(playerIds);
-    game.changeState(new PlayingState());
+    game.processAction({ type: "START", nickname: "system" });
     const state = game.getState();
 
     if (state.game.status !== "PLAYING") {

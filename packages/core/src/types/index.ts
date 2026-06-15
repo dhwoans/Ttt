@@ -1,5 +1,5 @@
 export interface Action {
-  type: "MOVE" | "MANAGER_START" | "RESET" | "TIMEOUT";
+  type: "MOVE" | "START" | "RESET" | "TIMEOUT";
   move?: number;
   nickname: string;
 }
@@ -35,6 +35,7 @@ export interface GameNode {
   roomId?: string;
   board: PlayerSymbol[];
   status: GameStatus;
+  maxPlayer: number;
   winner: number; // -2: DRAW, -1: NONE, 0/1: PLAYER_INDEX
   currentTurn: number;
   history: MoveNode[];

@@ -183,9 +183,9 @@ class GameSocketManager {
         const { userId, move } = data;
         const player = roomStore.playersInfos.find(p => p.userId === userId);
         if (player) {
-          gameStore.addMove({
-            index: move,
-            symbol: player.avatar as any,
+          gameStore.dispatch({
+            type: "MOVE",
+            move: move,
             nickname: player.nickname
           });
         }
@@ -204,15 +204,17 @@ class GameSocketManager {
 
       case "GAME_OVER": {
         gameStore.setServerTurnTimer(null);
-        gameStore.setGameStatus("GAME_OVER");
+        let winnerIdx = -1;
         if (data.result === "draw") {
-          gameStore.setWinner(-2);
+          winnerIdx = -2;
         } else if (data.winnerIndex !== undefined) {
-          gameStore.setWinner(data.winnerIndex);
+          winnerIdx = data.winnerIndex;
         } else if (data.winner) {
-          const index = roomStore.playersInfos.findIndex(p => p.userId === data.winner);
-          gameStore.setWinner(index);
+          winnerIdx = roomStore.playersInfos.findIndex(p => p.userId === data.winner);
         }
+        gameStore.setTree({
+          game: { ...gameStore.tree.game, status: "GAME_OVER", winner: winnerIdx }
+        });
         break;
       }
 
