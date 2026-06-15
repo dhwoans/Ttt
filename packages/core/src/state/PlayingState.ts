@@ -60,8 +60,14 @@ export default class PlayingState extends State {
     const nextBoard = reconstructBoard(game.tree.game.history);
     const outcome = evaluateGameState(nextBoard);
 
-    if (outcome !== -1) {
-      game.tree.game.winner = outcome;
+    if (outcome.isDraw || outcome.winnerSymbol !== null) {
+      if (outcome.isDraw) {
+        game.tree.game.winner = -2;
+      } else {
+        // Find player index by symbol in history (the player who just moved)
+        // Or if tree.players has the info, we could use that, but history is safer if players is empty
+        game.tree.game.winner = game.tree.game.currentTurn; // The player who just moved is the winner
+      }
       game.changeState(new GameOverState());
       return { success: true, message: "Game_Over" };
     }

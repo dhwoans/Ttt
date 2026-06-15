@@ -54,25 +54,25 @@ export function isValidMove(board: PlayerSymbol[], index: number): boolean {
 
 /**
  * Evaluates the game state and returns the outcome
- * @returns outcome -2: draw, -1: none (playing), 0,1: winner index
+ * @returns object with isDraw and winnerSymbol
  */
-export function evaluateGameState(board: PlayerSymbol[]): number {
+export function evaluateGameState(board: PlayerSymbol[]): { isDraw: boolean; winnerSymbol: PlayerSymbol | null } {
   const winnerSymbol = checkWinner1D(board);
   if (winnerSymbol) {
-    return winnerSymbol === "X" ? 0 : 1;
+    return { isDraw: false, winnerSymbol };
   }
   if (isDraw1D(board)) {
-    return -2;
+    return { isDraw: true, winnerSymbol: null };
   }
-  return -1;
+  return { isDraw: false, winnerSymbol: null };
 }
 
 /**
  * Calculates the next turn player index
  */
 export function calculateNextTurn(currentTurn: number, playersCount: number): number {
-  if (playersCount === 0) return 0;
-  return (currentTurn) % playersCount;
+  const count = playersCount > 0 ? playersCount : 2; // Fallback to 2 players
+  return (currentTurn + 1) % count;
 }
 
 /**
