@@ -1,6 +1,7 @@
 export interface Action {
   type: "MOVE" | "START" | "RESET" | "TIMEOUT";
   move?: number;
+  symbol?: PlayerSymbol;
   nickname: string;
 }
 
@@ -19,7 +20,7 @@ export type Response<T = void> = SuccessResponse<T> | FailureResponse;
 export type UserId = string;
 
 export type GameStatus = "IDLE" | "PLAYING" | "GAME_OVER";
-export type PlayerSymbol = "X" | "O" | "";
+export type PlayerSymbol = string;
 
 export interface PlayerNode {
   id: string;
@@ -33,9 +34,7 @@ export interface MoveNode {
 
 export interface GameNode {
   roomId?: string;
-  board: PlayerSymbol[];
   status: GameStatus;
-  maxPlayer: number;
   winner: number; // -2: DRAW, -1: NONE, 0/1: PLAYER_INDEX
   currentTurn: number;
   history: MoveNode[];

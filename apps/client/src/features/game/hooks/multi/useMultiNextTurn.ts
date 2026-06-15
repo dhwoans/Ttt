@@ -27,16 +27,16 @@ export function useMultiNextTurn({
   }, [currentTurnPlayerId, currentUserId, socketId]);
 
   const handleSquare = useCallback(
-    (row: number, col: number) => {
-      console.log("[Playing] handleSquare 호출:", { row, col });
+    (index: number) => {
+      console.log("[Playing] handleSquare 호출:", { index });
 
       if (isGameOver || !iscurrentUserTurnByServer) {
         console.log("[Playing] 클릭 거부: 내 턴이 아니거나 게임 종료 상태");
         return;
       }
 
-      console.log("[Playing] sendMove 호출:", { row, col });
-      sendMove(row, col);
+      console.log("[Playing] sendMove 호출:", { index });
+      sendMove(index);
     },
     [isGameOver, iscurrentUserTurnByServer, sendMove],
   );

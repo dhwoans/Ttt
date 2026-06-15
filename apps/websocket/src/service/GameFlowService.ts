@@ -2,6 +2,7 @@ import type { Socket } from "socket.io";
 import type RoomService from "./RoomService.js";
 import SocketErrorResponder from "../routes/socketio/SocketErrorResponder.js";
 import GameEventPublisher from "../routes/socketio/GameEventPublisher.js";
+import { reconstructBoard } from "@ttt/core";
 
 /**
  * 게임 진행 흐름(READY, MOVE, 상태 전이)을 오케스트레이션하는 서비스.
@@ -231,7 +232,7 @@ class GameFlowService {
         result,
         winner: winnerUserId,
         winnerIndex: state.game.winner,
-        board: state.game.board,
+        board: reconstructBoard(state.game.history),
       });
       return;
     }
@@ -370,7 +371,7 @@ class GameFlowService {
         result,
         winner: winnerUserId,
         winnerIndex: updatedState.game.winner,
-        board: updatedState.game.board,
+        board: reconstructBoard(updatedState.game.history),
       });
       this.clearTurnTimeout(roomId);
       return;

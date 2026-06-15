@@ -19,7 +19,6 @@ export default class GameOverState extends State {
     // Only RESET action is valid in game over state
     if (action.type === "RESET") {
       // Reset game board and transition to IDLE state
-      game.tree.game.board = Array(9).fill("");
       game.tree.game.winner = -1;
       game.tree.game.currentTurn = 0;
       game.tree.game.history = [];

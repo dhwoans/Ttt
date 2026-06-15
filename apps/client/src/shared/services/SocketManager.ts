@@ -186,6 +186,7 @@ class GameSocketManager {
           gameStore.dispatch({
             type: "MOVE",
             move: move,
+            symbol: player.avatar,
             nickname: player.nickname
           });
         }

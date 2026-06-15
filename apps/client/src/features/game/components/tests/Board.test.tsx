@@ -15,7 +15,7 @@ describe("Board", () => {
       tree: { ...s.tree, game: { ...s.tree.game, board: emptyBoard } },
     }));
     render(
-      <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
+      <Board selectSquare={vi.fn() as (index: number) => void} />,
     );
     expect(screen.getAllByRole("button")).toHaveLength(9);
   });
@@ -25,7 +25,7 @@ describe("Board", () => {
       tree: { ...s.tree, game: { ...s.tree.game, board: filledBoard } },
     }));
     render(
-      <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
+      <Board selectSquare={vi.fn() as (index: number) => void} />,
     );
     expect(screen.getAllByText("X")).toHaveLength(2);
     expect(screen.getAllByText("O")).toHaveLength(2);
@@ -36,7 +36,7 @@ describe("Board", () => {
       tree: { ...s.tree, game: { ...s.tree.game, board: filledBoard } },
     }));
     render(
-      <Board selectSquare={vi.fn() as (row: number, col: number) => void} />,
+      <Board selectSquare={vi.fn() as (index: number) => void} />,
     );
     const buttons = screen.getAllByRole("button");
     const disabledButtons = buttons.filter((btn) =>
@@ -45,17 +45,16 @@ describe("Board", () => {
     expect(disabledButtons).toHaveLength(3);
   });
 
-  it("빈 셀 클릭 시 selectSquare가 올바른 좌표와 함께 호출된다", async () => {
+  it("빈 셀 클릭 시 selectSquare가 올바른 인덱스와 함께 호출된다", async () => {
     useGameStore.setState((s) => ({
       tree: { ...s.tree, game: { ...s.tree.game, board: emptyBoard } },
     }));
     const selectSquare = vi.fn() as unknown as (
-      row: number,
-      col: number,
+      index: number,
     ) => void;
     render(<Board selectSquare={selectSquare} />);
     const buttons = screen.getAllByRole("button");
     await userEvent.click(buttons[4]);
-    expect(selectSquare).toHaveBeenCalledWith(1, 1);
+    expect(selectSquare).toHaveBeenCalledWith(4);
   });
 });

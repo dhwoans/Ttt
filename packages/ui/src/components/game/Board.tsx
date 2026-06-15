@@ -2,29 +2,21 @@ import * as React from "react"
 import { Square } from "./Square.js"
 
 interface BoardProps {
-  list: (string | null)[][];
-  selectSquare: ((row: number, col: number) => void) | false;
+  list: (string | null)[];
+  selectSquare: ((index: number) => void) | false;
 }
 
 const Board = React.forwardRef<HTMLOListElement, BoardProps>(
   ({ list, selectSquare }, ref) => {
     return (
-      <ol ref={ref} className="flex flex-col gap-2 p-4">
-        {list.map((innerArray, rowIndex) => (
-          <li key={rowIndex}>
-            <ol className="flex flex-row gap-2">
-              {innerArray.map((cell, colIndex) => (
-                <li key={colIndex}>
-                  <Square
-                    value={cell}
-                    disabled={list[rowIndex][colIndex] != null || !selectSquare}
-                    onClick={() =>
-                      selectSquare && selectSquare(rowIndex, colIndex)
-                    }
-                  />
-                </li>
-              ))}
-            </ol>
+      <ol ref={ref} className="grid grid-cols-3 gap-2 p-4">
+        {list.map((cell, index) => (
+          <li key={index}>
+            <Square
+              value={cell}
+              disabled={cell != null || !selectSquare}
+              onClick={() => selectSquare && selectSquare(index)}
+            />
           </li>
         ))}
       </ol>

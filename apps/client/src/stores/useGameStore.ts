@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { useRoomStore } from "./useRoomStore";
-import { Ttt } from "@ttt/core";
+import { Ttt, IdleState, PlayingState, GameOverState } from "@ttt/core";
 import type { GameStateTree, Action } from "@ttt/core";
 
 /**
@@ -29,7 +29,6 @@ interface GameStoreState {
 
 const initialTree: GameStateTree = {
   game: {
-    board: Array(9).fill(""),
     status: "IDLE",
     winner: -1,
     currentTurn: 0,
@@ -58,7 +57,23 @@ export const useGameStore = create<GameStoreState>()(
           // 깊은 복사로 불변성 보장 및 현재 상태 주입
           game.tree = JSON.parse(JSON.stringify(state.tree));
           
+          // 현재 상태 클래스 복원
+          switch (game.tree.game.status) {
+            case "IDLE":
+              game.currentState = new IdleState();
+              break;
+            case "PLAYING":
+              game.currentState = new PlayingState();
+              break;
+            case "GAME_OVER":
+              game.currentState = new GameOverState();
+              break;
+          }
+          
+          console.log("[Store] Dispatching action to engine:", action);
           const result = game.processAction(action);
+          console.log("[Store] Engine processAction result:", result);
+
           if (result.success) {
             return {
               tree: game.getState(),

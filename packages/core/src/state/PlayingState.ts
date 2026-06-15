@@ -2,7 +2,7 @@ import State from "./State.js";
 import GameOverState from "./GameOverState.js";
 import type Context from "../game/Context.js";
 import type { Action, Response } from "../types/index.js";
-import { isValidMove, evaluateGameState, calculateNextTurn } from "../utils/tttUtils.js";
+import { isValidMove, evaluateGameState, calculateNextTurn, reconstructBoard } from "../utils/tttUtils.js";
 
 /**
  * Represents the PLAYING state in the game FSM.
@@ -20,10 +20,11 @@ export default class PlayingState extends State {
     action: Action,
   ): Response<string> {
     let index: number;
+    const currentBoard = reconstructBoard(game.tree.game.history);
 
     if (action.type === "TIMEOUT") {
       // Find all empty positions
-      const availableMoves = game.tree.game.board
+      const availableMoves = currentBoard
         .map((cell, i) => (cell === "" ? i : -1))
         .filter((i) => i !== -1);
 
@@ -41,13 +42,12 @@ export default class PlayingState extends State {
     }
     
     // Validate move using utility
-    if (!isValidMove(game.tree.game.board, index)) {
+    if (!isValidMove(currentBoard, index)) {
       return { success: false, message: "Invalid or occupied position" };
     }
 
-    // Update board with current player's symbol
-    const symbol = game.tree.game.currentTurn % 2 == 0 ? "X" : "O";
-    game.tree.game.board[index] = symbol;
+    // Determine current player's symbol
+    const symbol = action.symbol ?? (game.tree.game.currentTurn % 2 == 0 ? "X" : "O");
 
     // Record history
     game.tree.game.history.push({
@@ -56,8 +56,9 @@ export default class PlayingState extends State {
       nickname: action.nickname,
     });
 
-    // Evaluate game state using utility
-    const outcome = evaluateGameState(game.tree.game.board);
+    // Evaluate game state using utility and the reconstructed board with the new move
+    const nextBoard = reconstructBoard(game.tree.game.history);
+    const outcome = evaluateGameState(nextBoard);
 
     if (outcome !== -1) {
       game.tree.game.winner = outcome;

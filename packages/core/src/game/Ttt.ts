@@ -14,10 +14,8 @@ export default class Ttt extends Context {
     super();
     this.tree = {
       game: {
-        board: Array(9).fill(""),
         winner: -1,
         status: "IDLE",
-        maxPlayer: 2,
         currentTurn: 0,
         history: [],
       },

@@ -64,7 +64,7 @@ function MultiTicTacToe() {
   };
 
   const BoardComponent = (
-    <Board selectSquare={canSelectSquare ? handleSquare : undefined} />
+    <Board selectSquare={canSelectSquare ? handleSquare : false} />
   );
   const ExitModalComponent = <ExitModal handleExit={handleExit} />;
   return (
