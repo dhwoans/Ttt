@@ -37,20 +37,16 @@ class GameTimerService {
   /**
    * 싱글 플레이어 모드에서 타임아웃 처리
    */
-  public handleSinglePlayerTimeout(nickname: string) {
-    const { tree, setTree } = useGameStore.getState();
+  public handleSinglePlayerTimeout(nickname: string, symbol?: string) {
+    console.log(`[Timer] Timeout triggered for ${nickname} (${symbol})`);
+    const { dispatch } = useGameStore.getState();
     
-    const game = new Ttt();
-    game.tree = tree;
-    
-    const result = game.processAction({
+    // 스토어의 dispatch를 사용하면 내부적으로 FSM 상태 복원 및 processAction이 안전하게 수행됩니다.
+    dispatch({
       type: "TIMEOUT",
       nickname,
+      symbol,
     });
-
-    if (result.success) {
-      setTree(game.getState());
-    }
   }
 }
 

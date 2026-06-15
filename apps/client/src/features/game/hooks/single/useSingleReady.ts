@@ -19,14 +19,11 @@ export function useSingleReady() {
   const handleReady = (isReady: boolean) => {
     if (!isReady) return;
     
-    // 싱글 플레이 시작 전, 로비에 세팅된 유저와 봇 정보를 엔진(State Tree)의 플레이어 목록에 주입
-    const playersInfos = useRoomStore.getState().playersInfos;
-    setTree({
-      players: playersInfos.map(p => ({ id: p.userId || "bot-id" }))
+    // 게임 시작 (스토어의 dispatch가 내부적으로 플레이어 목록을 동기화하고 첫 턴을 랜덤으로 결정합니다)
+    dispatch({ 
+      type: "START", 
+      nickname: "system" 
     });
-
-    // 게임 시작
-    dispatch({ type: "START", nickname: "system" });
   };
 
   useEffect(() => {

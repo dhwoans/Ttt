@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type UserProfile = {
   userId: string;
@@ -20,6 +20,9 @@ export const useUserStore = create<UserState>()(
       setCurrentUser: (currentUser) => set({ currentUser }),
       clearCurrentUser: () => set({ currentUser: null }),
     }),
-    { name: "user-storage" },
+    { 
+      name: "user-storage",
+      storage: createJSONStorage(() => sessionStorage),
+    },
   ),
 );

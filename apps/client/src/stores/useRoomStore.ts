@@ -80,7 +80,7 @@ export const useRoomStore = create<RoomState>()(
     }),
     {
       name: "ttt-room-store",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         gameServerUrl: state.gameServerUrl,
         gameTicket: state.gameTicket,

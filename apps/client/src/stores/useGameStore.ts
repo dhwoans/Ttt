@@ -57,6 +57,19 @@ export const useGameStore = create<GameStoreState>()(
           // 깊은 복사로 불변성 보장 및 현재 상태 주입
           game.tree = JSON.parse(JSON.stringify(state.tree));
           
+          // START 액션일 경우, RoomStore의 최신 플레이어 목록을 엔진 트리에 강제 동기화
+          if (action.type === "START") {
+            const playersInfos = useRoomStore.getState().playersInfos;
+            game.tree.players = playersInfos.map(p => ({ id: p.userId || "bot-id" }));
+          }
+
+          console.log("[Store] PRE-Dispatch Tree:", {
+            status: game.tree.game.status,
+            turn: game.tree.game.currentTurn,
+            playersLen: game.tree.players.length,
+            historyLen: game.tree.game.history.length
+          });
+
           // 현재 상태 클래스 복원
           switch (game.tree.game.status) {
             case "IDLE":
@@ -70,13 +83,20 @@ export const useGameStore = create<GameStoreState>()(
               break;
           }
           
-          console.log("[Store] Dispatching action to engine:", action);
+          console.log("[Store] Dispatching action:", action);
           const result = game.processAction(action);
-          console.log("[Store] Engine processAction result:", result);
+          console.log("[Store] Engine result:", result);
 
           if (result.success) {
+            const nextTree = game.getState();
+            console.log("[Store] POST-Dispatch Tree:", {
+              status: nextTree.game.status,
+              turn: nextTree.game.currentTurn,
+              playersLen: nextTree.players.length,
+              historyLen: nextTree.game.history.length
+            });
             return {
-              tree: game.getState(),
+              tree: nextTree,
               turnStartTime: Date.now(),
             };
           }
@@ -94,7 +114,7 @@ export const useGameStore = create<GameStoreState>()(
     }),
     {
       name: "ttt-game-store",
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         tree: state.tree,
         turnStartTime: state.turnStartTime,

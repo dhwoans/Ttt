@@ -24,14 +24,16 @@ export function useSingleTicTacToe() {
   const currentPlayer = playersInfos[tree.game.currentTurn % playersInfos.length] ?? playersInfos[0];
   const isPlayerTurn = currentPlayer?.nickname === playersInfos[0]?.nickname;
 
+  console.log(`[UI] Current turn index: ${tree.game.currentTurn}, Nickname: ${currentPlayer?.nickname}, IsPlayer: ${isPlayerTurn}`);
+
   // AI 봇 이동 훅
   useAIMove(isPlayerTurn);
 
-  // 턴 시작 시 타임아웃 타이머 가동 
+  // 턴 시작 시 타임아웃 타이머 가동 (React 외부 서비스)
   useEffect(() => {
     if (!isGameOver && currentPlayer) {
       gameTimerService.start(10000, () => {
-        gameTimerService.handleSinglePlayerTimeout(currentPlayer.nickname);
+        gameTimerService.handleSinglePlayerTimeout(currentPlayer.nickname, currentPlayer.avatar);
       });
     }
 

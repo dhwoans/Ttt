@@ -11,7 +11,8 @@ import { isValidMove, evaluateGameState, calculateNextTurn, reconstructBoard } f
 export default class PlayingState extends State {
   onEnter(game: Context): void {
     game.tree.game.status = "PLAYING";
-    game.tree.game.currentTurn = Math.floor(Math.random() * game.tree.players.length);
+    const len = game.tree.players.length;
+    game.tree.game.currentTurn = Math.floor(Math.random() * (len > 0 ? len : 2));
     console.log(`[FSM] Game started. Initial turn: ${game.tree.game.currentTurn}`);
   }
 
@@ -73,10 +74,12 @@ export default class PlayingState extends State {
     }
 
     // Advance turn using utility
-    game.tree.game.currentTurn = calculateNextTurn(
+    const nextTurn = calculateNextTurn(
       game.tree.game.currentTurn,
       game.tree.players.length
     );
+    console.log(`[FSM] Turn advanced: ${game.tree.game.currentTurn} -> ${nextTurn}`);
+    game.tree.game.currentTurn = nextTurn;
     
     return { success: true };
   }
