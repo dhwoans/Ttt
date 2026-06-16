@@ -24,10 +24,11 @@ class LegacyWsGameService {
 
     const action: Action = {
       type: type as any,
+      userId,
       move: parseInt(index!),
       nickname: sender,
     };
-    const applyResult = this.gameSessionManager.applyMove(roomId!, action);
+    const applyResult = this.gameSessionManager.applyMove(roomId!, userId, sender, parseInt(index!));
     if (!applyResult.success) {
       const errorPayload: SocketMessage = {
         type: "ERROR",
@@ -48,7 +49,7 @@ class LegacyWsGameService {
     }
 
     const state = gameStateResult.message.getState();
-    const roomResult = this.roomService.checkRoom(roomId!);
+    const roomResult = this.roomService.getRoomData(roomId!);
     if (!roomResult.success) {
       return { success: false, message: roomResult.message };
     }
@@ -108,8 +109,8 @@ class LegacyWsGameService {
       return;
     }
 
-    for (const player of roomResult.message.getAllPlayersData()) {
-      this.roomService.readyPlayer(roomId, player.userId, false);
+    for (const player of roomResult.message.tree.players) {
+      this.roomService.readyPlayer(roomId, player.id, false);
     }
   }
 }

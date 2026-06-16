@@ -29,6 +29,14 @@ export default class PlayingState extends State {
     let index: number;
     const currentBoard = reconstructBoard(game.tree.game.history);
 
+    // Validate turn
+    const currentPlayerId =
+      game.tree.players[game.tree.game.currentTurn % game.tree.players.length]
+        ?.id;
+    if (currentPlayerId && action.userId !== currentPlayerId) {
+      return { success: false, message: "Not your turn" };
+    }
+
     if (action.type === "TIMEOUT") {
       // Find all empty positions
       const availableMoves = currentBoard

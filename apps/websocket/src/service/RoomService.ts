@@ -1,17 +1,12 @@
 import { randomUUID } from "node:crypto";
 import type RoomRegistry from "./RoomRegistry.js";
 import type GameSessionManager from "./GameSessionManager.js";
-import type Room from "../models/Room.js";
-import type { Ttt } from "@ttt/core";
-import type { SuccessResponse } from "@ttt/core";
-import type { FailureResponse } from "@ttt/core";
+import { Room } from "@ttt/core";
+import type { SuccessResponse, FailureResponse, Ttt } from "@ttt/core";
 import type { Nickname, RoomId, UserId } from "../type/socket.js";
 
 class RoomService {
-  constructor(
-    private readonly roomRegistry: RoomRegistry,
-    private readonly gameSessionManager: GameSessionManager,
-  ) {}
+  constructor(private readonly roomRegistry: RoomRegistry) {}
 
   createRoom(
     userId: UserId,
@@ -25,12 +20,8 @@ class RoomService {
     return this.roomRegistry.createRoom(roomId);
   }
 
-  checkRoom(roomId: RoomId): SuccessResponse<Room> | FailureResponse {
-    return this.roomRegistry.getRoomData(roomId);
-  }
-
-  getRoomData(roomId: RoomId): SuccessResponse<Room> | FailureResponse {
-    return this.roomRegistry.getRoomData(roomId);
+  getRoomData(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
+    return this.roomRegistry.getSession(roomId);
   }
 
   removePlayer(
@@ -59,37 +50,36 @@ class RoomService {
 
   readyPlayer(
     roomId: RoomId,
-    userId: string,
-    status: boolean,
-  ): SuccessResponse<void> | FailureResponse {
-    return this.roomRegistry.readyPlayer(roomId, userId, status);
+    userId: UserId,
+    isReady: boolean,
+  ): SuccessResponse | FailureResponse {
+    const sessionResult = this.roomRegistry.getSession(roomId);
+    if (!sessionResult.success || !sessionResult.message) return sessionResult as FailureResponse;
+
+    return sessionResult.message.processAction({
+      type: "READY",
+      userId,
+      nickname: "unknown",
+      isReady,
+    }) as SuccessResponse<void> | FailureResponse;
   }
 
   gameStart(roomId: RoomId): SuccessResponse<void> | FailureResponse {
-    const result = this.checkRoom(roomId);
-    if (result.success && result.message) {
-      const room = result.message;
-      if (room.isFull()) {
-        for (const { isReady } of room.getAllPlayersData()) {
-          if (!isReady) {
-            return { success: false, message: "레디 안함" };
-          }
-        }
-
-        const playerIds = room
-          .getAllPlayersData()
-          .map((player) => player.userId);
-        return this.gameSessionManager.startGame(roomId, playerIds);
-      }
-
-      return { success: false, message: "인원 부족" };
+    const sessionResult = this.roomRegistry.getSession(roomId);
+    if (!sessionResult.success || !sessionResult.message) {
+      return { success: false, message: "방을 찾을 수 없습니다." };
     }
 
-    return { success: true };
+    const session = sessionResult.message;
+    return session.processAction({
+      type: "START",
+      userId: "system",
+      nickname: "system",
+    }) as SuccessResponse<void> | FailureResponse;
   }
 
   getGameState(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
-    return this.gameSessionManager.getGameState(roomId);
+    return this.roomRegistry.getSession(roomId);
   }
 }
 

@@ -40,7 +40,7 @@ class ApiController {
         );
         return;
       }
-      const room = this.roomService.checkRoom(result.message);
+      const room = this.roomService.getRoomData(result.message);
       if (!room.success || !room.message) {
         next(
           new Error(
@@ -54,9 +54,9 @@ class ApiController {
       // 방생성 이벤트
       eventshandler.emit(EVENT_LIST.ROOM_CREATE, {
         roomId: result.message,
-        isFull: room.message.isFull(),
-        currentPlayers: room.message.players.size,
-        maxPlayers: room.message.MAX_PLAYERS,
+        isFull: room.message.tree.players.length >= 2,
+        currentPlayers: room.message.tree.players.length,
+        maxPlayers: 2,
       } as roomInfo);
       // 방생성자 http 응답
       res.status(201).json({
@@ -82,7 +82,7 @@ class ApiController {
         return;
       }
       if (typeof roomId === "string") {
-        const result = this.roomService.checkRoom(roomId);
+        const result = this.roomService.getRoomData(roomId);
         if (!result.success || !result.message) {
           next(
             new Error(
@@ -94,7 +94,7 @@ class ApiController {
           return;
         }
         const room = result.message;
-        if (room.isFull()) {
+        if (room.tree.players.length >= 2) {
           res.status(300).json({
             success: false,
           });

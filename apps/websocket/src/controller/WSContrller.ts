@@ -31,7 +31,7 @@ class WSController {
   handleJoin(rawMessage: SocketMessage, userId: string): void {
     const { type, message, sender } = rawMessage;
     const [roomId, joinedUserId] = message;
-    const checkRoomResult = this.roomService.checkRoom(roomId!);
+    const checkRoomResult = this.roomService.getRoomData(roomId!);
     if (!checkRoomResult.success) {
       const errorMessage: SocketMessage = {
         type: "ERROR",
@@ -46,7 +46,7 @@ class WSController {
     } else {
       const room = checkRoomResult.message;
       if (!room) return;
-      if (room.players.size > 0) {
+      if (room.tree.players.length > 0) {
         const joinMessage: SocketMessage = {
           type: "JOIN",
           message: [joinedUserId!, "false"],
@@ -66,11 +66,11 @@ class WSController {
       );
       if (result.success) {
         eventshandler.emit(EVENT_LIST.PLAYER_PLUS, roomId);
-        const players = room.getAllPlayersData();
-        const messageList = players.map((player: PlayerInfo) => {
+        const players = room.tree.players;
+        const messageList = players.map((player: any) => {
           return {
             type: "JOIN",
-            message: [player.userId, player.isReady.toString()],
+            message: [player.id, player.isReady.toString()],
             sender: player.nickname,
           } as SocketMessage;
         });
@@ -91,7 +91,7 @@ class WSController {
   handleChat(rawMessage: SocketMessage): void {
     const { type, message, sender } = rawMessage;
     const [roomId, chat] = message;
-    const result = this.roomService.checkRoom(roomId!);
+    const result = this.roomService.getRoomData(roomId!);
 
     if (!result.success) {
       throw new Error(`Failed to relay chat: room ${roomId} not found`);
@@ -152,7 +152,7 @@ class WSController {
         message: [userId, status!],
         sender: "system",
       };
-      const checkRoomResult = this.roomService.checkRoom(roomId!);
+      const checkRoomResult = this.roomService.getRoomData(roomId!);
       if (checkRoomResult.success) {
         eventshandler.emit(EVENT_LIST.READY, {
           mode: EMIT_MODES.BROADCAST,
@@ -174,7 +174,7 @@ class WSController {
           message: [state.players[state.game.currentTurn]!.id],
           sender: "system",
         };
-        const checkRoomResult = this.roomService.checkRoom(roomId!);
+        const checkRoomResult = this.roomService.getRoomData(roomId!);
         if (checkRoomResult.success && checkRoomResult.message) {
           eventshandler.emit(EVENT_LIST.PLAYING, {
             mode: EMIT_MODES.BROADCAST,

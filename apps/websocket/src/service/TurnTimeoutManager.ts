@@ -1,6 +1,6 @@
 import type RoomService from "./RoomService.js";
 import type GameEventPublisher from "../routes/socketio/GameEventPublisher.js";
-import { reconstructBoard } from "@ttt/core";
+import { reconstructBoard, type PlayerNode } from "@ttt/core";
 
 export class TurnTimeoutManager {
   private readonly timeoutMs = 10000;
@@ -100,14 +100,15 @@ export class TurnTimeoutManager {
     }
 
     const playerResult = roomResult.message
-      .getAllPlayersData()
-      .find((player) => player.userId === currentPlayerId);
+      .tree.players
+      .find((player: PlayerNode) => player.id === currentPlayerId);
 
     const nickname = playerResult?.nickname ?? "system";
     const avatar = playerResult?.avatar;
 
     const actionResult = game.processAction({
       type: "TIMEOUT",
+      userId: currentPlayerId,
       nickname,
       ...(avatar ? { symbol: avatar } : {}),
     });

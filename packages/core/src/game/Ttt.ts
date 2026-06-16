@@ -47,8 +47,22 @@ export default class Ttt extends Context {
     return this.tree;
   }
 
-  // player 식별번호 저장
+  // player 관리 메서드
+  addPlayer(id: UserId, nickname: string, avatar?: string): void {
+    if (this.tree.players.find((p) => p.id === id)) return;
+    this.tree.players.push({ id, nickname, avatar, isReady: false });
+  }
+
+  removePlayer(id: UserId): void {
+    this.tree.players = this.tree.players.filter((p) => p.id !== id);
+  }
+
+  // player 식별번호 저장 (기존 코드 호환성 및 대량 설정용)
   setPlayers(playerIds: UserId[]): void {
-    this.tree.players = playerIds.map((id) => ({ id }));
+    this.tree.players = playerIds.map((id) => ({
+      id,
+      nickname: `Player ${id.substring(0, 4)}`,
+      isReady: false,
+    }));
   }
 }
