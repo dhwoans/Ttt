@@ -7,10 +7,11 @@ import { CharacterAvatar } from "@ttt/ui";
 export default function Players() {
   const playerInfos = useRoomStore((state) => state.playersInfos);
   const tree = useGameStore((state) => state.tree);
-  
-  const currentPlayerId = tree.players.length > 0 
-    ? tree.players[tree.game.currentTurn % tree.players.length]?.id 
-    : null;
+
+  const currentPlayerId =
+    tree.players.length > 0
+      ? tree.players[tree.game.currentTurn % tree.players.length]?.id
+      : null;
 
   return (
     <ol className="flex flex-row md:flex-col gap-10 md:gap-6">

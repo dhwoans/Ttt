@@ -77,5 +77,3 @@ class RedisManager {
 }
 
 export default RedisManager;
-
-

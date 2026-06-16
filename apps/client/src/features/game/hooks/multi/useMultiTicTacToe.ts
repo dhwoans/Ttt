@@ -15,10 +15,11 @@ export function useMultiTicTacToe() {
   const winnerIndex = tree.game.winner;
   const isGameOver = gameStatus === "GAME_OVER";
   const isDraw = winnerIndex === -2;
-  
-  const currentTurnUserId = tree.players.length > 0 
-    ? tree.players[tree.game.currentTurn % tree.players.length]?.id 
-    : "";
+
+  const currentTurnUserId =
+    tree.players.length > 0
+      ? tree.players[tree.game.currentTurn % tree.players.length]?.id
+      : "";
 
   const currentPlayer = currentTurnUserId
     ? (playersInfos.find((p) => p.userId === currentTurnUserId) ??

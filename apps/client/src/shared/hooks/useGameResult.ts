@@ -29,7 +29,8 @@ export function useGameResult() {
   const { status, winner: winnerIndex } = tree.game;
   const isGameOver = status === "GAME_OVER";
 
-  const winnerNickname = winnerIndex >= 0 ? playersInfos[winnerIndex]?.nickname : null;
+  const winnerNickname =
+    winnerIndex >= 0 ? playersInfos[winnerIndex]?.nickname : null;
 
   const resolved =
     !isGameOver || winnerIndex === -2

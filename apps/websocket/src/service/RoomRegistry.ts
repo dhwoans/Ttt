@@ -136,5 +136,3 @@ class RoomRegistry {
 }
 
 export default RoomRegistry;
-
-

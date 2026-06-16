@@ -59,7 +59,11 @@ class WSController {
           payload: joinMessage,
         });
       }
-      const result = this.roomService.joinPlayer(roomId!, joinedUserId!, sender);
+      const result = this.roomService.joinPlayer(
+        roomId!,
+        joinedUserId!,
+        sender,
+      );
       if (result.success) {
         eventshandler.emit(EVENT_LIST.PLAYER_PLUS, roomId);
         const players = room.getAllPlayersData();
@@ -192,5 +196,3 @@ class WSController {
 }
 
 export default WSController;
-
-

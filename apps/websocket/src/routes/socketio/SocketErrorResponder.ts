@@ -23,5 +23,3 @@ class SocketErrorResponder {
 }
 
 export default SocketErrorResponder;
-
-

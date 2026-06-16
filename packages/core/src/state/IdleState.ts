@@ -12,10 +12,7 @@ export default class IdleState extends State {
     game.tree.game.status = "IDLE";
   }
 
-  handleAction(
-    game: Context,
-    action: Action,
-  ): Response<string> {
+  handleAction(game: Context, action: Action): Response<string> {
     // Both user start and system start are handled by "START" action
     if (action.type === "START") {
       game.changeState(new PlayingState());

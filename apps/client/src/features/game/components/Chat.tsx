@@ -154,8 +154,8 @@
 //               onKeyDown={handleKeyDown}
 //               placeholder="메시지를 입력하세요"
 //               className="
-//                 flex-1 min-w-0 px-3 py-2 
-//                 border-3 border-black rounded-full 
+//                 flex-1 min-w-0 px-3 py-2
+//                 border-3 border-black rounded-full
 //                 text-base text-dark-2
 //                 focus:outline-none
 //                 focus:ring-2 focus:ring-accent
@@ -166,12 +166,12 @@
 //             <button
 //               onClick={handleMessage}
 //               className="
-//                 px-3 py-2 
-//                 bg-accent 
-//                 border-3 border-black rounded-full 
-//                 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] 
-//                 hover:shadow-none 
-//                 hover:translate-x-0.75 hover:translate-y-0.75 
+//                 px-3 py-2
+//                 bg-accent
+//                 border-3 border-black rounded-full
+//                 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]
+//                 hover:shadow-none
+//                 hover:translate-x-0.75 hover:translate-y-0.75
 //                 transition-all active:scale-95
 //                 font-bold text-white
 //               "

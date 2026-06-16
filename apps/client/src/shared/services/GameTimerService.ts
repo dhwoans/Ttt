@@ -40,7 +40,7 @@ class GameTimerService {
   public handleSinglePlayerTimeout(nickname: string, symbol?: string) {
     console.log(`[Timer] Timeout triggered for ${nickname} (${symbol})`);
     const { dispatch } = useGameStore.getState();
-    
+
     // 스토어의 dispatch를 사용하면 내부적으로 FSM 상태 복원 및 processAction이 안전하게 수행됩니다.
     dispatch({
       type: "TIMEOUT",

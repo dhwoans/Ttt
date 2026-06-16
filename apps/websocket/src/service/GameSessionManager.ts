@@ -78,5 +78,3 @@ class GameSessionManager {
 }
 
 export default GameSessionManager;
-
-

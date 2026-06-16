@@ -74,13 +74,17 @@ class LegacyWsGameService {
 
   private broadcastNextGameState(
     roomId: RoomId,
-    state: any // Using any briefly to avoid complex type mapping here, but correctly accessing tree properties
+    state: any, // Using any briefly to avoid complex type mapping here, but correctly accessing tree properties
   ): void {
     let nextMessage: SocketMessage;
     if (state.game.status === "GAME_OVER") {
       const winner: string =
         state.game.winner === -2 ? "DRAW" : state.players[state.game.winner].id;
-      nextMessage = { type: state.game.status, message: [winner], sender: "system" };
+      nextMessage = {
+        type: state.game.status,
+        message: [winner],
+        sender: "system",
+      };
       this.gameSessionManager.deleteGame(roomId);
       this.resetReady(roomId);
     } else {
@@ -111,5 +115,3 @@ class LegacyWsGameService {
 }
 
 export default LegacyWsGameService;
-
-

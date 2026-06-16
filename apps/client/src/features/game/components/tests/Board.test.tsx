@@ -14,9 +14,7 @@ describe("Board", () => {
     useGameStore.setState((s) => ({
       tree: { ...s.tree, game: { ...s.tree.game, board: emptyBoard } },
     }));
-    render(
-      <Board selectSquare={vi.fn() as (index: number) => void} />,
-    );
+    render(<Board selectSquare={vi.fn() as (index: number) => void} />);
     expect(screen.getAllByRole("button")).toHaveLength(9);
   });
 
@@ -24,9 +22,7 @@ describe("Board", () => {
     useGameStore.setState((s) => ({
       tree: { ...s.tree, game: { ...s.tree.game, board: filledBoard } },
     }));
-    render(
-      <Board selectSquare={vi.fn() as (index: number) => void} />,
-    );
+    render(<Board selectSquare={vi.fn() as (index: number) => void} />);
     expect(screen.getAllByText("X")).toHaveLength(2);
     expect(screen.getAllByText("O")).toHaveLength(2);
   });
@@ -35,9 +31,7 @@ describe("Board", () => {
     useGameStore.setState((s) => ({
       tree: { ...s.tree, game: { ...s.tree.game, board: filledBoard } },
     }));
-    render(
-      <Board selectSquare={vi.fn() as (index: number) => void} />,
-    );
+    render(<Board selectSquare={vi.fn() as (index: number) => void} />);
     const buttons = screen.getAllByRole("button");
     const disabledButtons = buttons.filter((btn) =>
       btn.hasAttribute("disabled"),
@@ -49,9 +43,7 @@ describe("Board", () => {
     useGameStore.setState((s) => ({
       tree: { ...s.tree, game: { ...s.tree.game, board: emptyBoard } },
     }));
-    const selectSquare = vi.fn() as unknown as (
-      index: number,
-    ) => void;
+    const selectSquare = vi.fn() as unknown as (index: number) => void;
     render(<Board selectSquare={selectSquare} />);
     const buttons = screen.getAllByRole("button");
     await userEvent.click(buttons[4]);

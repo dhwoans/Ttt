@@ -33,7 +33,7 @@ const cardDataList: CardBaseData[] = [
     imageSrc: ImageManager.local,
     title: "LOCAL MODE ",
     description: "준비 중",
-  }, 
+  },
 ];
 
 export default function LobbyContentsLayout() {

@@ -22,7 +22,7 @@ interface RoomState {
   readyTimeoutSnapshot: TimeoutSnapshot | null;
   playersInfos: GamePlayerInfo[];
   lastServerEvent: { name: string; data: any; timestamp: number } | null;
-  
+
   setIsWaitingForServer: (waiting: boolean) => void;
   setPlayersInfos: (infos: GamePlayerInfo[]) => void;
   addPlayerInfo: (info: GamePlayerInfo) => void;
@@ -48,7 +48,7 @@ export const useRoomStore = create<RoomState>()(
       readyTimeoutSnapshot: null,
       playersInfos: [],
       lastServerEvent: null,
-      
+
       setIsWaitingForServer: (isWaitingForServer) =>
         set({ isWaitingForServer }),
       setPlayersInfos: (playersInfos) => set({ playersInfos }),
@@ -75,7 +75,7 @@ export const useRoomStore = create<RoomState>()(
         set({ gameServerUrl: null, gameTicket: null }),
       setReadyTimeoutSnapshot: (readyTimeoutSnapshot) =>
         set({ readyTimeoutSnapshot }),
-      setLastServerEvent: (name, data) => 
+      setLastServerEvent: (name, data) =>
         set({ lastServerEvent: { name, data, timestamp: Date.now() } }),
     }),
     {

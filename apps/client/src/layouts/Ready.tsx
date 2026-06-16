@@ -35,9 +35,7 @@ export default function Ready({
     <section className="flex flex-col items-center justify-center min-h-screen gap-8 p-8">
       <VersusBanner playersInfos={playersInfos} />
 
-      <TimeoutProgressBar
-        label="준비 제한 시간"
-      />
+      <TimeoutProgressBar label="준비 제한 시간" />
 
       <div className="flex flex-col gap-4">
         <Button

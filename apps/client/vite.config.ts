@@ -4,15 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
-
-
 export default defineConfig(({ mode }) => {
   const enableImagemin = mode !== "production";
-  const commonPlugins = [
-    tailwindcss(),
-    react(),
-    tsconfigPaths(),
-  ];
+  const commonPlugins = [tailwindcss(), react(), tsconfigPaths()];
   return {
     plugins: commonPlugins,
     root: path.resolve(__dirname),

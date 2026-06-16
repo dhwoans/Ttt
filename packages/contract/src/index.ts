@@ -23,9 +23,12 @@ export type RoomAssignedEvent = ServerSchemas["RoomAssignedEvent"];
 export type ExistingPlayersEvent = ServerSchemas["ExistingPlayersEvent"];
 export type PlayerJoinedEvent = ServerSchemas["PlayerJoinedEvent"];
 export type PlayerReadyEvent = ServerSchemas["PlayerReadyEvent"];
-export type ReadyTimeoutStartedEvent = ServerSchemas["ReadyTimeoutStartedEvent"];
-export type ReadyTimeoutExpiredEvent = ServerSchemas["ReadyTimeoutExpiredEvent"];
-export type ReadyTimeoutCanceledEvent = ServerSchemas["ReadyTimeoutCanceledEvent"];
+export type ReadyTimeoutStartedEvent =
+  ServerSchemas["ReadyTimeoutStartedEvent"];
+export type ReadyTimeoutExpiredEvent =
+  ServerSchemas["ReadyTimeoutExpiredEvent"];
+export type ReadyTimeoutCanceledEvent =
+  ServerSchemas["ReadyTimeoutCanceledEvent"];
 export type TurnTimeoutStartedEvent = ServerSchemas["TurnTimeoutStartedEvent"];
 export type MoveMadeEvent = ServerSchemas["MoveMadeEvent"];
 export type NextTurnEvent = ServerSchemas["NextTurnEvent"];

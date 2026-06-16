@@ -21,10 +21,14 @@ export function useSingleTicTacToe() {
     winnerIndex >= 0 ? (playersInfos[winnerIndex]?.nickname ?? null) : null;
 
   // 플레이어가 1명 이상인지 확인 후, 0번 인덱스가 항상 유저("나")라고 가정 (봇은 1번)
-  const currentPlayer = playersInfos[tree.game.currentTurn % playersInfos.length] ?? playersInfos[0];
+  const currentPlayer =
+    playersInfos[tree.game.currentTurn % playersInfos.length] ??
+    playersInfos[0];
   const isPlayerTurn = currentPlayer?.nickname === playersInfos[0]?.nickname;
 
-  console.log(`[UI] Current turn index: ${tree.game.currentTurn}, Nickname: ${currentPlayer?.nickname}, IsPlayer: ${isPlayerTurn}`);
+  console.log(
+    `[UI] Current turn index: ${tree.game.currentTurn}, Nickname: ${currentPlayer?.nickname}, IsPlayer: ${isPlayerTurn}`,
+  );
 
   // AI 봇 이동 훅
   useAIMove(isPlayerTurn);
@@ -33,7 +37,10 @@ export function useSingleTicTacToe() {
   useEffect(() => {
     if (!isGameOver && currentPlayer) {
       gameTimerService.start(10000, () => {
-        gameTimerService.handleSinglePlayerTimeout(currentPlayer.nickname, currentPlayer.avatar);
+        gameTimerService.handleSinglePlayerTimeout(
+          currentPlayer.nickname,
+          currentPlayer.avatar,
+        );
       });
     }
 

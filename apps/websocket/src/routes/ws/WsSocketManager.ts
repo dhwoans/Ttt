@@ -56,9 +56,7 @@ class WsSocketManager implements SocketManager {
 
   connection(ws: WebSocket): void {
     ws.on("message", (rawMessage) => {
-      let message;
-
-      message = JSON.parse(rawMessage.toString());
+      const message = JSON.parse(rawMessage.toString());
 
       // 세션 관리
       if (message.type === "JOIN") {
@@ -92,5 +90,3 @@ class WsSocketManager implements SocketManager {
 }
 
 export default WsSocketManager;
-
-

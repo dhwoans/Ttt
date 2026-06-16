@@ -18,11 +18,11 @@ export function useSingleReady() {
 
   const handleReady = (isReady: boolean) => {
     if (!isReady) return;
-    
+
     // 게임 시작 (스토어의 dispatch가 내부적으로 플레이어 목록을 동기화하고 첫 턴을 랜덤으로 결정합니다)
-    dispatch({ 
-      type: "START", 
-      nickname: "system" 
+    dispatch({
+      type: "START",
+      nickname: "system",
     });
   };
 

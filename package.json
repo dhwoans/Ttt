@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "packageManager": "pnpm@10.29.2",
   "private": true,
+  "type": "module",
   "scripts": {
     "test": "turbo run test",
     "dev:client": "pnpm --filter client dev",
@@ -15,19 +16,29 @@
     "version:packages": "changeset version",
     "release": "changeset publish",
     "prepare": "husky",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
     ]
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@eslint/js": "^9.39.4",
+    "@types/eslint": "^9.6.1",
     "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4",
     "turbo": "latest",
     "typescript-eslint": "^8.61.0"
   },

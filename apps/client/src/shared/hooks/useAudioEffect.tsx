@@ -30,7 +30,11 @@ export const useAudio = () => {
 
   // BGM 제어
   const toggleBGM = (on: boolean) => {
-    on ? audioManager.setOn("bgm") : audioManager.setOff("bgm");
+    if (on) {
+      audioManager.setOn("bgm");
+    } else {
+      audioManager.setOff("bgm");
+    }
   };
 
   const playBGM = () => audioManager.play("bgm");
