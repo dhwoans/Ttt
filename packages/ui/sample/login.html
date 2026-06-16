@@ -1,0 +1,275 @@
+<html lang="en" vid="0">
+  <head vid="1">
+    <meta charset="UTF-8" vid="2" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      vid="3"
+    />
+    <title vid="4">BLITZ BLOKS // AUTHENTICATION</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" vid="5" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin=""
+      vid="6"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Inter:wght@400;900&amp;display=swap"
+      rel="stylesheet"
+      vid="7"
+    />
+    <style vid="8">
+      :root {
+        --orange: #ff5e2a;
+        --pink: #e3a6c4;
+        --yellow: #e9e65d;
+        --teal: #266070;
+        --olive: #4a4e27;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        background-color: var(--olive);
+        font-family: "Inter", sans-serif;
+        color: white;
+        overflow: hidden;
+        height: 800px;
+        width: 1280px;
+        display: flex;
+        cursor: crosshair;
+      }
+
+      .blitz-type {
+        font-family: "Archivo Black", sans-serif;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -0.08em;
+        line-height: 0.85;
+      }
+
+      .login-container {
+        display: grid;
+        grid-template-columns: 55% 45%;
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-side {
+        background-color: var(--teal);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 80px;
+        position: relative;
+        border-right: 10px solid var(--olive);
+      }
+
+      .hero-side h1 {
+        font-size: 12rem;
+        color: var(--yellow);
+        text-shadow: 12px 12px 0px var(--orange);
+        margin-bottom: 20px;
+      }
+
+      .auth-side {
+        background-color: var(--pink);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 80px;
+        color: var(--olive);
+      }
+
+      .auth-panel {
+        background: var(--yellow);
+        border: 6px solid var(--olive);
+        box-shadow: 20px 20px 0px var(--orange);
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .input-label {
+        font-weight: 900;
+        font-size: 1.2rem;
+      }
+
+      input {
+        background: transparent;
+        border: 4px solid var(--olive);
+        padding: 15px;
+        font-family: "Archivo Black", sans-serif;
+        font-size: 1.2rem;
+        color: var(--olive);
+        outline: none;
+      }
+
+      input:focus {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .login-btn {
+        background: var(--orange);
+        color: white;
+        padding: 20px;
+        border: 4px solid var(--olive);
+        font-size: 2rem;
+        cursor: pointer;
+        box-shadow: 8px 8px 0px var(--olive);
+        margin-top: 10px;
+        text-align: center;
+        transition: transform 0.1s;
+      }
+
+      .login-btn:active {
+        transform: translate(4px, 4px);
+        box-shadow: 4px 4px 0px var(--olive);
+      }
+
+      .auth-footer {
+        margin-top: 30px;
+        text-align: center;
+      }
+
+      .create-link {
+        font-weight: 900;
+        color: var(--olive);
+        text-decoration: underline;
+        text-decoration-thickness: 4px;
+        cursor: pointer;
+      }
+
+      .create-link:hover {
+        color: var(--orange);
+      }
+
+      .noise {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0.04;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      .status-tag {
+        background: var(--orange);
+        color: white;
+        padding: 5px 15px;
+        display: inline-block;
+        margin-bottom: 20px;
+        font-weight: 900;
+      }
+    </style>
+  </head>
+  <body vid="9">
+    <div class="noise" vid="10"></div>
+
+    <div class="login-container" vid="11">
+      <div class="hero-side" vid="12">
+        <div class="blitz-type status-tag" style="width: fit-content" vid="13">
+          SECURE_GATEWAY_V4.0
+        </div>
+        <h1 class="blitz-type" vid="14">BLITZ<br vid="15" />BLOKS</h1>
+        <p
+          class="blitz-type"
+          style="
+            font-size: 1.8rem;
+            color: var(--yellow);
+            max-width: 500px;
+            line-height: 1.1;
+          "
+          vid="16"
+        >
+          NEURAL_LINK_PENDING.<br
+            vid="17"
+          />PLEASE_IDENTIFY_YOURSELF_FOR_UPLINK.
+        </p>
+        <div
+          style="
+            position: absolute;
+            bottom: 40px;
+            left: 80px;
+            font-weight: 900;
+            color: var(--pink);
+            font-size: 0.8rem;
+          "
+          vid="18"
+        >
+          SYSTEM_ID: TERMINAL_09 // SECTOR: B-12
+        </div>
+      </div>
+
+      <div class="auth-side" vid="19">
+        <div class="auth-panel" vid="20">
+          <div
+            class="blitz-type"
+            style="
+              font-size: 2.5rem;
+              border-bottom: 4px solid var(--olive);
+              padding-bottom: 15px;
+              margin-bottom: 10px;
+            "
+            vid="21"
+          >
+            ACCESS_GRANT
+          </div>
+
+          <div class="input-group" vid="22">
+            <label class="blitz-type input-label" vid="23">OPERATOR_ID</label>
+            <input type="text" placeholder="USER_@NODE" vid="24" />
+          </div>
+
+          <div class="input-group" vid="25">
+            <label class="blitz-type input-label" vid="26">CIPHER_KEY</label>
+            <input type="password" placeholder="********" vid="27" />
+          </div>
+
+          <div class="blitz-type login-btn" vid="28">INITIATE_LOGIN</div>
+
+          <div class="auth-footer" vid="29">
+            <span class="blitz-type" style="font-size: 0.9rem" vid="30"
+              >NEW_OPERATOR?</span
+            ><br vid="31" />
+            <span class="blitz-type create-link" vid="32"
+              >GENERATE_NEW_IDENTITY</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script vid="33">
+      document
+        .querySelector(".login-btn")
+        .addEventListener("mouseenter", function () {
+          this.style.backgroundColor = "var(--olive)";
+          this.style.color = "var(--yellow)";
+        });
+      document
+        .querySelector(".login-btn")
+        .addEventListener("mouseleave", function () {
+          this.style.backgroundColor = "var(--orange)";
+          this.style.color = "white";
+        });
+    </script>
+  </body>
+</html>

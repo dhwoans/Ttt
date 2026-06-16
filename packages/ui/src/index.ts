@@ -17,3 +17,4 @@ export * from "./components/game/Board.js";
 export * from "./components/CardImage.js";
 export * from "./components/CharacterAvatar.js";
 export * from "./components/VolumeSlider.js";
+export * from "./components/Logo.js";

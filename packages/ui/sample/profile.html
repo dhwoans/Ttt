@@ -1,0 +1,435 @@
+<html lang="en" vid="0">
+  <head vid="1">
+    <meta charset="UTF-8" vid="2" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      vid="3"
+    />
+    <title vid="4">BLITZ BLOKS // PROFILE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" vid="5" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin=""
+      vid="6"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Inter:wght@400;900&amp;display=swap"
+      rel="stylesheet"
+      vid="7"
+    />
+    <style vid="8">
+      :root {
+        --orange: #ff5e2a;
+        --pink: #e3a6c4;
+        --yellow: #e9e65d;
+        --teal: #266070;
+        --olive: #4a4e27;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        background-color: var(--olive);
+        font-family: "Inter", sans-serif;
+        color: white;
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        cursor: crosshair;
+      }
+
+      .blitz-type {
+        font-family: "Archivo Black", sans-serif;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -0.08em;
+        line-height: 0.85;
+      }
+
+      .sidebar {
+        width: 20%;
+        height: 100vh;
+        background-color: var(--pink);
+        color: var(--olive);
+        display: flex;
+        flex-direction: column;
+        border-right: 10px solid var(--olive);
+        position: relative;
+        z-index: 10;
+      }
+
+      .header-module {
+        padding: 30px 20px;
+      }
+
+      .title-medium {
+        font-size: 3.5rem;
+      }
+
+      .nav-list {
+        flex-grow: 1;
+        padding-top: 40px;
+      }
+
+      .nav-item {
+        padding: 20px;
+        border-bottom: 2px solid var(--olive);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 900;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        color: var(--olive);
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--olive);
+        color: var(--pink);
+      }
+
+      .main-content {
+        flex-grow: 1;
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 0;
+        background: var(--olive);
+        position: relative;
+      }
+
+      .profile-section {
+        background-color: var(--orange);
+        color: var(--pink);
+        padding: 60px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        border-right: 5px solid var(--olive);
+      }
+
+      .stats-section {
+        background-color: var(--yellow);
+        color: var(--teal);
+        padding: 60px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        border-left: 5px solid var(--olive);
+      }
+
+      .avatar-frame {
+        width: 240px;
+        height: 240px;
+        background: var(--pink);
+        border: 15px solid var(--olive);
+        margin-bottom: 40px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+      }
+
+      .avatar-pixel {
+        width: 80%;
+        height: 80%;
+        background: var(--olive);
+        clip-path: polygon(
+          20% 0%,
+          80% 0%,
+          100% 20%,
+          100% 80%,
+          80% 100%,
+          20% 100%,
+          0% 80%,
+          0% 20%
+        );
+      }
+
+      .profile-name {
+        font-size: 5rem;
+        margin-bottom: 10px;
+        z-index: 5;
+      }
+
+      .profile-id {
+        font-weight: 900;
+        font-size: 1.2rem;
+        opacity: 0.8;
+        z-index: 5;
+      }
+
+      .stat-block {
+        margin-bottom: 40px;
+        z-index: 5;
+      }
+
+      .stat-label {
+        font-family: "Archivo Black", sans-serif;
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+
+      .stat-value {
+        font-family: "Archivo Black", sans-serif;
+        font-size: 4rem;
+        line-height: 1;
+      }
+
+      .score-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-bottom: 4px solid var(--teal);
+        padding: 10px 0;
+      }
+
+      .score-mode {
+        font-weight: 900;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+      }
+
+      .score-points {
+        font-family: "Archivo Black", sans-serif;
+        font-size: 2.5rem;
+      }
+
+      .abstract-shape {
+        position: absolute;
+        width: 150%;
+        height: 40%;
+        background: rgba(0, 0, 0, 0.1);
+        transform: rotate(-15deg);
+        pointer-events: none;
+      }
+
+      .blob-svg {
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 350px;
+        fill: var(--olive);
+        opacity: 0.6;
+      }
+
+      .noise {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0.04;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      .footer-ticker {
+        position: absolute;
+        bottom: 0;
+        left: 20%;
+        right: 0;
+        background: var(--teal);
+        color: var(--yellow);
+        padding: 15px;
+        font-weight: 900;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        overflow: hidden;
+        display: flex;
+        gap: 50px;
+        z-index: 20;
+      }
+
+      .ticker-text {
+        animation: ticker 30s linear infinite;
+      }
+
+      @keyframes ticker {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-50%);
+        }
+      }
+
+      .btn-exit {
+        background: var(--olive);
+        color: var(--pink);
+        border: none;
+        padding: 25px;
+        font-family: "Archivo Black";
+        font-size: 1.5rem;
+        width: 100%;
+        margin-top: auto;
+        cursor: pointer;
+        text-align: left;
+        text-decoration: none;
+      }
+
+      .btn-exit:hover {
+        background: var(--teal);
+        color: var(--yellow);
+      }
+
+      .bg-number {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        font-size: 15rem;
+        opacity: 0.1;
+        line-height: 1;
+      }
+    </style>
+  </head>
+  <body vid="9">
+    <div class="noise" vid="10"></div>
+
+    <aside class="sidebar" vid="11">
+      <div class="header-module" vid="12">
+        <h1 class="blitz-type title-medium" vid="13">
+          BLITZ<br vid="14" />BLOKS
+        </h1>
+        <p
+          style="margin-top: 10px; font-weight: 900; font-size: 0.8rem"
+          vid="15"
+        >
+          SYSTEM_PROFILE_V.04
+        </p>
+      </div>
+
+      <nav class="nav-list" vid="16">
+        <a href="#" class="nav-item blitz-type active" vid="17"
+          >01 PROFILE <span vid="18">→</span></a
+        >
+        <a href="#" class="nav-item blitz-type" vid="19"
+          >02 SETTINGS <span vid="20">→</span></a
+        >
+        <a href="#" class="nav-item blitz-type" vid="21"
+          >03 GALLERY <span vid="22">→</span></a
+        >
+        <a href="#" class="nav-item blitz-type" vid="23"
+          >04 CREDITS <span vid="24">→</span></a
+        >
+      </nav>
+
+      <a href="#" class="btn-exit blitz-type" vid="25">BACK_TO_LOBBY</a>
+
+      <svg
+        class="blob-svg"
+        viewBox="0 0 200 200"
+        xmlns="http://www.w3.org/2000/svg"
+        vid="26"
+      >
+        <path
+          d="M44.7,-76.4C58.3,-69.2,70,-57.9,78.7,-44.5C87.4,-31.1,93.1,-15.5,91.3,-0.9C89.5,13.6,80.3,27.2,71.2,40.1C62.1,53,53.2,65.3,41.1,72.8C29,80.3,13.7,83,0.3,82.4C-13,81.8,-26.1,78,-38.7,71.4C-51.3,64.8,-63.5,55.5,-71.4,43.4C-79.3,31.3,-82.9,15.7,-82.1,0.5C-81.2,-14.7,-75.9,-29.4,-67.2,-41.8C-58.5,-54.2,-46.4,-64.3,-33.1,-71.6C-19.8,-78.9,-9.9,-83.4,2.5,-87.7C14.8,-92,29.7,-96.2,44.7,-76.4Z"
+          transform="translate(100 100)"
+          vid="27"
+        ></path>
+      </svg>
+    </aside>
+
+    <main class="main-content" vid="28">
+      <section class="profile-section" vid="29">
+        <div class="abstract-shape" style="top: 10%; left: -20%" vid="30"></div>
+        <div class="bg-number blitz-type" vid="31">USER</div>
+
+        <div class="avatar-frame" vid="32">
+          <div class="avatar-pixel" vid="33"></div>
+        </div>
+
+        <h2 class="blitz-type profile-name" vid="34">
+          MARKO<br vid="35" />_01
+        </h2>
+        <p class="profile-id" vid="36">NODE_IDENTITY: #8829-X-BLITZ</p>
+
+        <div class="stat-block" style="margin-top: auto" vid="37">
+          <div class="stat-label" vid="38">TOTAL PLAY TIME</div>
+          <div class="stat-value blitz-type" vid="39">128:42:09</div>
+        </div>
+      </section>
+
+      <section class="stats-section" vid="40">
+        <div
+          class="abstract-shape"
+          style="bottom: 10%; right: -20%; transform: rotate(15deg)"
+          vid="41"
+        ></div>
+        <div
+          class="bg-number blitz-type"
+          style="color: var(--teal); opacity: 0.05"
+          vid="42"
+        >
+          DATA
+        </div>
+
+        <h3
+          class="blitz-type"
+          style="font-size: 3rem; margin-bottom: 40px"
+          vid="43"
+        >
+          TOP_SCORES
+        </h3>
+
+        <div class="score-row" vid="44">
+          <span class="score-mode" vid="45">SOLO BLITZ</span>
+          <span class="score-points" vid="46">999,999</span>
+        </div>
+        <div class="score-row" vid="47">
+          <span class="score-mode" vid="48">MULTI BATTLE</span>
+          <span class="score-points" vid="49">742,000</span>
+        </div>
+        <div class="score-row" vid="50">
+          <span class="score-mode" vid="51">LOCAL LINK</span>
+          <span class="score-points" vid="52">881,250</span>
+        </div>
+
+        <div class="stat-block" style="margin-top: 60px" vid="53">
+          <div class="stat-label" vid="54">GLOBAL RANKING</div>
+          <div class="stat-value blitz-type" vid="55">#004</div>
+        </div>
+
+        <div class="stat-block" vid="56">
+          <div class="stat-label" vid="57">NODE UPTIME</div>
+          <div class="stat-value blitz-type" vid="58">99.8%</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-ticker" vid="59">
+      <div class="ticker-text" vid="60">
+        &gt; PROFILE DATA SYNCED // ENCRYPTION: ACTIVE // SERVER: BERLIN_NODE_01
+        // LAST SESSION: 04:12 AGO // REWARD UNLOCKED: NEON_SKIN_04 // &gt;
+        PROFILE DATA SYNCED // ENCRYPTION: ACTIVE // SERVER: BERLIN_NODE_01 //
+        LAST SESSION: 04:12 AGO // REWARD UNLOCKED: NEON_SKIN_04 //
+      </div>
+    </footer>
+
+    <script vid="61">
+      document.querySelector(".btn-exit").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.body.style.filter = "invert(1)";
+        setTimeout(() => {
+          document.body.style.filter = "none";
+        }, 100);
+      });
+    </script>
+  </body>
+</html>
