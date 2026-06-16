@@ -20,7 +20,7 @@ export const useUserStore = create<UserState>()(
       setCurrentUser: (currentUser) => set({ currentUser }),
       clearCurrentUser: () => set({ currentUser: null }),
     }),
-    { 
+    {
       name: "user-storage",
       storage: createJSONStorage(() => sessionStorage),
     },

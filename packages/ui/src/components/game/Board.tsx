@@ -1,5 +1,5 @@
-import * as React from "react"
-import { Square } from "./Square.js"
+import * as React from "react";
+import { Square } from "./Square.js";
 
 interface BoardProps {
   list: (string | null)[];
@@ -20,9 +20,9 @@ const Board = React.forwardRef<HTMLOListElement, BoardProps>(
           </li>
         ))}
       </ol>
-    )
-  }
-)
-Board.displayName = "Board"
+    );
+  },
+);
+Board.displayName = "Board";
 
-export { Board }
+export { Board };

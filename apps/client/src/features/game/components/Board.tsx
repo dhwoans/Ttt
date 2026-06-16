@@ -8,7 +8,9 @@ export default function Board({
   selectSquare: ((index: number) => void) | false;
 }) {
   const history = useGameStore((state) => state.tree.game.history);
-  const list = reconstructBoard(history).map((cell) => (cell === "" ? null : cell));
-  
+  const list = reconstructBoard(history).map((cell) =>
+    cell === "" ? null : cell,
+  );
+
   return <UIBoard list={list} selectSquare={selectSquare} />;
 }

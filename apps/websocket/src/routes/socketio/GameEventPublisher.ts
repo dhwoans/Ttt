@@ -229,5 +229,3 @@ class GameEventPublisher {
 
 export type { PlayerPayload };
 export default GameEventPublisher;
-
-

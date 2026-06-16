@@ -67,4 +67,3 @@ class TicketAuthService {
 
 export type { AuthenticatedTicket, TicketValidationResult };
 export default TicketAuthService;
-

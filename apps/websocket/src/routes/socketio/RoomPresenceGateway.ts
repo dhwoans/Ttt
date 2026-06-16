@@ -141,5 +141,3 @@ class RoomPresenceGateway {
 
 export type { AuthenticatedUser, JoinResult };
 export default RoomPresenceGateway;
-
-

@@ -16,10 +16,10 @@ import hourglassNotDone from "@assets/icons/Hourglass_Not_Done.webm";
 import verse from "@assets/icons/verse.webp";
 import thoughtBalloon from "@assets/icons/thoughtBalloon.webp";
 
-import single from "@assets/backgrounds/single.webp"
-import local from "@assets/backgrounds/local.jpg"
-import multi from "@assets/backgrounds/multi.jpg"
-import spotlight  from "@assets/backgrounds/spotlight.png"
+import single from "@assets/backgrounds/single.webp";
+import local from "@assets/backgrounds/local.jpg";
+import multi from "@assets/backgrounds/multi.jpg";
+import spotlight from "@assets/backgrounds/spotlight.png";
 import toBeContinue from "@assets/backgrounds/toBeContinue.png";
 import jojoEffect from "@assets/backgrounds/jojoEffect.png";
 

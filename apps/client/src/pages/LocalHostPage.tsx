@@ -1,4 +1,3 @@
-
-export default function LocalHostPage(){
+export default function LocalHostPage() {
   return <></>;
 }

@@ -15,7 +15,7 @@ export function useRoomNavigation() {
     if (roomId) {
       console.log("[Navigation] Room assigned, navigating to:", roomId);
       toast.success("🎟️ 게임 방으로 입장합니다!");
-      
+
       const timer = setTimeout(() => {
         navigate(ROUTES.game.room(roomId));
       }, 1500);

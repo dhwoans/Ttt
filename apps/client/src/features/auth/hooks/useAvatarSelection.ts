@@ -42,8 +42,8 @@ export function useAvatarSelection() {
     index,
     isRandomizing,
     currentAvatar: {
-      nickname : animalList[index][0],
-      emoji : animalList[index][1],
+      nickname: animalList[index][0],
+      emoji: animalList[index][1],
       videoSrc: animalList[index][2],
     },
     randomize,

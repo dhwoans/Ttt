@@ -43,5 +43,12 @@ export function useReceivePlayerLeave() {
       resetGame();
       navigate("/lobby", { replace: true });
     }
-  }, [lastServerEvent, status, clearGameServerConnection, navigate, resetGame, setReadyTimeoutSnapshot]);
+  }, [
+    lastServerEvent,
+    status,
+    clearGameServerConnection,
+    navigate,
+    resetGame,
+    setReadyTimeoutSnapshot,
+  ]);
 }

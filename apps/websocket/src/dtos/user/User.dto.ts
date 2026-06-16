@@ -13,5 +13,3 @@ export default interface User {
 export interface PlayerInfo extends User {
   userId: string;
 }
-
-

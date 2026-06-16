@@ -52,10 +52,7 @@ function SingleTicTacToe() {
   );
   const ExitModalComponent = <ExitModal handleExit={handleExit} />;
   return (
-    <TicTacToe
-      BoardSlot={BoardComponent}
-      ExitModalSlot={ExitModalComponent}
-    />
+    <TicTacToe BoardSlot={BoardComponent} ExitModalSlot={ExitModalComponent} />
   );
 }
 

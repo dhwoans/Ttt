@@ -12,10 +12,7 @@ export default class GameOverState extends State {
     game.tree.game.status = "GAME_OVER";
   }
 
-  handleAction(
-    game: Context,
-    action: Action,
-  ): Response<string> {
+  handleAction(game: Context, action: Action): Response<string> {
     // Only RESET action is valid in game over state
     if (action.type === "RESET") {
       // Reset game board and transition to IDLE state

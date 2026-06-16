@@ -12,5 +12,3 @@ export interface TicketResponse {
   ttl?: number;
   message?: string;
 }
-
-

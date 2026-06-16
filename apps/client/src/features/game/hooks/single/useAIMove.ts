@@ -21,8 +21,12 @@ export function useAIMove(isPlayerTurn: boolean) {
       if (!playersInfos[0] || !playersInfos[1]) return;
       const playerSymbol = playersInfos[0].avatar;
       const botSymbol = playersInfos[1].avatar;
-      
-      const aiMoveIndex = ticTacToeAI.getBestMove(tree.game.history, botSymbol, playerSymbol);
+
+      const aiMoveIndex = ticTacToeAI.getBestMove(
+        tree.game.history,
+        botSymbol,
+        playerSymbol,
+      );
 
       if (aiMoveIndex !== null) {
         dispatch({

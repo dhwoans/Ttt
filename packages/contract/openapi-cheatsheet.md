@@ -3,13 +3,13 @@
 ## 🔷 최상위 구조 (Root Object)
 
 ```yaml
-openapi: 3.1.0          # 버전 (필수)
-info: ...               # API 메타정보 (필수)
-servers: [...]          # 서버 목록
-paths: ...              # 엔드포인트 정의 (필수)
-components: ...         # 재사용 컴포넌트
-tags: [...]             # 태그 목록
-security: [...]         # 전역 보안 정책
+openapi: 3.1.0 # 버전 (필수)
+info: ... # API 메타정보 (필수)
+servers: [...] # 서버 목록
+paths: ... # 엔드포인트 정의 (필수)
+components: ... # 재사용 컴포넌트
+tags: [...] # 태그 목록
+security: [...] # 전역 보안 정책
 ```
 
 ---
@@ -18,9 +18,9 @@ security: [...]         # 전역 보안 정책
 
 ```yaml
 info:
-  title: My API          # API 이름 (필수)
-  version: 1.0.0         # API 버전 (필수)
-  description: |         # 설명 (Markdown 가능)
+  title: My API # API 이름 (필수)
+  version: 1.0.0 # API 버전 (필수)
+  description: | # 설명 (Markdown 가능)
     여러 줄 설명
   contact:
     name: 담당자
@@ -39,7 +39,7 @@ servers:
     description: 운영 서버
   - url: http://localhost:3000
     description: 로컬 개발 서버
-  - url: https://{env}.example.com   # 변수 사용
+  - url: https://{env}.example.com # 변수 사용
     variables:
       env:
         default: dev
@@ -54,13 +54,13 @@ servers:
 paths:
   /users/{id}:
     get:
-      operationId: getUser    # 고유 식별자 (코드 생성 시 사용)
+      operationId: getUser # 고유 식별자 (코드 생성 시 사용)
       summary: 사용자 조회
       description: 상세 설명
       tags: [User]
       parameters:
         - name: id
-          in: path            # path | query | header | cookie
+          in: path # path | query | header | cookie
           required: true
           schema:
             type: string
@@ -152,7 +152,7 @@ components:
   schemas:
     User:
       type: object
-      required: [id, name]        # 필수 필드 목록
+      required: [id, name] # 필수 필드 목록
       properties:
         id:
           type: string
@@ -166,7 +166,7 @@ components:
           maximum: 150
         role:
           type: string
-          enum: [user, admin]      # 허용 값 제한
+          enum: [user, admin] # 허용 값 제한
         tags:
           type: array
           items:
@@ -179,18 +179,18 @@ components:
 
 ## 🔷 Schema 주요 타입 & 속성
 
-| 타입 | 속성 |
-|------|------|
-| `string` | `minLength`, `maxLength`, `pattern`, `format`, `enum` |
-| `integer` / `number` | `minimum`, `maximum`, `multipleOf` |
-| `boolean` | — |
-| `array` | `items`, `minItems`, `maxItems`, `uniqueItems` |
-| `object` | `properties`, `required`, `additionalProperties` |
+| 타입                 | 속성                                                  |
+| -------------------- | ----------------------------------------------------- |
+| `string`             | `minLength`, `maxLength`, `pattern`, `format`, `enum` |
+| `integer` / `number` | `minimum`, `maximum`, `multipleOf`                    |
+| `boolean`            | —                                                     |
+| `array`              | `items`, `minItems`, `maxItems`, `uniqueItems`        |
+| `object`             | `properties`, `required`, `additionalProperties`      |
 
 ```yaml
 # format 예시
 type: string
-format: date-time   # date, time, date-time, email, uri, uuid, password
+format: date-time # date, time, date-time, email, uri, uuid, password
 ```
 
 ---
@@ -502,13 +502,13 @@ paths:
 
 ### 📌 in: 위치 한눈에 비교
 
-| HTTP 위치 | OpenAPI `in` 값 | 예시 |
-|-----------|----------------|------|
-| URL 경로 `/users/{id}` | `path` | `in: path` |
-| URL 쿼리 `?page=1` | `query` | `in: query` |
-| 요청 헤더 | `header` | `in: header` |
-| 쿠키 | `cookie` | `in: cookie` |
-| 요청 바디 `{ ... }` | `requestBody` | (parameter 아님) |
+| HTTP 위치              | OpenAPI `in` 값 | 예시             |
+| ---------------------- | --------------- | ---------------- |
+| URL 경로 `/users/{id}` | `path`          | `in: path`       |
+| URL 쿼리 `?page=1`     | `query`         | `in: query`      |
+| 요청 헤더              | `header`        | `in: header`     |
+| 쿠키                   | `cookie`        | `in: cookie`     |
+| 요청 바디 `{ ... }`    | `requestBody`   | (parameter 아님) |
 
 ---
 

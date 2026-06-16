@@ -15,5 +15,3 @@ class UserModel {
   async deleteUser(userId: UserId) {}
 }
 export default UserModel;
-
-

@@ -13,11 +13,7 @@ export const Countdown = ({
   onComplete,
   className,
 }: CountdownProps) => {
-  const remaining = useCountdown(
-    durationMs,
-    initialStartTime,
-    onComplete,
-  );
+  const remaining = useCountdown(durationMs, initialStartTime, onComplete);
 
   const displayText = Math.ceil(remaining / 1000);
   const isWarning = remaining < Math.round(durationMs / 3);

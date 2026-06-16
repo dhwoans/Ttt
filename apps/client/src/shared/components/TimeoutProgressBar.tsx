@@ -22,7 +22,7 @@ export function TimeoutProgressBar({
   const setReadyTimeoutSnapshot = useRoomStore(
     (state) => state.setReadyTimeoutSnapshot,
   );
-  
+
   const [timeoutMs, setTimeoutMs] = useState<number | null>(null);
   const [remainingMs, setRemainingMs] = useState<number>(0);
 
@@ -42,7 +42,7 @@ export function TimeoutProgressBar({
 
     const elapsed = Date.now() - startedAt;
     const remain = total - elapsed;
-    
+
     if (remain > 0) {
       setTimeoutMs(total);
       setRemainingMs(remain);

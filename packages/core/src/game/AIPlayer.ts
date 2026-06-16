@@ -13,7 +13,10 @@ export interface AIEngine {
 /**
  * 승리/방어 확인용 로직
  */
-function findDecisiveMove(board: PlayerSymbol[], targetSymbol: string): number | null {
+function findDecisiveMove(
+  board: PlayerSymbol[],
+  targetSymbol: string,
+): number | null {
   for (const combo of WINNING_COMBINATIONS_1D) {
     let targetCount = 0;
     let emptyPos: number | null = null;

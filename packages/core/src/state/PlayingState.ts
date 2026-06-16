@@ -2,7 +2,12 @@ import State from "./State.js";
 import GameOverState from "./GameOverState.js";
 import type Context from "../game/Context.js";
 import type { Action, Response } from "../types/index.js";
-import { isValidMove, evaluateGameState, calculateNextTurn, reconstructBoard } from "../utils/tttUtils.js";
+import {
+  isValidMove,
+  evaluateGameState,
+  calculateNextTurn,
+  reconstructBoard,
+} from "../utils/tttUtils.js";
 
 /**
  * Represents the PLAYING state in the game FSM.
@@ -12,14 +17,15 @@ export default class PlayingState extends State {
   onEnter(game: Context): void {
     game.tree.game.status = "PLAYING";
     const len = game.tree.players.length;
-    game.tree.game.currentTurn = Math.floor(Math.random() * (len > 0 ? len : 2));
-    console.log(`[FSM] Game started. Initial turn: ${game.tree.game.currentTurn}`);
+    game.tree.game.currentTurn = Math.floor(
+      Math.random() * (len > 0 ? len : 2),
+    );
+    console.log(
+      `[FSM] Game started. Initial turn: ${game.tree.game.currentTurn}`,
+    );
   }
 
-  handleAction(
-    game: Context,
-    action: Action,
-  ): Response<string> {
+  handleAction(game: Context, action: Action): Response<string> {
     let index: number;
     const currentBoard = reconstructBoard(game.tree.game.history);
 
@@ -33,22 +39,26 @@ export default class PlayingState extends State {
         return { success: false, message: "No available moves" };
       }
 
-      index = availableMoves[Math.floor(Math.random() * availableMoves.length)]!;
-      console.log(`[FSM] Timeout handled for ${action.nickname}. Random move: ${index}`);
+      index =
+        availableMoves[Math.floor(Math.random() * availableMoves.length)]!;
+      console.log(
+        `[FSM] Timeout handled for ${action.nickname}. Random move: ${index}`,
+      );
     } else {
       if (action.move === undefined) {
         return { success: false, message: "Move index is required" };
       }
       index = action.move;
     }
-    
+
     // Validate move using utility
     if (!isValidMove(currentBoard, index)) {
       return { success: false, message: "Invalid or occupied position" };
     }
 
     // Determine current player's symbol
-    const symbol = action.symbol ?? (game.tree.game.currentTurn % 2 == 0 ? "X" : "O");
+    const symbol =
+      action.symbol ?? (game.tree.game.currentTurn % 2 == 0 ? "X" : "O");
 
     // Record history
     game.tree.game.history.push({
@@ -76,11 +86,13 @@ export default class PlayingState extends State {
     // Advance turn using utility
     const nextTurn = calculateNextTurn(
       game.tree.game.currentTurn,
-      game.tree.players.length
+      game.tree.players.length,
     );
-    console.log(`[FSM] Turn advanced: ${game.tree.game.currentTurn} -> ${nextTurn}`);
+    console.log(
+      `[FSM] Turn advanced: ${game.tree.game.currentTurn} -> ${nextTurn}`,
+    );
     game.tree.game.currentTurn = nextTurn;
-    
+
     return { success: true };
   }
 }

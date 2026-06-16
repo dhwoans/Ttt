@@ -32,8 +32,6 @@ export const SOCKET_EVENTS = [
   "GAME_START",
 ] as const;
 
-
-
 export type EmitContext =
   | {
       mode: "UNICAST";
@@ -63,5 +61,3 @@ export type EmitContext =
 //   };
 //   payload: SocketMessage;
 // }
-
-

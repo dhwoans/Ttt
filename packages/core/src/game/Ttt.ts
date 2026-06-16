@@ -1,7 +1,12 @@
 import Context from "./Context.js";
 import IdleState from "../state/IdleState.js";
 import type State from "../state/State.js";
-import type { UserId, GameStateTree, Action, Response } from "../types/index.js";
+import type {
+  UserId,
+  GameStateTree,
+  Action,
+  Response,
+} from "../types/index.js";
 
 /**
  * Tic-Tac-Toe game context class (FSM Context pattern)
@@ -25,7 +30,6 @@ export default class Ttt extends Context {
     this.currentState.onEnter(this);
   }
 
-  
   changeState(newState: State): void {
     console.log(
       `[FSM] Transition: ${this.currentState.constructor.name} -> ${newState.constructor.name}`,
@@ -48,4 +52,3 @@ export default class Ttt extends Context {
     this.tree.players = playerIds.map((id) => ({ id }));
   }
 }
-

@@ -19,9 +19,7 @@ export default function TicTacToe({
   const tree = useGameStore((state) => state.tree);
   const isGameOver = tree.game.status === "GAME_OVER";
   const turnStartTime = useGameStore((state) => state.turnStartTime);
-  const serverTurnTimer = useGameStore(
-    (state) => state.serverTurnTimer,
-  );
+  const serverTurnTimer = useGameStore((state) => state.serverTurnTimer);
   const countdownDurationMs = serverTurnTimer?.timeoutMs ?? 10000;
   const countdownStartTime = serverTurnTimer?.startedAt ?? turnStartTime;
 

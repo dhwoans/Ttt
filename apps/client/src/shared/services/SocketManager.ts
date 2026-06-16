@@ -111,7 +111,7 @@ class GameSocketManager {
 
         // --- Store 업데이트 직접 처리 (핵심 로직 통합) ---
         this.handleStoreUpdate(name, data);
-        
+
         // --- 범용 이벤트 추적 (상태 기반 사이드 이펙트 트리거용) ---
         useRoomStore.getState().setLastServerEvent(name, data);
       });
@@ -126,7 +126,7 @@ class GameSocketManager {
       case "ROOM_ASSIGNED": {
         const assignedRoomId = data.roomId;
         gameStore.setTree({
-          game: { ...gameStore.tree.game, roomId: assignedRoomId }
+          game: { ...gameStore.tree.game, roomId: assignedRoomId },
         });
         break;
       }
@@ -134,7 +134,10 @@ class GameSocketManager {
       case "READY_TIMEOUT_STARTED": {
         const timeoutMs = Number(data?.timeoutMs);
         if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
-          roomStore.setReadyTimeoutSnapshot({ timeoutMs, startedAt: Date.now() });
+          roomStore.setReadyTimeoutSnapshot({
+            timeoutMs,
+            startedAt: Date.now(),
+          });
         }
         break;
       }
@@ -143,12 +146,14 @@ class GameSocketManager {
         const timeoutMs = Number(data?.timeoutMs);
         if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
           gameStore.setServerTurnTimer({ timeoutMs, startedAt: Date.now() });
-          
+
           if (data.currentTurnPlayerId) {
-            const index = gameStore.tree.players.findIndex(p => p.id === data.currentTurnPlayerId);
+            const index = gameStore.tree.players.findIndex(
+              (p) => p.id === data.currentTurnPlayerId,
+            );
             if (index !== -1) {
               gameStore.setTree({
-                game: { ...gameStore.tree.game, currentTurn: index }
+                game: { ...gameStore.tree.game, currentTurn: index },
               });
             }
           }
@@ -181,23 +186,25 @@ class GameSocketManager {
         gameStore.setServerTurnTimer(null);
         roomStore.setIsWaitingForServer(false);
         const { userId, move } = data;
-        const player = roomStore.playersInfos.find(p => p.userId === userId);
+        const player = roomStore.playersInfos.find((p) => p.userId === userId);
         if (player) {
           gameStore.dispatch({
             type: "MOVE",
             move: move,
             symbol: player.avatar,
-            nickname: player.nickname
+            nickname: player.nickname,
           });
         }
         break;
       }
 
       case "NEXT_TURN": {
-        const index = gameStore.tree.players.findIndex(p => p.id === data.nextPlayerId);
+        const index = gameStore.tree.players.findIndex(
+          (p) => p.id === data.nextPlayerId,
+        );
         if (index !== -1) {
           gameStore.setTree({
-            game: { ...gameStore.tree.game, currentTurn: index }
+            game: { ...gameStore.tree.game, currentTurn: index },
           });
         }
         break;
@@ -211,10 +218,16 @@ class GameSocketManager {
         } else if (data.winnerIndex !== undefined) {
           winnerIdx = data.winnerIndex;
         } else if (data.winner) {
-          winnerIdx = roomStore.playersInfos.findIndex(p => p.userId === data.winner);
+          winnerIdx = roomStore.playersInfos.findIndex(
+            (p) => p.userId === data.winner,
+          );
         }
         gameStore.setTree({
-          game: { ...gameStore.tree.game, status: "GAME_OVER", winner: winnerIdx }
+          game: {
+            ...gameStore.tree.game,
+            status: "GAME_OVER",
+            winner: winnerIdx,
+          },
         });
         break;
       }
@@ -247,9 +260,13 @@ class GameSocketManager {
         gameStore.setServerTurnTimer(null);
         break;
       }
-      
+
       case "ERROR": {
-        toast.error(typeof data.message === "string" ? data.message : "오류가 발생했습니다.");
+        toast.error(
+          typeof data.message === "string"
+            ? data.message
+            : "오류가 발생했습니다.",
+        );
         break;
       }
     }

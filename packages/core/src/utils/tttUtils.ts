@@ -1,4 +1,7 @@
-import { WINNING_COMBINATIONS_1D, WINNING_COMBINATIONS_2D } from "../constants/index.js";
+import {
+  WINNING_COMBINATIONS_1D,
+  WINNING_COMBINATIONS_2D,
+} from "../constants/index.js";
 import type { PlayerSymbol, MoveNode } from "../types/index.js";
 
 /**
@@ -56,7 +59,10 @@ export function isValidMove(board: PlayerSymbol[], index: number): boolean {
  * Evaluates the game state and returns the outcome
  * @returns object with isDraw and winnerSymbol
  */
-export function evaluateGameState(board: PlayerSymbol[]): { isDraw: boolean; winnerSymbol: PlayerSymbol | null } {
+export function evaluateGameState(board: PlayerSymbol[]): {
+  isDraw: boolean;
+  winnerSymbol: PlayerSymbol | null;
+} {
   const winnerSymbol = checkWinner1D(board);
   if (winnerSymbol) {
     return { isDraw: false, winnerSymbol };
@@ -70,7 +76,10 @@ export function evaluateGameState(board: PlayerSymbol[]): { isDraw: boolean; win
 /**
  * Calculates the next turn player index
  */
-export function calculateNextTurn(currentTurn: number, playersCount: number): number {
+export function calculateNextTurn(
+  currentTurn: number,
+  playersCount: number,
+): number {
   const count = playersCount > 0 ? playersCount : 2; // Fallback to 2 players
   return (currentTurn + 1) % count;
 }
