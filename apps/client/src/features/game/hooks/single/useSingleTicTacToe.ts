@@ -69,6 +69,7 @@ export function useSingleTicTacToe() {
         move: index,
         symbol: currentPlayer.avatar,
         nickname: currentPlayer.nickname,
+        userId: currentPlayer.userId,
       });
     },
     [isPlayerTurn, isGameOver, currentPlayer, dispatch],

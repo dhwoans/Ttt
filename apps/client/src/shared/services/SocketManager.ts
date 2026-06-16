@@ -193,6 +193,7 @@ class GameSocketManager {
             move: move,
             symbol: player.avatar,
             nickname: player.nickname,
+            userId: player.userId,
           });
         }
         break;

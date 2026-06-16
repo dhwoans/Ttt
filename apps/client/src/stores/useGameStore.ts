@@ -60,6 +60,9 @@ export const useGameStore = create<GameStoreState>()(
             const playersInfos = useRoomStore.getState().playersInfos;
             game.tree.players = playersInfos.map((p) => ({
               id: p.userId || "bot-id",
+              nickname: p.nickname || "Bot",
+              isReady: p.isReady || false,
+              ...(p.avatar && { avatar: p.avatar }),
             }));
           }
 

@@ -23,6 +23,7 @@ export function useSingleReady() {
     dispatch({
       type: "START",
       nickname: "system",
+      userId: "system",
     });
   };
 
