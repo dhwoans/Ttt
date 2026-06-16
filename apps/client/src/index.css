@@ -1,24 +1,16 @@
-@import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;900&display=swap");
 @import "tailwindcss";
 @source "../../../packages/ui/src";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @custom-variant dark (&:is(.dark *));
 
-@font-face {
-  font-family: "CookieRun";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff")
-    format("woff");
-  font-weight: normal;
-  font-display: swap;
-}
-
 html {
   font-size: calc(10px + 0.5vw);
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   line-height: var(--line-height-normal);
   overflow: hidden;
-  color: var(--color-gray-50);
+  color: var(--color-foreground);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -39,48 +31,43 @@ body {
   height: 100%;
   overflow: hidden;
   background-color: var(--background);
-  background-image: url("../assets/backgrounds/background.svg");
-  /* background:
-    radial-gradient(
-      circle at top,
-      rgba(241, 210, 70, 0.98),
-      rgba(250, 176, 103, 0.87)
-    ),
-    url("../assets/backgrounds/Smiling.png");
-  background-repeat: repeat;
-  background-size:
-    auto,
-    50px 50px;
-  animation: move-pattern 10s linear infinite; */
 }
+
 @layer base {
-  h1 {
-    @apply text-primary text-[500%] rotate-5 text-retro-stroke;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  .blitz-type {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.08em;
+    line-height: 0.85;
   }
 }
 
 /* 까만 테두리 그림자 조합 */
 @utility text-retro-stroke {
-  /* 1. 글자 겉면 테두리 두께와 색상 */
   -webkit-text-stroke: 2px var(--foreground);
-  /* 2. 테두리가 글자 안쪽(Fill)을 파먹지 않도록 바깥으로만 밀어냄 (초특급 꿀팁!) */
   paint-order: stroke fill;
-  /* 3. 테두리 바깥으로 떨어지는 레트로 그림자 */
   text-shadow: 6px 6px 0px var(--foreground);
 }
+
 /* 브루탈 박스 */
 @utility brutal-box {
   border: 2px solid var(--foreground);
   box-shadow: 5px 5px 0 0 var(--foreground);
 }
 
-/* 2. 버튼 (Nesting 적용!) */
+/* 버튼 (Nesting 적용!) */
 @utility brutal-btn {
   border: 2px solid var(--foreground);
   box-shadow: 5px 5px 0 0 var(--foreground);
   transition: all 0.2s;
 
-  /* & 기호를 쓰면 hover와 active 상태를 한 덩어리로 묶을 수 있습니다 */
   &:hover {
     box-shadow: none;
     transform: translate(5px, 5px);
@@ -91,31 +78,17 @@ body {
   }
 }
 
-@keyframes barber-pole {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 85px 85px;
-  }
-}
-
-@keyframes move-pattern {
-  from {
-    background-position:
-      0% 0%,
-      0% 0%;
-  }
-  to {
-    background-position:
-      0% 0%,
-      65% 46%;
-  }
-}
-
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: "Luckiest Guy", "CookieRun";
+  --font-heading: "Archivo Black", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  /* Theme Colors */
+  --color-orange: var(--orange);
+  --color-pink: var(--pink);
+  --color-yellow: var(--yellow);
+  --color-teal: var(--teal);
+  --color-olive: var(--olive);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -124,11 +97,6 @@ body {
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -151,44 +119,45 @@ body {
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 :root {
-  --background: oklch(96.425% 0.01597 357.64);
-  --foreground: oklch(0.147 0.004 49.25);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.147 0.004 49.25);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.147 0.004 49.25);
-  --primary: oklch(87.769% 0.16641 95.738);
-  --primary-foreground: oklch(0.97 0.014 254.604);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.97 0.001 106.424);
-  --muted-foreground: oklch(0.553 0.013 58.071);
-  --accent: oklch(0.488 0.243 264.376);
-  --accent-foreground: oklch(0.97 0.014 254.604);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.923 0.003 48.717);
-  --input: oklch(0.923 0.003 48.717);
-  --ring: oklch(0.709 0.01 56.259);
-  --chart-1: oklch(0.837 0.128 66.29);
-  --chart-2: oklch(0.705 0.213 47.604);
-  --chart-3: oklch(0.646 0.222 41.116);
-  --chart-4: oklch(0.553 0.195 38.402);
-  --chart-5: oklch(0.47 0.157 37.304);
-  --radius: 0;
-  --sidebar: oklch(0.985 0.001 106.423);
-  --sidebar-foreground: oklch(0.147 0.004 49.25);
-  --sidebar-primary: oklch(87.769% 0.16641 95.738);
-  --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
-  --sidebar-accent: oklch(0.97 0.001 106.424);
-  --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
-  --sidebar-border: oklch(0.923 0.003 48.717);
-  --sidebar-ring: oklch(0.709 0.01 56.259);
+  /* Blitz Kreuz Palette */
+  --orange: #ff5e2a;
+  --pink: #e3a6c4;
+  --yellow: #e9e65d;
+  --teal: #266070;
+  --olive: #4a4e27;
+
+  /* Map to Shadcn/Tailwind */
+  --background: var(--olive);
+  --foreground: var(--yellow);
+
+  --card: var(--orange);
+  --card-foreground: var(--pink);
+
+  --popover: var(--teal);
+  --popover-foreground: var(--yellow);
+
+  --primary: var(--orange);
+  --primary-foreground: var(--olive);
+
+  --secondary: var(--pink);
+  --secondary-foreground: var(--olive);
+
+  --muted: var(--teal);
+  --muted-foreground: var(--yellow);
+
+  --accent: var(--yellow);
+  --accent-foreground: var(--teal);
+
+  --destructive: #ff3333;
+
+  --border: rgba(0, 0, 0, 0.1);
+  --input: rgba(0, 0, 0, 0.1);
+  --ring: var(--orange);
+
+  --radius: 0px;
 }
 
 .dark {

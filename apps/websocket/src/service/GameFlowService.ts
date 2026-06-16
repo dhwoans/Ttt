@@ -38,7 +38,6 @@ class GameFlowService {
     const allReady =
       players.length > 0 && players.every((player) => player.isReady);
 
-
     if (!roomIsFull) {
       this.readyTimeoutManager.clear(roomId, "ROOM_NOT_FULL");
       this.turnTimeoutManager.clear(roomId);

@@ -18,7 +18,7 @@ describe("Players", () => {
         ...s.tree,
         players: [
           { id: "u1", nickname: "cat", isReady: false },
-          { id: "u2", nickname: "dog", isReady: false }
+          { id: "u2", nickname: "dog", isReady: false },
         ],
         game: {
           ...s.tree.game,

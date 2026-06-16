@@ -45,9 +45,7 @@ class RoomPresenceGateway {
 
     const roomData = this.roomService.getRoomData(roomId);
     const existingPlayers =
-      roomData.success && roomData.message
-        ? roomData.message.tree.players
-        : [];
+      roomData.success && roomData.message ? roomData.message.tree.players : [];
 
     const joinResult = this.roomService.joinPlayer(
       roomId,

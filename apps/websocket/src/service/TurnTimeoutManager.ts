@@ -99,9 +99,9 @@ export class TurnTimeoutManager {
       return;
     }
 
-    const playerResult = roomResult.message
-      .tree.players
-      .find((player: PlayerNode) => player.id === currentPlayerId);
+    const playerResult = roomResult.message.tree.players.find(
+      (player: PlayerNode) => player.id === currentPlayerId,
+    );
 
     const nickname = playerResult?.nickname ?? "system";
     const avatar = playerResult?.avatar;
