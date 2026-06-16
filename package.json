@@ -33,7 +33,6 @@
     "@changesets/cli": "^2.31.0",
     "@eslint/js": "^9.39.4",
     "@types/eslint": "^9.6.1",
-    "@types/eslint__js": "^9.14.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
