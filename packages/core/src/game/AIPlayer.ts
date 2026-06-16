@@ -1,5 +1,6 @@
-import { WINNING_COMBINATIONS_1D, reconstructBoard } from "@ttt/core";
-import type { MoveNode, PlayerSymbol } from "@ttt/core";
+import { WINNING_COMBINATIONS_1D } from "../constants/index.js";
+import { reconstructBoard } from "../utils/tttUtils.js";
+import type { MoveNode, PlayerSymbol } from "../types/index.js";
 
 export interface AIEngine {
   getBestMove: (
