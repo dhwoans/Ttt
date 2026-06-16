@@ -2,7 +2,7 @@ import type { Socket } from "socket.io";
 import type RoomService from "./RoomService.js";
 import type SocketErrorResponder from "../routes/socketio/SocketErrorResponder.js";
 import type GameEventPublisher from "../routes/socketio/GameEventPublisher.js";
-import { reconstructBoard } from "@ttt/core";
+import { reconstructBoard, type PlayerData } from "@ttt/core";
 import { ReadyTimeoutManager } from "./ReadyTimeoutManager.js";
 import { TurnTimeoutManager } from "./TurnTimeoutManager.js";
 
@@ -33,10 +33,11 @@ class GameFlowService {
       return;
     }
 
-    const players = roomResult.message.getAllPlayersData();
-    const roomIsFull = roomResult.message.isFull();
+    const players = roomResult.message.tree.players;
+    const roomIsFull = roomResult.message.tree.players.length >= 2;
     const allReady =
       players.length > 0 && players.every((player) => player.isReady);
+
 
     if (!roomIsFull) {
       this.readyTimeoutManager.clear(roomId, "ROOM_NOT_FULL");
@@ -98,10 +99,11 @@ class GameFlowService {
       return;
     }
 
-    const players = roomResult.message.getAllPlayersData();
+    const players = roomResult.message.tree.players;
     const allReady =
       players.length > 0 && players.every((player) => player.isReady);
-    const roomIsFull = roomResult.message.isFull();
+
+    const roomIsFull = roomResult.message.tree.players.length >= 2;
 
     if (!roomIsFull || !allReady) {
       this.onRoomStateChanged(roomId);
@@ -119,7 +121,7 @@ class GameFlowService {
     for (const player of players) {
       const resetReadyResult = this.roomService.readyPlayer(
         roomId,
-        player.userId,
+        player.id,
         false,
       );
       if (!resetReadyResult.success) {
@@ -127,7 +129,7 @@ class GameFlowService {
       }
 
       this.publisher.emitPlayerReady(roomId, {
-        userId: player.userId,
+        userId: player.id,
         nickname: player.nickname,
         ...(player.avatar ? { avatar: player.avatar } : {}),
         isReady: false,
@@ -175,6 +177,7 @@ class GameFlowService {
     const move = data.move;
     const action = {
       type: "MOVE" as const,
+      userId,
       move,
       nickname,
     };

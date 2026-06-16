@@ -22,7 +22,7 @@ const errorHandler = new ErrorHandler();
 // const sessionManger = new SessionManger();
 const redisManger = new RedisManager();
 
-const roomService = new RoomService(roomRegistry, gameSessionManager);
+const roomService = new RoomService(roomRegistry);
 const legacyWsGameService = new LegacyWsGameService(
   gameSessionManager,
   roomService,

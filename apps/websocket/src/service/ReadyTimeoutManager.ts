@@ -1,5 +1,6 @@
 import type RoomService from "./RoomService.js";
 import type GameEventPublisher from "../routes/socketio/GameEventPublisher.js";
+import type { PlayerNode } from "@ttt/core";
 
 export class ReadyTimeoutManager {
   private readonly timeoutMs = 20000;
@@ -57,26 +58,28 @@ export class ReadyTimeoutManager {
       return;
     }
 
-    if (!roomResult.message.isFull()) {
+    if (roomResult.message.tree.players.length < 2) {
       return;
     }
 
-    const players = roomResult.message.getAllPlayersData();
-    const unreadyPlayers = players.filter((player) => !player.isReady);
+    const players = roomResult.message.tree.players;
+    const unreadyPlayers = players.filter(
+      (player: PlayerNode) => !player.isReady,
+    );
 
     if (unreadyPlayers.length === 0) {
       return;
     }
 
     for (const player of unreadyPlayers) {
-      const removeResult = this.roomService.removePlayer(roomId, player.userId);
+      const removeResult = this.roomService.removePlayer(roomId, player.id);
       if (!removeResult.success) {
         continue;
       }
 
       await this.publisher.evictPlayerFromRoom(
         roomId,
-        player.userId,
+        player.id,
         "Ready timeout",
       );
     }
@@ -86,7 +89,7 @@ export class ReadyTimeoutManager {
       return;
     }
 
-    const remainingPlayers = updatedRoomResult.message.getAllPlayersData();
+    const remainingPlayers = updatedRoomResult.message.tree.players;
     for (const player of remainingPlayers) {
       if (!player.isReady) {
         continue;
@@ -94,7 +97,7 @@ export class ReadyTimeoutManager {
 
       const resetResult = this.roomService.readyPlayer(
         roomId,
-        player.userId,
+        player.id,
         false,
       );
       if (!resetResult.success) {
@@ -102,7 +105,7 @@ export class ReadyTimeoutManager {
       }
 
       this.publisher.emitPlayerReady(roomId, {
-        userId: player.userId,
+        userId: player.id,
         nickname: player.nickname,
         ...(player.avatar ? { avatar: player.avatar } : {}),
         isReady: false,

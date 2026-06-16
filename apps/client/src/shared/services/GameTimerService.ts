@@ -46,6 +46,7 @@ class GameTimerService {
       type: "TIMEOUT",
       nickname,
       symbol,
+      userId: "system",
     });
   }
 }

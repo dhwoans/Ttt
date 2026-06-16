@@ -34,6 +34,7 @@ export function useAIMove(isPlayerTurn: boolean) {
           move: aiMoveIndex,
           symbol: botSymbol,
           nickname: playersInfos[1].nickname,
+          userId: playersInfos[1].userId || "bot-id",
         });
       }
     }, 1000);

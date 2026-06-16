@@ -1,8 +1,10 @@
 export interface Action {
-  type: "MOVE" | "START" | "RESET" | "TIMEOUT";
+  type: "MOVE" | "START" | "RESET" | "TIMEOUT" | "READY";
+  userId: string;
   move?: number;
   symbol?: PlayerSymbol;
   nickname: string;
+  isReady?: boolean;
 }
 
 export interface SuccessResponse<T = void> {
@@ -24,6 +26,9 @@ export type PlayerSymbol = string;
 
 export interface PlayerNode {
   id: string;
+  nickname: string;
+  avatar?: string;
+  isReady: boolean;
 }
 
 export interface MoveNode {

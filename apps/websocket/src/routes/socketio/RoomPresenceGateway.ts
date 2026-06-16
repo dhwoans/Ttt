@@ -46,7 +46,7 @@ class RoomPresenceGateway {
     const roomData = this.roomService.getRoomData(roomId);
     const existingPlayers =
       roomData.success && roomData.message
-        ? roomData.message.getAllPlayersData()
+        ? roomData.message.tree.players
         : [];
 
     const joinResult = this.roomService.joinPlayer(
@@ -75,7 +75,17 @@ class RoomPresenceGateway {
       });
     }
 
-    this.publisher.emitExistingPlayers(socket, roomId, existingPlayers);
+    this.publisher.emitExistingPlayers(
+      socket,
+      roomId,
+      existingPlayers.map((p) => ({
+        userId: p.id,
+        nickname: p.nickname,
+        ...(p.avatar ? { avatar: p.avatar } : {}),
+        isReady: p.isReady,
+      })),
+    );
+
     this.publisher.emitRoomAssigned(socket, roomId);
 
     return { success: true, roomId };

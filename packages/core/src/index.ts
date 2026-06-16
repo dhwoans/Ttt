@@ -1,6 +1,8 @@
 // Game Context
 export { default as Context } from "./game/Context.js";
 export { default as Ttt } from "./game/Ttt.js";
+export { default as Room } from "./domain/Room.js";
+export type { PlayerData } from "./domain/Room.js";
 export * from "./game/AIPlayer.js";
 
 // State Pattern

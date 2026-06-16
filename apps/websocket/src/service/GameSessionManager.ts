@@ -3,31 +3,80 @@ import type { Action, SuccessResponse, FailureResponse } from "@ttt/core";
 import type { RoomId, UserId } from "../type/socket.js";
 
 class GameSessionManager {
-  private readonly games = new Map<RoomId, Ttt>();
+  private readonly sessions = new Map<RoomId, Ttt>();
+
+  createSession(roomId: RoomId): Ttt {
+    const game = new Ttt();
+    game.tree.game.roomId = roomId;
+    this.sessions.set(roomId, game);
+    return game;
+  }
 
   getGameState(roomId: RoomId): SuccessResponse<Ttt> | FailureResponse {
-    const game = this.games.get(roomId);
+    const game = this.sessions.get(roomId);
     if (!game) {
       return {
         success: false,
-        message: `Game state not found: roomId=${roomId}`,
+        message: `Game session not found: roomId=${roomId}`,
       };
     }
 
     return { success: true, message: game };
   }
 
+  addPlayer(
+    roomId: RoomId,
+    userId: UserId,
+    nickname: string,
+    avatar?: string,
+  ): SuccessResponse | FailureResponse {
+    const game = this.sessions.get(roomId);
+    if (!game) return { success: false, message: "Session not found" };
+
+    game.addPlayer(userId, nickname, avatar);
+    return { success: true };
+  }
+
+  removePlayer(roomId: RoomId, userId: UserId): SuccessResponse | FailureResponse {
+    const game = this.sessions.get(roomId);
+    if (!game) return { success: false, message: "Session not found" };
+
+    game.removePlayer(userId);
+    return { success: true };
+  }
+
+  readyPlayer(
+    roomId: RoomId,
+    userId: UserId,
+    isReady: boolean,
+  ): SuccessResponse | FailureResponse {
+    const game = this.sessions.get(roomId);
+    if (!game) return { success: false, message: "Session not found" };
+
+    return game.processAction({
+      type: "READY",
+      userId,
+      nickname: "unknown", // Core finds player by userId
+      isReady,
+    }) as SuccessResponse<void> | FailureResponse;
+  }
+
   startGame(
     roomId: RoomId,
-    playerIds: UserId[],
+    _playerIds: UserId[],
   ): SuccessResponse | FailureResponse {
-    const game = new Ttt();
-    this.games.set(roomId, game);
+    const game = this.sessions.get(roomId);
+    if (!game) return { success: false, message: "Session not found" };
 
-    game.setPlayers(playerIds);
-    game.processAction({ type: "START", nickname: "system" });
+    const result = game.processAction({
+      type: "START",
+      userId: "system",
+      nickname: "system",
+    });
+
+    if (!result.success) return result as FailureResponse;
+
     const state = game.getState();
-
     if (state.game.status !== "PLAYING") {
       return {
         success: false,
@@ -35,27 +84,21 @@ class GameSessionManager {
       };
     }
 
-    if (state.players.length !== 2) {
-      return {
-        success: false,
-        message: `Failed to start game: insufficient players (${state.players.length}/2)`,
-      };
-    }
-
     return { success: true };
   }
 
   deleteGame(roomId: RoomId): SuccessResponse | FailureResponse {
-    this.games.delete(roomId);
-    if (this.games.get(roomId)) {
-      return { success: false, message: "게임 삭제 실패" };
-    }
-
+    this.sessions.delete(roomId);
     return { success: true };
   }
 
-  applyMove(roomId: RoomId, action: Action): SuccessResponse | FailureResponse {
-    const game = this.games.get(roomId);
+  applyMove(
+    roomId: RoomId,
+    userId: UserId,
+    nickname: string,
+    move: number,
+  ): SuccessResponse | FailureResponse {
+    const game = this.sessions.get(roomId);
     if (!game) {
       return {
         success: false,
@@ -63,17 +106,23 @@ class GameSessionManager {
       };
     }
 
-    const state = game.getState();
-    if (state.game.status !== "PLAYING") {
-      return {
-        success: false,
-        message: "Game is not in PLAYING state",
-      };
-    }
+    return game.processAction({
+      type: "MOVE",
+      userId,
+      nickname,
+      move,
+    }) as SuccessResponse<void> | FailureResponse;
+  }
 
-    return game.processAction(action) as
-      | SuccessResponse<void>
-      | FailureResponse;
+  applyTimeout(roomId: RoomId, userId: UserId, nickname: string): SuccessResponse | FailureResponse {
+    const game = this.sessions.get(roomId);
+    if (!game) return { success: false, message: "Session not found" };
+
+    return game.processAction({
+      type: "TIMEOUT",
+      userId,
+      nickname
+    }) as SuccessResponse<void> | FailureResponse;
   }
 }
 
