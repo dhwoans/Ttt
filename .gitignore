@@ -79,3 +79,4 @@ $RECYCLE.BIN/
 *.tgz
 .yarn-integrity
 .pnp.*
+packages/ui/src/sample
