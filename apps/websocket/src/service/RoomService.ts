@@ -54,8 +54,7 @@ class RoomService {
     isReady: boolean,
   ): SuccessResponse | FailureResponse {
     const sessionResult = this.roomRegistry.getSession(roomId);
-    if (!sessionResult.success || !sessionResult.message)
-      return sessionResult as FailureResponse;
+    if (!sessionResult.success || !sessionResult.message) return sessionResult as FailureResponse;
 
     return sessionResult.message.processAction({
       type: "READY",

@@ -37,10 +37,7 @@ class GameSessionManager {
     return { success: true };
   }
 
-  removePlayer(
-    roomId: RoomId,
-    userId: UserId,
-  ): SuccessResponse | FailureResponse {
+  removePlayer(roomId: RoomId, userId: UserId): SuccessResponse | FailureResponse {
     const game = this.sessions.get(roomId);
     if (!game) return { success: false, message: "Session not found" };
 
@@ -117,18 +114,14 @@ class GameSessionManager {
     }) as SuccessResponse<void> | FailureResponse;
   }
 
-  applyTimeout(
-    roomId: RoomId,
-    userId: UserId,
-    nickname: string,
-  ): SuccessResponse | FailureResponse {
+  applyTimeout(roomId: RoomId, userId: UserId, nickname: string): SuccessResponse | FailureResponse {
     const game = this.sessions.get(roomId);
     if (!game) return { success: false, message: "Session not found" };
 
     return game.processAction({
       type: "TIMEOUT",
       userId,
-      nickname,
+      nickname
     }) as SuccessResponse<void> | FailureResponse;
   }
 }
